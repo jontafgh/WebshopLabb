@@ -1,5 +1,29 @@
-﻿<h3>NavMenu</h3>
+﻿@rendermode InteractiveServer
+
+@if (SideBarShown) {
+    <div class="top-menu-nav-item right" @onclick="OnHideSideBar">
+        X
+    </div> 
+}
+
+<div class="text-xlarge padding">
+    LOGO
+</div>
+
+<div class="nav-menu text-gray padding-64 text-large">
+
+    <NavLink class="nav-item" href="checkout">Checkout</NavLink>
+    <NavLink class="nav-item" href="products">Products</NavLink>
+    <NavLink class="nav-item" href="newuser">New User</NavLink>
+    <NavLink class="nav-item" href="profile">Profile</NavLink>
+
+</div>
+
 
 @code {
+    [Parameter] public bool SideBarShown { get; set; } = false;
+    [Parameter] public EventCallback<MouseEventArgs> OnHideSideBar { get; set; }
 
 }
+
+

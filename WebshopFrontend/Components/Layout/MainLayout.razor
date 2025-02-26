@@ -1,14 +1,31 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="sidemenu">
-    <NavMenu></NavMenu>
+<div class="topbar black text-xlarge">
+    <TopMenu OnShowSidebar="ShowSidebar"></TopMenu>
+</div>
+
+<div class="sidebar white" style="@DisplayStyle">
+    <NavMenu SideBarShown="@_sideBarShown" OnHideSideBar="ShowSidebar"></NavMenu>
+</div>
+
+<div class="overlay" style="@DisplayStyle" @onclick="ShowSidebar">
+
 </div>
 
 <div class="main">
-    <div class="content">
-        @Body
-    </div>
+    @Body
 </div>
+
+@code {
+    public string DisplayStyle = string.Empty;
+    private bool _sideBarShown;
+
+    public void ShowSidebar(MouseEventArgs e)
+    {
+        DisplayStyle = (DisplayStyle == string.Empty) ? "display: block;" : string.Empty;
+        _sideBarShown = (!_sideBarShown);
+    }
+}
 
 
 

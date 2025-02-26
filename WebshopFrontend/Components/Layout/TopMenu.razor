@@ -1,0 +1,12 @@
+﻿@rendermode InteractiveServer
+<div class="left text-xlarge padding">
+    LOGO
+</div>
+<a class="right top-menu-nav-item padding" @onclick="OnShowSidebar">|||</a>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnShowSidebar { get; set; }
+}
