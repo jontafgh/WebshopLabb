@@ -1,8 +1,46 @@
 ﻿@page "/products"
 @rendermode InteractiveServer
+@using WebshopFrontend.Components.Components
 
-<h3>Products</h3>
+
+<div class="product-flex-container">
+    @foreach(var boardgame in _boardgames){
+        <ProductPreview Product="boardgame" />
+    }
+</div>
 
 @code {
 
+    private List<Boardgame> _boardgames = [];
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 10; i++)
+        {
+            _boardgames.Add(CreateBoardgame());
+        }
+    }
+
+
+    private Boardgame CreateBoardgame()
+    {
+        return new Boardgame()
+            {
+                ArtNr = "LPFI402",
+                Name = "Catan",
+                Publisher = "Kosmos",
+                Price = 399,
+                MinPlayers = 3,
+                MaxPlayers = 4,
+                PlayTime = 120,
+                MinAge = 10,
+                Description = "Catan is a multiplayer board game designed by Klaus Teuber and first published in 1995 in Germany by Franckh-Kosmos Verlag (Kosmos) as Die Siedler von Catan. " +
+                              "Players assume the roles of settlers, each attempting to build and develop holdings while trading and acquiring resources. Players are rewarded points as their settlements grow; " +
+                              "the first to reach a set number of points is the winner. The game and its many expansions are also published by Mayfair Games, Filosofia, Capcom, 999 Games, Κάισσα, and Devir.",
+                Image = "https://alphaspel.se/media/products/thumbs/d7819003-df98-4149-94d4-7d3ca4e88093.250x250_q50_fill.png",
+                ImageText = "Catan",
+                Stock = 10
+            };
+    }
 }
+

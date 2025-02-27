@@ -1,0 +1,24 @@
+﻿@rendermode InteractiveServer
+
+<div class="container product-flex-item">
+    <div class="product-preview-top">
+        <img src="@Product.Image" alt="@Product.ImageText"/>
+        <p>@Product.Name</p>
+    </div>
+    
+    <div class="product-preview-bottom">
+        <div class="text-left">
+            <span>@(Product.Price):-</span>
+        </div>
+        <div class="text-right">
+            <span>I lager:@(Product.Stock) st</span>
+        </div>
+    </div>
+    
+    
+</div>
+
+@code {
+    [Parameter] public IProduct Product { get; set; }
+
+}
