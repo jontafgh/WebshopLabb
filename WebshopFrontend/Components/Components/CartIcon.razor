@@ -1,0 +1,41 @@
+﻿@using WebshopFrontend.EventHandlers
+@rendermode InteractiveServer
+@inject IJSRuntime Js
+@inject NotifyCartUpdated NotifyCartUpdated
+@implements IDisposable
+
+<figure class="cart">
+    <img src="Icons/icon-shopping-cart.svg" alt="shoping cart" />
+    <figcaption class="badge"><span>@_noOfItemsInCart</span></figcaption>
+</figure>
+
+@code {
+    private int _noOfItemsInCart = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        NotifyCartUpdated.CartUpdated += UpdateCart;
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _noOfItemsInCart = await Js.InvokeAsync<int>("GetNumberOfProductsInLocalStorage");
+        if (firstRender)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async void UpdateCart(object? sender, EventArgs e)
+    {
+        _noOfItemsInCart =  await Js.InvokeAsync<int>("GetNumberOfProductsInLocalStorage");
+       await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+        NotifyCartUpdated.CartUpdated -= UpdateCart;
+    }
+
+}

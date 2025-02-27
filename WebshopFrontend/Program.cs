@@ -1,4 +1,5 @@
 using WebshopFrontend.Components;
+using WebshopFrontend.EventHandlers;
 
 namespace WebshopFrontend;
 
@@ -11,6 +12,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+        builder.Services.AddScoped<NotifyCartUpdated>();
 
         var app = builder.Build();
 

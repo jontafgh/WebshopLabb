@@ -1,0 +1,28 @@
+﻿@using WebshopFrontend.EventHandlers
+@rendermode InteractiveServer
+@inject IJSRuntime Js
+@inject NotifyCartUpdated NotifyCartUpdated
+
+@if (Product.Stock > 0)
+{
+<a @onclick="AddToCart" class="text-center text-xlarge text-bold button-buy button-block">
+    Buy
+</a>
+}
+else
+{
+<a class="text-center text-xlarge text-bold button-reserve button-block">
+    Reserve
+</a>
+}
+
+
+@code {
+    [Parameter] public IProduct Product { get; set; }
+
+    private async Task AddToCart()
+    {
+        await Js.InvokeVoidAsync("AddProductToLocalStorage", Product.ArtNr);
+        NotifyCartUpdated.NotifyCartUpdate(this);
+    }
+}

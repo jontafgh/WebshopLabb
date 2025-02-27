@@ -1,4 +1,5 @@
 ﻿@rendermode InteractiveServer
+@using WebshopFrontend.Components.Components
 
 @if (SideBarShown) {
     <div class="top-menu-nav-item right" @onclick="OnHideSideBar">
@@ -10,7 +11,7 @@
     LOGO
 </div>
 
-<div class="nav-menu text-gray padding-64 text-large">
+<div class="nav-menu text-gray padding text-large">
 
     <NavLink class="nav-item" href="checkout">Checkout</NavLink>
     <NavLink class="nav-item" href="products">Products</NavLink>
@@ -19,6 +20,9 @@
 
 </div>
 
+<div>
+    <CartIcon></CartIcon>
+</div>
 
 @code {
     [Parameter] public bool SideBarShown { get; set; } = false;

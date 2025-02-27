@@ -3,22 +3,33 @@
 <div class="container product-flex-item">
     <div class="product-preview-top">
         <img src="@Product.Image" alt="@Product.ImageText"/>
-        <p>@Product.Name</p>
+        <span>@Product.Name</span>
     </div>
-    
+
     <div class="product-preview-bottom">
-        <div class="text-left">
-            <span>@(Product.Price):-</span>
+        <div>
+            <span class="@GetPriceClasses()">@(Product.Price):-</span>
+            <span class="@GetDiscountClasses()">@(Product.DiscountedPrice):-</span>
         </div>
-        <div class="text-right">
-            <span>I lager:@(Product.Stock) st</span>
+
+        <div>
+            <span>Lager:@(Product.Stock) st</span>
         </div>
+        
     </div>
     
-    
+    <div>
+        <AddToCartButton Product="Product"></AddToCartButton>
+    </div>
+
+
 </div>
 
 @code {
     [Parameter] public IProduct Product { get; set; }
+
+    private string GetDiscountClasses() => (Product.DiscountedPrice == null) ? "hide-element" : "red text-bold";
+
+    private string GetPriceClasses() => (Product.DiscountedPrice == null) ? "text-bold" : "text-crossed text-bold";
 
 }
