@@ -26,7 +26,7 @@
 </div>
 
 @code {
-    [Parameter] public IProduct Product { get; set; }
+    [Parameter] public Product Product { get; set; }
 
     private string GetDiscountClasses() => (Product.DiscountedPrice == null) ? "hide-element" : "red text-bold";
 
