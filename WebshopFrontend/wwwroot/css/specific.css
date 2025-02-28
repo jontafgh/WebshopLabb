@@ -151,3 +151,39 @@
         left: 50%;
         transform: translateX(-50%);
     }
+
+.product-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(5, auto);
+    grid-template-areas:
+        "Product Product"
+        "Image Price"
+        "Image Price"
+        "Descriprion Addtocart"
+        "Description Stock";
+}
+
+.product-grid-item-1 {
+    grid-area: Product;
+}
+
+.product-grid-item-2 {
+    grid-area: Image;
+}
+
+.product-grid-item-3 {
+    grid-area: Price;
+}
+
+.product-grid-item-4 {
+    grid-area: Description;
+}
+
+.product-grid-item-5 {
+    grid-area: Addtocart;
+}
+
+.product-grid-item-6 {
+    grid-area: Stock;
+}

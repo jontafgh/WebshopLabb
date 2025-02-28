@@ -47,6 +47,20 @@ namespace WebshopBackend
                         : Results.NotFound()
             );
 
+            app.MapGet("/products/article/{artNr}", async (string artNr, WebshopContext db) =>
+                await db.Boardgames.Include(b => b.Publisher)
+                        .Include(b => b.Image)
+                        .Include(b => b.Price!)
+                        .ThenInclude(p => p.Discount)
+                        .Include(b => b.BoardgameDetails)
+                        .Include(b => b.Stock!)
+                        .ThenInclude(s => s.NextRestock)
+                        .FirstOrDefaultAsync(b => b.ArtNr == artNr)
+                    is Boardgame boardgame
+                    ? Results.Ok(boardgame)
+                    : Results.NotFound()
+            );
+
             app.MapPost("/products", async (BoardgameDto boardgameDto, WebshopContext db) =>
             {
                 var boardgame = boardgameDto.ToBoardgame();

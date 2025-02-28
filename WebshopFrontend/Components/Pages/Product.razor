@@ -1,0 +1,57 @@
+﻿@page "/product/{ArtNr}"
+@rendermode InteractiveServer
+@using WebshopFrontend.Components.Components
+@inject IHttpClientFactory Http
+
+@if (_boardgame == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="product-grid-container">
+
+        <div class="product-grid-item-1">
+            <h1>@_boardgame.Name</h1>
+            <span>@_boardgame.ArtNr</span>
+            <p>@_boardgame.Publisher.Name</p>
+        </div>
+
+        <div class="product-grid-item-2">
+            <img src="@_boardgame.Image.ImageMediumUrl" alt="@_boardgame.Image.ImageText"/>
+        </div>
+
+        <div class="product-grid-item-3">
+            <span>@_boardgame.Price.Regular</span>
+        </div>
+
+        <div class="product-grid-item-4">
+            <p>@_boardgame.BoardgameDetails.Description</p>
+        </div>
+
+        <div class="product-grid-item-5">
+            <AddToCartButton Boardgame="_boardgame"></AddToCartButton>
+        </div>
+
+        <div class="product-grid-item-6">
+            <span>@_boardgame.Stock.Quantity</span>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public required string ArtNr { get; set; }
+
+    private BoardgameDto? _boardgame;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        using var client = Http.CreateClient("WebshopMinimalApi");
+        _boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{ArtNr}");
+    }
+}
