@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using WebshopBackend.Models;
 using WebshopShared;
 using static System.Net.WebRequestMethods;
 namespace WebshopBackend
@@ -7,31 +10,53 @@ namespace WebshopBackend
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var app = builder.Build();
-            
-            app.MapGet("/products", () => TypedResults.Ok(ProductExtensions.GetProducts()));
-            app.MapGet("/products/{id}", (int id) =>
-            {
-                var product = ProductExtensions.GetProduct(id);
-                return TypedResults.Ok(product);
-            });
-            app.Run();
-        }
-    }
 
-    public static class ProductExtensions
-    {
-        public static List<Product> GetProducts()
-        {
-            return new List<Product>()
+            builder.Services.AddDbContext<WebshopContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("WebshopDb"))
+                );
+
+            var app = builder.Build();
+
+            app.MapGet("/products", async (WebshopContext db) =>
+            
+                await db.Boardgames
+                   .Include(b => b.Publisher)
+                   .Include(b => b.Image)
+                   .Include(b => b.Price!)
+                       .ThenInclude(p => p.Discount)
+                   .Include(b => b.BoardgameDetails)
+                   .Include(b => b.Stock!)
+                       .ThenInclude(s => s.NextRestock)
+                   .ToListAsync()
+                   is List<Boardgame> boardgame
+                        ? Results.Ok(boardgame)
+                        : Results.NotFound()
+            );
+
+            app.MapGet("/products/{id}", async (int id, WebshopContext db) =>
+                await db.Boardgames.Include(b => b.Publisher)
+                    .Include(b => b.Image)
+                    .Include(b => b.Price!)
+                        .ThenInclude(p => p.Discount)
+                    .Include(b => b.BoardgameDetails)
+                    .Include(b => b.Stock!)
+                        .ThenInclude(s => s.NextRestock)
+                    .FirstOrDefaultAsync(b => b.Id == id)
+                    is Boardgame boardgame
+                        ? Results.Ok(boardgame)
+                        : Results.NotFound()
+            );
+
+            app.MapPost("/products", async (BoardgameDto boardgameDto, WebshopContext db) =>
             {
-                new Product() { ID = 1, ArtNr = "1234", Name = "Catan", Publisher = "Kosmos", MinPlayers = 3, MaxPlayers = 4, MinAge = 10, PlayTime = 60, Description = "A great game", Price = 30.00m, DiscountedPrice = null, Image = "https://alphaspel.se/media/products/thumbs/d7819003-df98-4149-94d4-7d3ca4e88093.250x250_q50_fill.png", ImageText = "Catan" , Stock = 10 },
-                new Product() { ID = 2, ArtNr = "5678", Name = "Ticket to Ride", Publisher = "Days of Wonder", MinPlayers = 2, MaxPlayers = 5, MinAge = 8, PlayTime = 60, Description = "Another great game", Price = 40.00m, DiscountedPrice = 30.00m, Image = "https://alphaspel.se/media/products/thumbs/e42ccac9-f1f2-4640-84d2-3fcf341fea5e.250x250_q50_fill.jpg", ImageText = "Ticket to ride", Stock = 5 }
-            };
-        }
-        public static Product? GetProduct(int id)
-        {
-            return GetProducts().FirstOrDefault(p => p.ID == id);
+                var boardgame = boardgameDto.ToBoardgame();
+                db.Boardgames.Add(boardgame);
+                await db.SaveChangesAsync();
+
+                return Results.Created($"/products/{boardgame.Id}", boardgame);
+            });
+
+            app.Run();
         }
     }
 }

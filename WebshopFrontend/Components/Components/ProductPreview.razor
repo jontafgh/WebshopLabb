@@ -1,35 +1,36 @@
 ﻿@rendermode InteractiveServer
 
 <div class="container product-flex-item">
-    <div class="product-preview-top">
-        <img src="@Product.Image" alt="@Product.ImageText"/>
-        <span>@Product.Name</span>
+
+    <div class="product-preview-top padding-16">
+        <img src="@Boardgame.Image.ImageSmallUrl" alt="@Boardgame.Image.ImageText"/>
+        <span>@Boardgame.Name</span>
     </div>
 
     <div class="product-preview-bottom">
-        <div>
-            <span class="@GetPriceClasses()">@(Product.Price):-</span>
-            <span class="@GetDiscountClasses()">@(Product.DiscountedPrice):-</span>
+        <div class="text-div">
+            <span class="@GetPriceClasses()">@(Boardgame.Price.Regular)$</span>
+            <span class="@GetDiscountClasses()">@((Boardgame.Price.Discount == null) ? "" : Boardgame.Price.Discount.Price)$</span>
         </div>
 
-        <div>
-            <span>Lager:@(Product.Stock) st</span>
+        <div class="text-div">
+            <span>Stock:@(Boardgame.Stock.Quantity)</span>
         </div>
-        
+
     </div>
-    
+
     <div>
-        <AddToCartButton Product="Product"></AddToCartButton>
+        <AddToCartButton Boardgame="Boardgame"></AddToCartButton>
     </div>
 
 
 </div>
 
 @code {
-    [Parameter] public Product Product { get; set; }
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
 
-    private string GetDiscountClasses() => (Product.DiscountedPrice == null) ? "hide-element" : "red text-bold";
+    private string GetDiscountClasses() => (Boardgame.Price.Discount == null) ? "hide-element" : "red text-bold";
 
-    private string GetPriceClasses() => (Product.DiscountedPrice == null) ? "text-bold" : "text-crossed text-bold";
+    private string GetPriceClasses() => (Boardgame.Price.Discount == null) ? "text-bold" : "text-crossed text-small";
 
 }

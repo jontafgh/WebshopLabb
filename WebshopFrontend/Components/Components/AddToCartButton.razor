@@ -3,7 +3,7 @@
 @inject IJSRuntime Js
 @inject NotifyCartUpdated NotifyCartUpdated
 
-@if (Product.Stock > 0)
+@if (Boardgame.Stock.Quantity > 0)
 {
 <a @onclick="AddToCart" class="text-center text-xlarge text-bold button-buy button-block">
     Buy
@@ -18,11 +18,11 @@ else
 
 
 @code {
-    [Parameter] public Product Product { get; set; }
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
 
     private async Task AddToCart()
     {
-        await Js.InvokeVoidAsync("AddProductToLocalStorage", Product.ArtNr);
+        await Js.InvokeVoidAsync("AddProductToLocalStorage", Boardgame.ArtNr);
         NotifyCartUpdated.NotifyCartUpdate(this);
     }
 }

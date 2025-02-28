@@ -6,22 +6,22 @@
 
 <div class="product-flex-container">
 
-    @if (_products == null)
+    @if (_boardgames == null)
     {
         <p>Loading...</p>
     }
     else
     {
-        foreach (var product in _products)
+        foreach (var boardgame in _boardgames)
         {
-        <ProductPreview Product="product" />
+            <ProductPreview Boardgame="boardgame" />
         }  
     }
 </div>
 
 @code {
 
-    private List<Product>? _products = new List<Product>();
+    private List<BoardgameDto>? _boardgames = new List<BoardgameDto>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,7 +31,7 @@
     private async Task LoadProducts()
     {
         using var client = Http.CreateClient("WebshopMinimalApi");
-        _products = await client.GetFromJsonAsync<List<Product>>("products");
+        _boardgames = await client.GetFromJsonAsync<List<BoardgameDto>>("products");
     }
 }
 

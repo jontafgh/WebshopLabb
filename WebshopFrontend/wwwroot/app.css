@@ -13,6 +13,7 @@ img {
     max-width: 100%;
     height: auto;
     display: block;
+    object-fit: contain;
 }
 
 .content {
@@ -226,6 +227,8 @@ img {
     justify-content: space-between;
 }
 
+
+
 .cart {
     width: 40px;
     height: auto;
@@ -273,14 +276,14 @@ img {
     .topbar {
         display: none;
     }
+    
+}
+
+@media (min-width: 1200px) {
     .product-flex-item {
         flex-basis: 25%;
         max-width: 25%;
     }
-}
-
-@media (min-width: 1200px) {
-   
 }
 
 
