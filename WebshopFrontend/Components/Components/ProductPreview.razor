@@ -2,18 +2,18 @@
 
 <div class="container product-flex-item">
 
-    <div class="product-preview-top padding-16">
+    <div class="product-preview-top padding-y-16">
         <img src="@Boardgame.Image.ImageSmallUrl" alt="@Boardgame.Image.ImageText"/>
         <span>@Boardgame.Name</span>
     </div>
 
     <div class="product-preview-bottom">
-        <div class="text-div">
+        <div>
             <span class="@GetPriceClasses()">@(Boardgame.Price.Regular)$</span>
             <span class="@GetDiscountClasses()">@((Boardgame.Price.Discount == null) ? "" : Boardgame.Price.Discount.Price)$</span>
         </div>
 
-        <div class="text-div">
+        <div>
             <span>Stock:@(Boardgame.Stock.Quantity)</span>
         </div>
 

@@ -1,10 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="topbar black text-xlarge">
+<div class="topbar black text-xlarge padding-x-16">
     <TopMenu OnShowSidebar="ShowSidebar"></TopMenu>
 </div>
 
-<div class="sidebar white" style="@DisplayStyle">
+<div class="sidebar white padding-x-16" style="@DisplayStyle">
     <NavMenu SideBarShown="@_sideBarShown" OnHideSideBar="ShowSidebar"></NavMenu>
 </div>
 
