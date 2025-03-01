@@ -6,17 +6,8 @@
 }
 
 @media (min-width: 993px) {
-    .sidebar {
-        display: block;
-    }
-
-    .main {
-        margin-left: 250px;
-    }
-
-    .topbar {
-        display: none;
-    }
+    .sidebar { display: block; }
+    .top-menu-menu  { display: none; }
 }
 
 @media (min-width: 1200px) {

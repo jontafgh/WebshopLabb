@@ -17,10 +17,23 @@ body {
     min-height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
+    background-color: rgb(242, 242, 242);
+}
+
+header {
+    z-index: 4;
+}
+
+main {
+    flex-grow: 1;
 }
 
 img {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+a {
+    cursor: pointer;
 }

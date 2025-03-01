@@ -1,8 +1,28 @@
-﻿@rendermode InteractiveServer
-<div class="left text-xlarge padding-y padding-x">
-    LOGO
+﻿@using WebshopFrontend.Components.Components
+@rendermode InteractiveServer
+
+<div class="text-xlarge top-menu">
+    <div class="padding-x">
+        LOGO
+    </div>
+
+    <div class="top-menu-search padding-x">
+        <input class="center-verticaly" type="text" />
+    </div>
+
+    <div class="padding-x">
+        <CartIcon></CartIcon>
+    </div>
+
+    <div class="top-menu-menu padding-x">
+        <a @onclick="OnShowSidebar">
+            <div>
+                <img src="Icons\menu-symbol-of-three-parallel-lines-svgrepo-com - Copy.svg" alt="Menu" />
+            </div>
+        </a>
+    </div>
 </div>
-<a class="right top-menu-nav-item padding-y" @onclick="OnShowSidebar">|||</a>
+
 
 
 @code {

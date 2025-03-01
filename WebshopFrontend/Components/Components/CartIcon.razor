@@ -4,10 +4,7 @@
 @inject NotifyCartUpdated NotifyCartUpdated
 @implements IDisposable
 
-<figure class="cart">
-    <img src="Icons/icon-shopping-cart.svg" alt="shoping cart" />
-    <figcaption class="badge"><span>@_noOfItemsInCart</span></figcaption>
-</figure>
+<i class="fa badge fa-lg" value="@_noOfItemsInCart">&#xf07a;</i>
 
 @code {
     private int _noOfItemsInCart = 0;

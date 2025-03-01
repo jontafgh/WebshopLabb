@@ -7,6 +7,22 @@
     background-color: black;
     color: white;
 }
+.container-center-verticaly {
+    position: relative
+}
+
+.center-verticaly {
+    margin: 0;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    position: absolute;
+}
+
+.gray {
+    background-color: rgb(242, 242, 242);
+    color: black;
+}
 
 .red {
     color: red;
@@ -90,10 +106,6 @@
 
 .text-right {
     text-align: right;
-}
-
-.container {
-    padding: 0.01em 16px;
 }
 
 .active {
