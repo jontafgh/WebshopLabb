@@ -4,9 +4,19 @@
 }
 
 html {
-    font-family: Verdana,sans-serif;
+    
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
     font-size: 15px;
     line-height: 1.5;
+    height: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 img {
