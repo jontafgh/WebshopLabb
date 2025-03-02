@@ -10,56 +10,11 @@
 else
 {
     <div class="product-grid-container">
-
-        <div class="product-grid-item-1 padding-x padding-y">
-            <h1>@_boardgame.Name</h1>
-            <span>@_boardgame.ArtNr</span>
-            <span>@_boardgame.Publisher.Name</span>
-        </div>
-
-        <div class="product-grid-item-2 padding-x padding-y">
-            <img src="@_boardgame.Image.ImageMediumUrl" alt="@_boardgame.Image.ImageText"/>
-        </div>
-
-        <div class="product-grid-item-3 padding-x padding-y">
-            @if (_boardgame.Price.Discount != null)
-            {
-                <div>
-                    <h3>Special Offer</h3>
-                    <span>From: @_boardgame.Price.Discount.StartDate.ToShortDateString()</span><br/>
-                    <span>To: @_boardgame.Price.Discount.EndDate.ToShortDateString()</span>
-                </div>
-            }
-            <div>
-                <Price RegularPrice="@_boardgame.Price.Regular" DiscountedPrice="@_boardgame.Price.Discount?.Price" FontSizePx="40"></Price>
-            </div>
-
-            <AddToCartButton Boardgame="_boardgame"></AddToCartButton>
-        </div>
-
-        <div class="product-grid-item-4 padding-x padding-y">
-            <GameProperties Boardgame="_boardgame"></GameProperties>
-            <p>@_boardgame.BoardgameDetails.Description</p>
-        </div>
-
-        <div class="product-grid-item-6 padding-x padding-y">
-            <span>Stock: @_boardgame.Stock.Quantity</span>
-            @if (_boardgame.Stock.NextRestock == null)
-            {
-                <div>
-                    <span>Next restock: N/A</span>
-                </div>
-            }
-            else
-            {
-                <div>
-                    <span>Next restock: @_boardgame.Stock.NextRestock.RestockDate.ToShortDateString()</span>
-                    <br />
-                    <span>Quantity: @_boardgame.Stock.NextRestock.Quantity</span>
-                </div>
-            }
-            
-        </div>
+        <ProductHeading Boardgame="_boardgame"></ProductHeading>
+        <ProductImages Boardgame="_boardgame"></ProductImages>
+        <ProductPrice Boardgame="_boardgame"></ProductPrice>
+        <ProductDetails Boardgame="_boardgame"></ProductDetails>
+        <ProductStock Boardgame="_boardgame"></ProductStock>
     </div>
 }
 

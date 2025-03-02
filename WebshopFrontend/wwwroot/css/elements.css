@@ -40,3 +40,8 @@ a {
     cursor: pointer;
     text-decoration: none;
 }
+
+hr {
+    border: 1px solid #ededed;
+    border-radius: 5px;
+}

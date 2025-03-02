@@ -1,0 +1,10 @@
+﻿<div class="product-grid-item-4 padding-x padding-y">
+    <hr/>
+    <GameProperties Boardgame="@Boardgame"></GameProperties>
+    <hr/>
+    <p class="padding-y">@Boardgame.BoardgameDetails.Description</p>
+</div>
+
+@code {
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
+}

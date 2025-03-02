@@ -1,0 +1,25 @@
+﻿@using WebshopFrontend.Components.Components
+
+<div class="product-grid-item-3 padding-x padding-y">
+    @if (Boardgame.Price.Discount != null)
+    {
+        <div>
+            <h3>Special Offer</h3>
+            <div class="text-gray">
+                <span>From: @Boardgame.Price.Discount.StartDate.ToShortDateString()</span><br />
+                <span>To: @Boardgame.Price.Discount.EndDate.ToShortDateString()</span>
+            </div>
+
+        </div>
+    }
+    <div>
+        <Price RegularPrice="@Boardgame.Price.Regular" DiscountedPrice="@Boardgame.Price.Discount?.Price" FontSizePx="40"></Price>
+    </div>
+
+    <AddToCartButton Boardgame="@Boardgame"></AddToCartButton>
+</div>
+
+@code {
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
+
+}

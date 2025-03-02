@@ -1,0 +1,21 @@
+﻿<div class="product-grid-item-6 padding-x padding-y">
+    <span>Stock: @Boardgame.Stock.Quantity</span>
+    @if (Boardgame.Stock.NextRestock == null)
+    {
+        <div>
+            <span>Next restock: N/A</span>
+        </div>
+    }
+    else
+    {
+        <div>
+            <span>Next restock: @Boardgame.Stock.NextRestock.RestockDate.ToShortDateString()</span>
+            <br />
+            <span>Quantity: @Boardgame.Stock.NextRestock.Quantity</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
+}

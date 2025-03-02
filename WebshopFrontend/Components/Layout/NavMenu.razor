@@ -4,8 +4,8 @@
 <nav class="nav-menu">
     @if (SideBarShown)
     {
-        <div class="" @onclick="OnHideSideBar">
-            X
+        <div class="nav-menu-close padding-x padding-y">
+            <i class="fa fa-times nav-menu-close-button" aria-hidden="true" @onclick="OnHideSideBar"></i>
         </div>
     }
 
@@ -13,14 +13,7 @@
     <NavMenuButton Icon="fa fa-credit-card" Href="checkout" Text="Checkout"></NavMenuButton>
     <NavMenuButton Icon="fa fa-user-plus" Href="newuser" Text="New User"></NavMenuButton>
     <NavMenuButton Icon="fa fa-user-circle"  Href="profile" Text="Profile"></NavMenuButton>
-
-
-    @*  <NavLink class="nav-item padding-x padding-y" href="checkout">Checkout</NavLink>
-    <NavLink class="nav-item padding-x padding-y" href="products">Products</NavLink>
-    <NavLink class="nav-item padding-x padding-y" href="newuser">New User</NavLink>
-    <NavLink class="nav-item padding-x padding-y" href="profile">Profile</NavLink>
- *@
-
+    
 </nav>
 
 @code {

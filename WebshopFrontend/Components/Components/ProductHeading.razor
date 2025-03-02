@@ -1,0 +1,12 @@
+﻿<div class="product-grid-item-1 padding-x padding-y">
+    <h1>@Boardgame.Name</h1>
+    <hr/>
+    <div class="text-gray">
+        <span>@Boardgame.ArtNr</span>
+        <span>@Boardgame.Publisher.Name</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
+}

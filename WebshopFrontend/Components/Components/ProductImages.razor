@@ -1,0 +1,19 @@
+﻿<div class="product-grid-item-2 padding-x padding-y">
+    <img src="@Boardgame.Image.ImageMediumUrl" alt="@Boardgame.Image.ImageText" @onclick="ShowHideLargeImage" />
+
+    <div class="overlay" style="@DisplayStyle" @onclick="ShowHideLargeImage">
+        <i class="fa fa-times overlay-close-button" aria-hidden="true"></i>
+        <img src="@Boardgame.Image.ImageLargeUrl" alt="@Boardgame.Image.ImageText" @onclick=" ShowHideLargeImage" />
+    </div>            
+</div>
+
+@code {
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
+
+    public string DisplayStyle = "display: none;";
+
+    public void ShowHideLargeImage(MouseEventArgs e)
+    {
+        DisplayStyle = (DisplayStyle == "display: none;") ? "display: block;" : "display: none;";
+    }
+}
