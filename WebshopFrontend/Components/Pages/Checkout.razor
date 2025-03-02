@@ -1,6 +1,92 @@
 ﻿@page "/checkout"
+@using System.Text.Json
+@rendermode InteractiveServer
+@inject IJSRuntime Js
+@inject IHttpClientFactory Http
+
 <h3>Checkout</h3>
 
+@if (_boardgames != null)
+{
+    <div class="checkout-table-container">
+        <table class="checkout-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>ArNr</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var article in _boardgames)
+                {
+                    <tr>
+                        <td>@article.Key.Name</td>
+                        <td>@article.Key.ArtNr</td>
+                        <td>@article.Key.Price.Regular</td>
+                        <td>@(article.Key.Price.Regular * article.Value)</td>
+                        <td>@article.Value</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4">Total:</th>
+                    <td>
+                        @GetTotalPrice()
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+}
+
+
 @code {
+    private Dictionary<BoardgameDto, int>? _boardgames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _boardgames = await LoadProducts();
+    }
+
+    private decimal GetTotalPrice()
+    {
+        return _boardgames!.Sum(boardgame => boardgame.Key.Price.Regular * boardgame.Value);
+    }
+
+    private async Task<Dictionary<BoardgameDto, int>> LoadProducts()
+    {
+        using var client = Http.CreateClient("WebshopMinimalApi");
+
+        var articleNumbers = await GetAricleNumbers();
+
+        var boardgames = new Dictionary<BoardgameDto, int>();
+
+        foreach (var articleNumber in articleNumbers)
+        {
+            var boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{articleNumber}");
+
+            if (boardgame == null) continue;
+            if (boardgames.Keys.Any(b => b.ArtNr == boardgame.ArtNr))
+            {
+                boardgames[boardgames.Keys.First(b => b.ArtNr == boardgame.ArtNr)]++;
+            }
+            else
+            {
+                boardgames.Add(boardgame, 1);
+            }
+        }
+        return boardgames;
+    }
+
+    private async Task<List<string>> GetAricleNumbers()
+    {
+        var json = await Js.InvokeAsync<string>("GetProductsFromLocalStorageAsString");
+        return JsonSerializer.Deserialize<List<string>>(json) ?? [];
+    }
 
 }

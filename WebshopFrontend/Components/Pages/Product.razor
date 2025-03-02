@@ -25,10 +25,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProducts();
+        await LoadProduct();
     }
 
-    private async Task LoadProducts()
+    private async Task LoadProduct()
     {
         using var client = Http.CreateClient("WebshopMinimalApi");
         _boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{ArtNr}");

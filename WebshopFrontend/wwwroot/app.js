@@ -4,6 +4,10 @@
     localStorage.setItem("products", JSON.stringify(products));
 }
 
+function EmptyLocalStorage() {
+    localStorage.clear();
+}
+
 function GetProductsFromLocalStorage() {
     var products = localStorage.getItem("products");
     if (products === null) {
@@ -11,6 +15,12 @@ function GetProductsFromLocalStorage() {
     }
     return JSON.parse(products);
 }
+
+function GetProductsFromLocalStorageAsString() {
+    var products = localStorage.getItem("products");
+    return products;
+}
+
 
 function GetNumberOfProductsInLocalStorage() {
     return GetProductsFromLocalStorage().length;

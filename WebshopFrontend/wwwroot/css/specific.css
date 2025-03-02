@@ -50,10 +50,38 @@
     transition: 0.2s;
 }
 
-.cart:hover {
-    background-color: rgb(212, 212, 212);
-    color: black;
+    .cart:hover {
+        background-color: rgb(212, 212, 212);
+        color: black;
+    }
+
+.checkout-table-container {
+    overflow-x: auto;
 }
+
+.checkout-table {
+    width: 100%;
+    background: white;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+    .checkout-table th {
+        height: 50px;
+    }
+
+    .checkout-table td {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .checkout-table tfoot th {
+        text-align: right;
+    }
+
+    .checkout-table th, .checkout-table td {
+        border-bottom: 1px solid #d9d9d9;
+    }
 
 .content {
     margin-left: auto;
@@ -284,9 +312,10 @@
         width: 25px;
         height: 25px;
     }
-.top-menu-menu:hover {
-    color: black;
-}
+
+    .top-menu-menu:hover {
+        color: black;
+    }
 
 
 .top-menu-nav-item {
