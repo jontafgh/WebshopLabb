@@ -60,6 +60,12 @@
     width: 100%;
 }
 
+.game-properties {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .main {
     margin-left: 0;
     transition: margin-left .4s;
@@ -137,39 +143,49 @@
 }
 
 .product-grid-container {
+    width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(5, auto);
     grid-template-areas:
-        "Product Product"
-        "Image Price"
-        "Image Price"
-        "Descriprion Addtocart"
-        "Description Stock";
+        "product product"
+        "image price"
+        "image price"
+        "description stock"
+        "description stock";
+    grid-template-columns: 8fr minmax(200px, 6fr);
+    grid-template-rows: 80px auto auto auto auto;
+    border: 1px solid #ededed;
+}
+
+[class^="product-grid-item"] {
+    
+    background: white;
 }
 
 .product-grid-item-1 {
-    grid-area: Product;
+    grid-area: product;
 }
 
 .product-grid-item-2 {
-    grid-area: Image;
+    grid-area: image;
 }
 
 .product-grid-item-3 {
-    grid-area: Price;
+    grid-area: price;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
 }
 
 .product-grid-item-4 {
-    grid-area: Description;
-}
-
-.product-grid-item-5 {
-    grid-area: Addtocart;
+    grid-area: description;
 }
 
 .product-grid-item-6 {
-    grid-area: Stock;
+    grid-area: stock;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: start;
 }
 
 .root {
@@ -215,12 +231,6 @@
         width: 25px;
         height: 25px;
     }
-
-.top-menu-cart {
-}
-
-.top-menu-logo {
-}
 
 .top-menu-nav-item {
     cursor: pointer;

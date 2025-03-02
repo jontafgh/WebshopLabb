@@ -1,0 +1,19 @@
+﻿
+<div class="game-properties padding-y-32">
+    <div>
+        <i class="fa fa-users" aria-hidden="true"></i>
+        <span>@Boardgame.BoardgameDetails.MinPlayers - @Boardgame.BoardgameDetails.MaxPlayers</span>
+    </div>
+    <div>
+        <i class="fa fa-clock" aria-hidden="true"></i>
+        <span>@Boardgame.BoardgameDetails.PlayTime min</span>
+    </div>
+    <div>
+        <i class="fa fa-id-card" aria-hidden="true"></i>
+        <span>From @Boardgame.BoardgameDetails.MinAge yr</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public required BoardgameDto Boardgame { get; set; }
+}
