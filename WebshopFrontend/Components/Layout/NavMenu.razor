@@ -1,20 +1,27 @@
 ﻿@rendermode InteractiveServer
 @using WebshopFrontend.Components.Components
 
-@if (SideBarShown) {
-    <div class="top-menu-nav-item right" @onclick="OnHideSideBar">
-        X
-    </div> 
-}
+<nav class="nav-menu">
+    @if (SideBarShown)
+    {
+        <div class="" @onclick="OnHideSideBar">
+            X
+        </div>
+    }
 
-<div class="nav-menu text-gray padding-y text-large">
-    
-    <NavLink class="nav-item padding-x padding-y" href="checkout">Checkout</NavLink>
+    <NavMenuButton Icon="fa fa-folder-open" Href="products" Text="Products"></NavMenuButton>
+    <NavMenuButton Icon="fa fa-credit-card" Href="checkout" Text="Checkout"></NavMenuButton>
+    <NavMenuButton Icon="fa fa-user-plus" Href="newuser" Text="New User"></NavMenuButton>
+    <NavMenuButton Icon="fa fa-user-circle"  Href="profile" Text="Profile"></NavMenuButton>
+
+
+    @*  <NavLink class="nav-item padding-x padding-y" href="checkout">Checkout</NavLink>
     <NavLink class="nav-item padding-x padding-y" href="products">Products</NavLink>
     <NavLink class="nav-item padding-x padding-y" href="newuser">New User</NavLink>
     <NavLink class="nav-item padding-x padding-y" href="profile">Profile</NavLink>
+ *@
 
-</div>
+</nav>
 
 @code {
     [Parameter] public bool SideBarShown { get; set; } = false;

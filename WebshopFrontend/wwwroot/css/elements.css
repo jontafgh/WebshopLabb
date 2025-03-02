@@ -22,6 +22,8 @@ body {
 
 header {
     z-index: 4;
+    position: sticky;
+    top: 0;
 }
 
 main {
@@ -36,4 +38,5 @@ img {
 
 a {
     cursor: pointer;
+    text-decoration: none;
 }

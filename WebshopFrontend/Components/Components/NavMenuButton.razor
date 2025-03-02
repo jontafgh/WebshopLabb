@@ -1,0 +1,21 @@
+﻿<NavLink class="white text-gray" href="@Href">
+    <div class="nav-item text-large">
+        <div class="flex-row">
+            <div class="padding-x nav-menu-icon">
+                <i class="@Icon" aria-hidden="true"></i>
+            </div>
+            <div class="padding-x">
+                <span>@Text</span>
+            </div>
+        </div>
+    </div>
+</NavLink>
+
+@code {
+    [Parameter] public required string Text { get; set; }
+
+    [Parameter] public required string Icon { get; set; }
+
+    [Parameter] public required string Href { get; set; }
+
+}

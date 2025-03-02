@@ -6,8 +6,18 @@
 }
 
 @media (min-width: 993px) {
-    .sidebar { display: block; }
-    .top-menu-menu  { display: none; }
+    .sidebar {
+        display: block;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-menu-menu {
+         display: none;
+    }
+    header {
+        position: static;
+    }
 }
 
 @media (min-width: 1200px) {

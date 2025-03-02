@@ -4,7 +4,11 @@
 @inject NotifyCartUpdated NotifyCartUpdated
 @implements IDisposable
 
-<i class="fa badge fa-lg" value="@_noOfItemsInCart">&#xf07a;</i>
+<NavLink href="checkout" class="text-gray cart">
+    <div>
+        <i class="fa badge fa-lg" style="font-size: 24px;" value="@_noOfItemsInCart">&#xf07a;</i>
+    </div>
+</NavLink>
 
 @code {
     private int _noOfItemsInCart = 0;
