@@ -3,20 +3,9 @@
 @inject IJSRuntime Js
 @inject NotifyCartUpdated NotifyCartUpdated
 
-<div>
-    @if (Boardgame.Stock.Quantity > 0)
-    {
-        <a @onclick="AddToCart" class="text-center text-xlarge text-bold button-buy button-block">
-            Buy
-        </a>
-    }
-    else
-    {
-        <a class="text-center text-xlarge text-bold button-reserve button-block">
-            Reserve
-        </a>
-    }
-</div>
+<button class="@GetButtonClasses()" @onclick="AddToCart">
+    <span>@GetButtonText()</span>
+</button>
 
 @code {
     [Parameter] public required BoardgameDto Boardgame { get; set; }
@@ -25,5 +14,15 @@
     {
         await Js.InvokeVoidAsync("AddProductToLocalStorage", Boardgame.ArtNr);
         NotifyCartUpdated.NotifyCartUpdate(this);
+    }
+
+    private string GetButtonText() => Boardgame.Stock.Quantity > 0 ? "Buy" : "Reserve";
+
+    private string GetButtonClasses()
+    {
+        const string defaultClasses = "text-center text-xlarge text-bold button-block";
+        var addedClass = Boardgame.Stock.Quantity > 0 ? " button-buy" : " button-reserve";
+
+        return defaultClasses + addedClass;
     }
 }

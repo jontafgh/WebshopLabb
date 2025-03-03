@@ -4,6 +4,7 @@
     cursor: pointer;
     text-decoration: none;
     border-radius: 2px;
+    border: 0;
 }
 
 .button-buy {
@@ -11,15 +12,15 @@
     color: white;
 }
 
-.button-buy:hover {
-    background-color: rgb(56, 160, 56);
-}
+    .button-buy:hover {
+        background-color: rgb(56, 160, 56);
+    }
 
 .button-reserve {
     background-color: rgb(255, 165, 0);
     color: white;
 }
 
-.button-reserve:hover {
-    background-color: rgb(255, 145, 0);
-}
+    .button-reserve:hover {
+        background-color: rgb(255, 145, 0);
+    }
