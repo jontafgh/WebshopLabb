@@ -1,0 +1,67 @@
+﻿@rendermode InteractiveServer
+@using WebshopShared
+
+<EditForm Model="Person">
+    <ObjectGraphDataAnnotationsValidator />
+    <div>
+        <label>
+            First Name:
+            <InputText @bind-Value="Person.FirstName"/>
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Last Name:
+            <InputText @bind-Value="Person.LastName"/>
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Email:
+            <InputText @bind-Value="Person.Email"/>
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Length:
+            <InputText @bind-Value="Person.Address.Street"/>
+        </label>
+    </div>
+    <div>
+        <label>
+            Length:
+            <InputText @bind-Value="Person.Address.Street"/>
+        </label>
+    </div>
+    <div>
+        <label>
+            Description:
+            <InputText @bind-Value="Person.Address.Street"/>
+        </label>
+    </div>
+    <div>
+        <label>
+            Length:
+            <InputText @bind-Value="Person.Address.Street"/>
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Phone:
+            <InputText @bind-Value="Person.PhoneNumber"/>
+        </label>
+    </div>
+
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</EditForm>
+
+@code {
+    
+    public Person Person { get; set; } = new Person();
+}

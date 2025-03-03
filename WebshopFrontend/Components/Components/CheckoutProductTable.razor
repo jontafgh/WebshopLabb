@@ -1,0 +1,169 @@
+﻿@using System.Text.Json
+@using WebshopFrontend.Components.Components
+@using WebshopFrontend.EventHandlers
+@inject NotifyCartUpdated NotifyCartUpdated
+@rendermode InteractiveServer
+@inject IJSRuntime Js
+@inject IHttpClientFactory Http
+
+@if (_boardgames.Any())
+{
+    <table class="checkout-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>ArNr</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Quantity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in _products)
+            {
+                <tr>
+                    <td>@GetBoardgame(product.Key).Name</td>
+                    <td>@GetBoardgame(product.Key).ArtNr</td>
+                    <td><Price Boardgame="GetBoardgame(product.Key)" FontSizePx="15"></Price></td>
+                    <td>@GetTotalPricePerProduct(product.Key)</td>
+                    <td>@product.Value</td>
+                    <td>
+                        <button class="checkout-table-button">
+                            <i class="fa fa-plus" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(1, product.Key))"></i>
+                        </button>
+
+                        <button class="margin-x checkout-table-button">
+                            <i class="fa fa-minus" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(-1, product.Key))"></i>
+                        </button>
+
+                        <button class="checkout-table-button">
+                            <i class="fa fa-times" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(0, product.Key))"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5">Total: </th>
+                <td>
+                    @GetTotalPrice()
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+
+@code {
+    private Dictionary<string, int> _products = new();
+    private List<string> _articleNumbers = [];
+    private List<BoardgameDto> _boardgames = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var json = await Js.InvokeAsync<string>("GetProductsFromLocalStorageAsString");
+            _articleNumbers = JsonSerializer.Deserialize<List<string>>(json) ?? [];
+
+            await LoadProducts();
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task UpdateProductQuantity(int action, string artNr)
+    {
+        var boardgame = _boardgames.First(b => b.ArtNr == artNr);
+
+        switch (action)
+        {
+            case 1:
+                _products[artNr]++;
+                await AddToCart(artNr);
+                break;
+            case -1:
+                switch (_products[artNr])
+                {
+                    case > 1:
+                        _products[artNr]--;
+                        await RemoveFromCart(artNr);
+                        break;
+                    case 1:
+                        _products.Remove(artNr);
+                        _boardgames.Remove(boardgame);
+                        await RemoveFromCart(artNr);
+                        break;
+                    default:
+                        _products.Remove(artNr);
+                        NotifyCartUpdated.NotifyCartUpdate(this);
+                        break;
+                }
+                break;
+            case 0:
+                for (var i = 0; i < _products[artNr]; i++)
+                {
+                    await RemoveFromCart(artNr);
+                }
+                _products.Remove(artNr);
+                _boardgames.Remove(boardgame);
+                break;
+        }
+    }
+
+    public decimal GetTotalPricePerProduct(string artNr)
+    {
+        var boardgame = _boardgames.First(b => b.ArtNr == artNr);
+
+        if (boardgame.Price.Discount != null)
+        {
+            return boardgame.Price.Discount.Price * _products[artNr];
+        }
+        return boardgame.Price.Regular * _products[artNr];
+    }
+
+
+    public BoardgameDto GetBoardgame(string artNr)
+    {
+        return _boardgames.First(b => b.ArtNr == artNr);
+    }
+
+    private async Task AddToCart(string artNr)
+    {
+        await Js.InvokeVoidAsync("AddProductToLocalStorage", artNr);
+        NotifyCartUpdated.NotifyCartUpdate(this);
+    }
+
+    private async Task RemoveFromCart(string artNr)
+    {
+        await Js.InvokeVoidAsync("RemoveProductFromLocalStorage", artNr);
+        NotifyCartUpdated.NotifyCartUpdate(this);
+    }
+
+    private decimal GetTotalPrice()
+    {
+        return _boardgames!.Sum(b => b.Price.Regular * _products[b.ArtNr]);
+    }
+
+    private async Task LoadProducts()
+    {
+        using var client = Http.CreateClient("WebshopMinimalApi");
+
+        foreach (var articleNumber in _articleNumbers)
+        {
+            var boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{articleNumber}");
+
+            if (boardgame == null) continue;
+            if (!_products.TryAdd(boardgame.ArtNr, 1))
+            {
+                _products[boardgame.ArtNr]++;
+            }
+            else
+            {
+                _boardgames.Add(boardgame);
+            }
+        }
+    }
+}

@@ -1,39 +1,3 @@
 ﻿.checkout-table-container {
     overflow-x: auto;
 }
-
-.checkout-table {
-    width: 100%;
-    background: white;
-    text-align: left;
-    border-collapse: collapse;
-}
-
-.checkout-table th {
-    height: 50px;
-}
-
-.checkout-table td {
-    padding-top: 8px;
-    padding-bottom: 8px;
-}
-
-.checkout-table tfoot th {
-    text-align: right;
-}
-
-.checkout-table th, .checkout-table td {
-    border-bottom: 1px solid #d9d9d9;
-}
-
-.checkout-table-button {
-    background: white;
-    color: gray;
-    border: none;
-    transition: 0.1s;
-}
-
-    .checkout-table-button:hover {
-        color: black;
-        cursor: pointer;
-    }
