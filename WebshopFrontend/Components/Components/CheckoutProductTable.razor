@@ -9,6 +9,7 @@
 @if (_boardgames.Any())
 {
     <table class="checkout-table">
+        <caption>Products in cart</caption>
         <thead>
             <tr>
                 <th>Product</th>
@@ -23,12 +24,12 @@
             @foreach (var product in _products)
             {
                 <tr>
-                    <td>@GetBoardgame(product.Key).Name</td>
-                    <td>@GetBoardgame(product.Key).ArtNr</td>
-                    <td><Price Boardgame="GetBoardgame(product.Key)" FontSizePx="15"></Price></td>
-                    <td>@GetTotalPricePerProduct(product.Key)</td>
-                    <td>@product.Value</td>
-                    <td>
+                    <td data-label="Product">@GetBoardgame(product.Key).Name</td>
+                    <td data-label="ArNr">@GetBoardgame(product.Key).ArtNr</td>
+                    <td data-label="Price"><Price Boardgame="GetBoardgame(product.Key)" FontSizePx="15"></Price></td>
+                    <td data-label="Total">@GetTotalPricePerProduct(product.Key)</td>
+                    <td data-label="Quantity">@product.Value</td>
+                    <td data-label="">
                         <button class="checkout-table-button">
                             <i class="fa fa-plus" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(1, product.Key))"></i>
                         </button>

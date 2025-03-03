@@ -44,15 +44,9 @@
     background: white;
 }
 
-/*.top-menu-nav-item {
-    cursor: pointer;
-    background-color: inherit;
-    color: inherit;
-    text-decoration: none;
-    text-align: left;
+.input-text {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
-
-    .top-menu-nav-item:hover {
-        background-color: gray;
-        color: black;
-    }*/

@@ -22,7 +22,7 @@
         }
     }
 
-    private string GetDiscountClasses() => (Boardgame.Price.Discount == null) ? "hide-element" : "red text-bold";
+    private string GetDiscountClasses() => (Boardgame.Price.Discount == null) ? "hide-element" : "red";
 
-    private string GetPriceClasses() => ((Boardgame.Price.Discount == null)) ? "text-bold" : "text-crossed";
+    private string GetPriceClasses() => ((Boardgame.Price.Discount == null)) ? "" : "text-crossed";
 }

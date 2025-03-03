@@ -1,67 +1,158 @@
 ﻿@rendermode InteractiveServer
 @using WebshopShared
 
-<EditForm Model="Person">
+
+<EditForm Model="Person" OnValidSubmit="Submit" FormName="User">
     <ObjectGraphDataAnnotationsValidator />
-    <div>
-        <label>
-            First Name:
-            <InputText @bind-Value="Person.FirstName"/>
-        </label>
-    </div>
+    <div class="form-flex-container">
 
-    <div>
-        <label>
-            Last Name:
-            <InputText @bind-Value="Person.LastName"/>
-        </label>
-    </div>
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="firstname">
+                    First Name:
+                </label>
+            </div>
 
-    <div>
-        <label>
-            Email:
-            <InputText @bind-Value="Person.Email"/>
-        </label>
-    </div>
+            <div class="form-flex-item">
+                <InputText class="input-text" id="firstname" @bind-Value="Person.FirstName" />
+            </div>
 
-    <div>
-        <label>
-            Length:
-            <InputText @bind-Value="Person.Address.Street"/>
-        </label>
-    </div>
-    <div>
-        <label>
-            Length:
-            <InputText @bind-Value="Person.Address.Street"/>
-        </label>
-    </div>
-    <div>
-        <label>
-            Description:
-            <InputText @bind-Value="Person.Address.Street"/>
-        </label>
-    </div>
-    <div>
-        <label>
-            Length:
-            <InputText @bind-Value="Person.Address.Street"/>
-        </label>
-    </div>
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.FirstName)" />
+            </div>
+        </div>
 
-    <div>
-        <label>
-            Phone:
-            <InputText @bind-Value="Person.PhoneNumber"/>
-        </label>
-    </div>
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="lastname">
+                    Last Name:
+                </label>
+            </div>
 
+            <div class="form-flex-item">
+                <InputText class="input-text" id="lastname" @bind-Value="Person.LastName" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.LastName)" />
+            </div>
+        </div>
+
+
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="email">
+                    Email:
+                </label>
+            </div>
+
+            <div class="form-flex-item">
+                <InputText class="input-text" id="email" @bind-Value="Person.Email" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.Email)" />
+            </div>
+        </div>
+
+
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="country">
+                    Country:
+                </label>
+            </div>
+
+            <div class="form-flex-item">
+                <InputText class="input-text" id="country" @bind-Value="Person.Address.Country" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.Address.Country)" />
+            </div>
+        </div>
+
+
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="city">
+                    City:
+                </label>
+            </div>
+
+            <div class="form-flex-item">
+                <InputText class="input-text" id="city" @bind-Value="Person.Address.City" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.Address.City)" />
+            </div>
+        </div>
+
+
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="street">
+                    Street:
+                </label>
+            </div>
+
+            <div class="form-flex-item">
+                <InputText class="input-text" id="street" @bind-Value="Person.Address.Street" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.Address.Street)" />
+            </div>
+        </div>
+
+
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="postalcode">
+                    PostalCode:
+                </label>
+            </div>
+
+            <div class="form-flex-item">
+                <InputText class="input-text" id="postalcode" @bind-Value="Person.Address.PostalCode" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.Address.PostalCode)" />
+            </div>
+        </div>
+
+
+        <div class="form-flex-row">
+            <div class="form-flex-item">
+                <label for="phonenumber">
+                    Phone:
+                </label>
+            </div>
+
+            <div class="form-flex-item">
+                <InputText class="input-text" id="phonenumber" @bind-Value="Person.PhoneNumber" />
+            </div>
+
+            <div class="form-flex-item">
+                <ValidationMessage For="@(() => Person.PhoneNumber)" />
+            </div>
+        </div>
+    </div>
     <div>
         <button type="submit">Submit</button>
     </div>
 </EditForm>
 
+
 @code {
-    
-    public Person Person { get; set; } = new Person();
+
+    [SupplyParameterFromForm] public Person Person { get; set; } = new Person();
+
+    private void Submit()
+    {
+        throw new NotImplementedException();
+    }
+
 }

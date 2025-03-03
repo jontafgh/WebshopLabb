@@ -1,8 +1,8 @@
 ﻿.product-flex-item {
     display: flex;
     flex-direction: column;
-    flex-basis: 50%;
-    max-width: 50%;
+    flex-basis: 100%;
+    max-width: 100%;
     border: 1px solid #ededed;
 }
 
@@ -10,6 +10,13 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+@media (min-width: 420px) {
+    .product-flex-item {
+        flex-basis: 50%;
+        max-width: 50%;
+    }
 }
 
 @media (min-width: 768px) {
