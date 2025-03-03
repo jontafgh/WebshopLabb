@@ -32,6 +32,11 @@
     display: none;
 }
 
+.margin-x {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
 .padding-y-64 {
     padding-bottom: 64px;
     padding-top: 64px;
@@ -107,8 +112,6 @@
 .text-right {
     text-align: right;
 }
-
-
 
 .right {
     float: right;

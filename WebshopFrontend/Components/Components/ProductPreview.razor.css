@@ -1,0 +1,27 @@
+﻿.product-flex-item {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+    max-width: 50%;
+    border: 1px solid #ededed;
+}
+
+.product-preview-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+    .product-flex-item {
+        flex-basis: 33.333%;
+        max-width: 33.333%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .product-flex-item {
+        flex-basis: 25%;
+        max-width: 25%;
+    }
+}

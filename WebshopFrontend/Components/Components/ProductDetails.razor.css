@@ -1,0 +1,7 @@
+﻿
+.product-grid-item-description {
+    grid-area: description;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}

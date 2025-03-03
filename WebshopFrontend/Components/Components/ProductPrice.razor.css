@@ -1,0 +1,6 @@
+﻿.product-grid-item-price {
+    grid-area: price;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}

@@ -1,0 +1,30 @@
+﻿.top-menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.top-menu-search {
+    flex-grow: 1;
+    position: relative;
+}
+
+.top-menu-menu {
+    display: flex;
+    align-items: center;
+    transition: 0.1s
+}
+
+.top-menu-menu img {
+    width: 25px;
+    height: 25px;
+}
+
+.top-menu-menu:hover {
+    color: black;
+}
+
+@media (min-width: 993px) {
+    .top-menu-menu { display: none; }
+}

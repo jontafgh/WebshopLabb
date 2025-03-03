@@ -4,6 +4,15 @@
     localStorage.setItem("products", JSON.stringify(products));
 }
 
+function RemoveProductFromLocalStorage(product) {
+    var products = GetProductsFromLocalStorage();
+    var index = products.indexOf(product);
+    if (index > -1) {
+        products.splice(index, 1);
+    }
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
 function EmptyLocalStorage() {
     localStorage.clear();
 }

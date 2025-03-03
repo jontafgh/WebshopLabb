@@ -1,0 +1,23 @@
+﻿.nav-item {
+    width: 250px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid #ededed;
+    transition: 0.1s;
+}
+
+.nav-item a {
+    background: inherit;
+    color: inherit;
+}
+
+.nav-item:hover {
+    background-color: rgb(212, 212, 212);
+    color: black;
+}
+
+.nav-menu-icon {
+    width: 37px;
+}

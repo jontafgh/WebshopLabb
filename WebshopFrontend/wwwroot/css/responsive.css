@@ -1,31 +1,4 @@
-﻿@media (min-width: 768px) {
-    .product-flex-item {
-        flex-basis: 33.333%;
-        max-width: 33.333%;
-    }
-
-    .product-grid-container {
-        grid-template-areas:
-            "product product"
-            "image price"
-            "image price"
-            "description stock"
-            "description stock";
-        grid-template-columns: 8fr minmax(200px, 6fr);
-        grid-template-rows: 80px auto auto auto auto;
-    }
-}
-
-@media (min-width: 993px) {
-    .sidebar {
-        display: block;
-        position: sticky;
-        top: 0;
-    }
-
-    .top-menu-menu {
-         display: none;
-    }
+﻿@media (min-width: 993px) {
     header {
         position: static;
     }
@@ -40,9 +13,4 @@
 }
 
 @media (min-width: 1200px) {
-    .product-flex-item {
-        flex-basis: 25%;
-        max-width: 25%;
-    }
-    
 }

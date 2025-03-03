@@ -1,0 +1,50 @@
+﻿.root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.top-bar {
+    height: 32px;
+}
+
+.middle-top-bar {
+    border-top: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 100%;
+}
+
+.main {
+    margin-left: 0;
+    transition: margin-left .4s;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    display: none;
+    overflow: auto;
+    position: fixed;
+    flex-shrink: 0;
+    z-index: 3;
+    top: 81px;
+    border: 1px solid #ededed;
+}
+
+@media (min-width: 993px) {
+    .sidebar {
+        display: block;
+        position: sticky;
+        top: 0;
+    }
+}

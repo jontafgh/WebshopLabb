@@ -1,0 +1,25 @@
+﻿.badge:after {
+    content: attr(value);
+    font-size: 14px;
+    color: white;
+    background: gray;
+    border-radius: 10%;
+    padding: 3px 3px;
+    position: relative;
+    left: -50px;
+    top: -4px;
+}
+
+.badge span {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cart {
+    transition: 0.2s;
+}
+
+    .cart:hover {
+        color: black;
+    }
