@@ -10,11 +10,11 @@
 else
 {
     <div class="product-grid-container">
-        <ProductHeading Boardgame="_boardgame"></ProductHeading>
-        <ProductImages Boardgame="_boardgame"></ProductImages>
-        <ProductPrice Boardgame="_boardgame"></ProductPrice>
-        <ProductDetails Boardgame="_boardgame"></ProductDetails>
-        <ProductStock Boardgame="_boardgame"></ProductStock>
+        <ProductHeading Product="_boardgame"></ProductHeading>
+        <ProductImages Product="_boardgame"></ProductImages>
+        <ProductPrice Product="_boardgame"></ProductPrice>
+        <BoardgameDetails Boardgame="_boardgame"></BoardgameDetails>
+        <ProductStock Product="_boardgame"></ProductStock>
     </div>
 }
 
@@ -25,10 +25,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProduct();
+        await LoadBoardgame();
     }
 
-    private async Task LoadProduct()
+    private async Task LoadBoardgame()
     {
         using var client = Http.CreateClient("WebshopMinimalApi");
         _boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{ArtNr}");

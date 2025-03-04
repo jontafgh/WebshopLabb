@@ -20,7 +20,7 @@ I den här laborationen kommer ni att bygga en Webshop med Blazor Web App utifr�
 - [x] Man ska kunna navigera till produktsidan via sökfältet i webbläsaren (t.ex. localhost/product/1)
 - [x] Man ska kunna navigera till varukorgen (page) via en knapp/länk
 - [x] Sidan ska visa vad som finns i varukorgen
-  - [ ] Innehålla ett formulär för att fylla i adressuppgifter
+  - [x] Innehålla ett formulär för att fylla i adressuppgifter
 - [ ] När formuläret skickas in ska användaren komma till en bekräftelsesida (page) där informationen om beställningen visas:
   - [ ] Vilka produkter som köpts
   - [ ] Namn och adress från formuläret
@@ -31,7 +31,7 @@ I den här laborationen kommer ni att bygga en Webshop med Blazor Web App utifr�
   - [ ] Semantiska element där det finns möjlighet
 - [ ] CSS ska vara tydligt strukturerad och bidra till GUI/UX
 - [ ] Appen ska vara responsiv och anpassad till mobile & desktop
-- [ ] Inget CSS ramverk (bootstrap, tailwind etc.) får användas
+- [x] Inget CSS ramverk (bootstrap, tailwind etc.) får användas
 - [x] Använd templatet Blazor Web App
   - [x] Man behöver inte kombinera olika rendermodes
   - [x] För godkänt räcker det med ett projekt i din solution

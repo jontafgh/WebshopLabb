@@ -6,7 +6,7 @@
 @inject IJSRuntime Js
 @inject IHttpClientFactory Http
 
-@if (_boardgames.Any())
+@if (_products.Any())
 {
     <table class="checkout-table">
         <caption>Products in cart</caption>
@@ -21,12 +21,12 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in _products)
+            @foreach (var product in _articlesQuantities)
             {
                 <tr>
-                    <td data-label="Product">@GetBoardgame(product.Key).Name</td>
-                    <td data-label="ArNr">@GetBoardgame(product.Key).ArtNr</td>
-                    <td data-label="Price"><Price Boardgame="GetBoardgame(product.Key)" FontSizePx="15"></Price></td>
+                    <td data-label="Product">@GetProduct(product.Key).Name</td>
+                    <td data-label="ArNr">@GetProduct(product.Key).ArtNr</td>
+                    <td data-label="Price"><Price Product="GetProduct(product.Key)" FontSizePx="15"></Price></td>
                     <td data-label="Total">@GetTotalPricePerProduct(product.Key)</td>
                     <td data-label="Quantity">@product.Value</td>
                     <td data-label="">
@@ -58,9 +58,9 @@
 
 
 @code {
-    private Dictionary<string, int> _products = new();
+    private Dictionary<string, int> _articlesQuantities = new();
     private List<string> _articleNumbers = [];
-    private List<BoardgameDto> _boardgames = [];
+    private List<IProduct> _products = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -77,58 +77,58 @@
 
     private async Task UpdateProductQuantity(int action, string artNr)
     {
-        var boardgame = _boardgames.First(b => b.ArtNr == artNr);
+        var product = _products.First(product => product.ArtNr == artNr);
 
         switch (action)
         {
             case 1:
-                _products[artNr]++;
+                _articlesQuantities[artNr]++;
                 await AddToCart(artNr);
                 break;
             case -1:
-                switch (_products[artNr])
+                switch (_articlesQuantities[artNr])
                 {
                     case > 1:
-                        _products[artNr]--;
+                        _articlesQuantities[artNr]--;
                         await RemoveFromCart(artNr);
                         break;
                     case 1:
-                        _products.Remove(artNr);
-                        _boardgames.Remove(boardgame);
+                        _articlesQuantities.Remove(artNr);
+                        _products.Remove(product);
                         await RemoveFromCart(artNr);
                         break;
                     default:
-                        _products.Remove(artNr);
+                        _articlesQuantities.Remove(artNr);
                         NotifyCartUpdated.NotifyCartUpdate(this);
                         break;
                 }
                 break;
             case 0:
-                for (var i = 0; i < _products[artNr]; i++)
+                for (var i = 0; i < _articlesQuantities[artNr]; i++)
                 {
                     await RemoveFromCart(artNr);
                 }
-                _products.Remove(artNr);
-                _boardgames.Remove(boardgame);
+                _articlesQuantities.Remove(artNr);
+                _products.Remove(product);
                 break;
         }
     }
 
     public decimal GetTotalPricePerProduct(string artNr)
     {
-        var boardgame = _boardgames.First(b => b.ArtNr == artNr);
+        var boardgame = _products.First(product => product.ArtNr == artNr);
 
         if (boardgame.Price.Discount != null)
         {
-            return boardgame.Price.Discount.Price * _products[artNr];
+            return boardgame.Price.Discount.Price * _articlesQuantities[artNr];
         }
-        return boardgame.Price.Regular * _products[artNr];
+        return boardgame.Price.Regular * _articlesQuantities[artNr];
     }
 
 
-    public BoardgameDto GetBoardgame(string artNr)
+    public IProduct GetProduct(string artNr)
     {
-        return _boardgames.First(b => b.ArtNr == artNr);
+        return _products.First(product => product.ArtNr == artNr);
     }
 
     private async Task AddToCart(string artNr)
@@ -145,7 +145,7 @@
 
     private decimal GetTotalPrice()
     {
-        return _boardgames!.Sum(b => b.Price.Regular * _products[b.ArtNr]);
+        return _products!.Sum(b => b.Price.Regular * _articlesQuantities[b.ArtNr]);
     }
 
     private async Task LoadProducts()
@@ -157,13 +157,13 @@
             var boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{articleNumber}");
 
             if (boardgame == null) continue;
-            if (!_products.TryAdd(boardgame.ArtNr, 1))
+            if (!_articlesQuantities.TryAdd(boardgame.ArtNr, 1))
             {
-                _products[boardgame.ArtNr]++;
+                _articlesQuantities[boardgame.ArtNr]++;
             }
             else
             {
-                _boardgames.Add(boardgame);
+                _products.Add(boardgame);
             }
         }
     }

@@ -1,11 +1,11 @@
 ﻿
 <div>
-    <span class="@GetPriceClasses()" style="@_regularStyle">@(Boardgame.Price.Regular)$</span>
-    <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Boardgame.Price.Discount == null) ? "" : Boardgame.Price.Discount.Price)$</span>
+    <span class="@GetPriceClasses()" style="@_regularStyle">@(Product.Price.Regular)$</span>
+    <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Product.Price.Discount == null) ? "" : Product.Price.Discount.Price)$</span>
 </div>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required IProduct Product { get; set; }
     [Parameter] public int FontSizePx { get; set; } = 15;
 
     private string _regularStyle = "font-size: 15px;";
@@ -16,13 +16,13 @@
         _regularStyle = $"font-size: {FontSizePx}px;";
         _discountedStyle = $"font-size: {FontSizePx}px;";
 
-        if (Boardgame.Price.Discount != null)
+        if (Product.Price.Discount != null)
         {
             _regularStyle = $"font-size: {FontSizePx - (FontSizePx/2)}px;";
         }
     }
 
-    private string GetDiscountClasses() => (Boardgame.Price.Discount == null) ? "hide-element" : "red";
+    private string GetDiscountClasses() => (Product.Price.Discount == null) ? "hide-element" : "red";
 
-    private string GetPriceClasses() => ((Boardgame.Price.Discount == null)) ? "" : "text-crossed";
+    private string GetPriceClasses() => ((Product.Price.Discount == null)) ? "" : "text-crossed";
 }

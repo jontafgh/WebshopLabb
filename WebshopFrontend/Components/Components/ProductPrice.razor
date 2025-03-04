@@ -1,25 +1,25 @@
 ﻿@using WebshopFrontend.Components.Components
 
 <div class="product-grid-item-price padding-x padding-y">
-    @if (Boardgame.Price.Discount != null)
+    @if (Product.Price.Discount != null)
     {
         <div>
             <h3>Special Offer</h3>
             <div class="text-gray">
-                <span>From: @Boardgame.Price.Discount.StartDate.ToShortDateString()</span><br />
-                <span>To: @Boardgame.Price.Discount.EndDate.ToShortDateString()</span>
+                <span>From: @Product.Price.Discount.StartDate.ToShortDateString()</span><br />
+                <span>To: @Product.Price.Discount.EndDate.ToShortDateString()</span>
             </div>
 
         </div>
     }
     <div>
-        <Price Boardgame="Boardgame" FontSizePx="40"></Price>
+        <Price Product="Product" FontSizePx="40"></Price>
     </div>
 
-    <AddToCartButton Boardgame="@Boardgame"></AddToCartButton>
+    <AddToCartButton Product="@Product"></AddToCartButton>
 </div>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required IProduct Product { get; set; }
 
 }

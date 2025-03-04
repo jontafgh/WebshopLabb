@@ -148,11 +148,12 @@
 
 @code {
 
-    [SupplyParameterFromForm] public Person Person { get; set; } = new Person();
+    [SupplyParameterFromForm] public PersonDto Person { get; set; } = new PersonDto();
+
+    [Parameter] public EventCallback<PersonDto> OnFormSubmit { get; set; }
 
     private void Submit()
     {
-        throw new NotImplementedException();
+        OnFormSubmit.InvokeAsync(Person);
     }
-
 }

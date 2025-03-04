@@ -1,5 +1,6 @@
 ﻿@page "/products"
 @rendermode InteractiveServer
+@using System.Reflection.Metadata.Ecma335
 @using WebshopFrontend.Components.Components
 @inject IHttpClientFactory Http
 
@@ -12,23 +13,34 @@
     }
     else
     {
-        foreach (var boardgame in _boardgames)
+        foreach (var product in _products)
         {
-            <ProductPreview Boardgame="boardgame" />
+            <ProductPreview Product="product" />
         }  
     }
 </div>
 
 @code {
 
-    private List<BoardgameDto>? _boardgames = new List<BoardgameDto>();
+    private List<BoardgameDto>? _boardgames;
+    private List<IProduct> _products = [];
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProducts();
+        await LoadBoardgames();
+        GetProducts();
     }
 
-    private async Task LoadProducts()
+    private void GetProducts()
+    {
+        if (_boardgames == null) return;
+        foreach (var boardgame in _boardgames)
+        {
+            _products.Add(boardgame);
+        }
+    }
+
+    private async Task LoadBoardgames()
     {
         using var client = Http.CreateClient("WebshopMinimalApi");
         _boardgames = await client.GetFromJsonAsync<List<BoardgameDto>>("products");

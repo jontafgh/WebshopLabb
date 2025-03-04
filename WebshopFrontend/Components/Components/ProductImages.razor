@@ -1,14 +1,14 @@
 ﻿<div class="product-grid-item-image padding-x padding-y">
-    <img src="@Boardgame.Image.ImageMediumUrl" alt="@Boardgame.Image.ImageText" @onclick="ShowHideLargeImage" />
+    <img src="@Product.Image.ImageMediumUrl" alt="@Product.Image.ImageText" @onclick="ShowHideLargeImage" />
 
     <div class="overlay" style="@DisplayStyle" @onclick="ShowHideLargeImage">
         <i class="fa fa-times overlay-close-button" aria-hidden="true"></i>
-        <img src="@Boardgame.Image.ImageLargeUrl" alt="@Boardgame.Image.ImageText" @onclick=" ShowHideLargeImage" />
+        <img src="@Product.Image.ImageLargeUrl" alt="@Product.Image.ImageText" @onclick=" ShowHideLargeImage" />
     </div>            
 </div>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required IProduct Product { get; set; }
 
     public string DisplayStyle = "display: none;";
 

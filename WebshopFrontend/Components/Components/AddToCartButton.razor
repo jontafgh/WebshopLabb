@@ -8,20 +8,20 @@
 </button>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required IProduct Product { get; set; }
 
     private async Task AddToCart()
     {
-        await Js.InvokeVoidAsync("AddProductToLocalStorage", Boardgame.ArtNr);
+        await Js.InvokeVoidAsync("AddProductToLocalStorage", Product.ArtNr);
         NotifyCartUpdated.NotifyCartUpdate(this);
     }
 
-    private string GetButtonText() => Boardgame.Stock.Quantity > 0 ? "Buy" : "Reserve";
+    private string GetButtonText() => Product.Stock.Quantity > 0 ? "Buy" : "Reserve";
 
     private string GetButtonClasses()
     {
         const string defaultClasses = "text-center text-xlarge text-bold button-block";
-        var addedClass = Boardgame.Stock.Quantity > 0 ? " button-buy" : " button-reserve";
+        var addedClass = Product.Stock.Quantity > 0 ? " button-buy" : " button-reserve";
 
         return defaultClasses + addedClass;
     }

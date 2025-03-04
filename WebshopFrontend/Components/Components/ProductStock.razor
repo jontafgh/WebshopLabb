@@ -1,6 +1,6 @@
 ﻿<div class="product-grid-item-stock padding-x padding-y">
-    <span>Stock: @Boardgame.Stock.Quantity</span>
-    @if (Boardgame.Stock.NextRestock == null)
+    <span>Stock: @Product.Stock.Quantity</span>
+    @if (Product.Stock.NextRestock == null)
     {
         <div>
             <span>Next restock: N/A</span>
@@ -9,13 +9,13 @@
     else
     {
         <div>
-            <span>Next restock: @Boardgame.Stock.NextRestock.RestockDate.ToShortDateString()</span>
+            <span>Next restock: @Product.Stock.NextRestock.RestockDate.ToShortDateString()</span>
             <br />
-            <span>Quantity: @Boardgame.Stock.NextRestock.Quantity</span>
+            <span>Quantity: @Product.Stock.NextRestock.Quantity</span>
         </div>
     }
 </div>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required IProduct Product { get; set; }
 }

@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebshopShared
 {
-    public class Person
+    public class PersonDto
     {
         [Required]
         [StringLength(50, MinimumLength = 2)]
@@ -25,10 +25,10 @@ namespace WebshopShared
         public string PhoneNumber { get; set; }
 
         [ValidateComplexType]
-        public Address Address { get; set; } = new Address();
+        public AddressDto Address { get; set; } = new AddressDto();
     }
 
-    public class Address
+    public class AddressDto
     {
         [Required]
         [StringLength(50, MinimumLength = 2)]

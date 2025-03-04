@@ -3,32 +3,32 @@
 <div class="product-flex-item white padding-y-16 padding-x-16">
     <NavLink href="@ProductHref" class="white">
         <div>
-            <img src="@Boardgame.Image.ImageSmallUrl" alt="@Boardgame.Image.ImageText"/>
-            <span>@Boardgame.Name</span>
+            <img src="@Product.Image.ImageSmallUrl" alt="@Product.Image.ImageText"/>
+            <span>@Product.Name</span>
         </div>
 
         <div class="product-preview-bottom">
             <div>
-                <Price Boardgame="Boardgame" FontSizePx="15"></Price>
+                <Price Product="Product" FontSizePx="15"></Price>
             </div>
 
             <div>
-                <span>Stock:@(Boardgame.Stock.Quantity)</span>
+                <span>Stock:@(Product.Stock.Quantity)</span>
             </div>
 
         </div>
     </NavLink>
 
     <div>
-        <AddToCartButton Boardgame="Boardgame"></AddToCartButton>
+        <AddToCartButton Product="Product"></AddToCartButton>
     </div>
 
 
 </div>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required IProduct Product { get; set; }
 
-    private string ProductHref => $"product/{Boardgame.ArtNr}";
+    private string ProductHref => $"product/{Product.ArtNr}";
 
 }

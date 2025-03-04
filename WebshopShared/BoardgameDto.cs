@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebshopShared
 {
-    public class BoardgameDto
+    public class BoardgameDto : IProduct
     {
         public string ArtNr { get; set; } = null!;
         public string Name { get; set; } = null!;
