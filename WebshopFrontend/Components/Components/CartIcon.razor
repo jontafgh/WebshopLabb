@@ -1,8 +1,9 @@
 ﻿@using WebshopFrontend.EventHandlers
+@using WebshopFrontend.Services
+@using WebshopFrontend.Services.Interfaces
 @rendermode InteractiveServer
 @inject IJSRuntime Js
-@inject NotifyCartUpdated NotifyCartUpdated
-@implements IDisposable
+@inject ICounterService CounterService
 
 <NavLink href="checkout" class="text-gray">
     <div class="cart">
@@ -13,30 +14,18 @@
 @code {
     private int _noOfItemsInCart = 0;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        NotifyCartUpdated.CartUpdated += UpdateCart;
-        await base.OnInitializedAsync();
+        CounterService.CounterChanged += UpdateCartCounter;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async void UpdateCartCounter(object? sender, int newCount)
     {
-        _noOfItemsInCart = await Js.InvokeAsync<int>("GetNumberOfProductsInLocalStorage");
-        if (firstRender)
+        await InvokeAsync(() =>
         {
-            await InvokeAsync(StateHasChanged);
-        }
-    }
-
-    private async void UpdateCart(object? sender, EventArgs e)
-    {
-        _noOfItemsInCart =  await Js.InvokeAsync<int>("GetNumberOfProductsInLocalStorage");
-       await InvokeAsync(StateHasChanged);
-    }
-    
-    public void Dispose()
-    {
-        NotifyCartUpdated.CartUpdated -= UpdateCart;
+            _noOfItemsInCart = newCount;
+            StateHasChanged();
+        });
     }
 
 }

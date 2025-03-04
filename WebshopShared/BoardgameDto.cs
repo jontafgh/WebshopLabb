@@ -8,6 +8,7 @@ namespace WebshopShared
 {
     public class BoardgameDto : IProduct
     {
+        public int Id { get; set; }
         public string ArtNr { get; set; } = null!;
         public string Name { get; set; } = null!;
         public PublisherDto Publisher { get; set; } = null!;
@@ -19,11 +20,13 @@ namespace WebshopShared
 
     public class PublisherDto
     {
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
     }
 
     public class ImageDto
     {
+        public int Id { get; set; }
         public string ImageText { get; set; } = null!;
         public string ImageSmallUrl { get; set; } = null!;
         public string ImageMediumUrl { get; set; } = null!;
@@ -32,12 +35,14 @@ namespace WebshopShared
 
     public class PriceDto
     {
+        public int Id { get; set; }
         public decimal Regular { get; set; }
         public DiscountDto? Discount { get; set; }
     }
 
     public class DiscountDto
     {
+        public int Id { get; set; }
         public decimal Price { get; set; } 
         public DateTime StartDate { get; set; } 
         public DateTime EndDate { get; set; }
@@ -45,6 +50,7 @@ namespace WebshopShared
 
     public class BoardgameDetailsDto
     {
+        public int Id { get; set; }
         public string Description { get; set; } = null!;
         public int MinPlayers { get; set; }
         public int MaxPlayers { get; set; }
@@ -54,12 +60,14 @@ namespace WebshopShared
 
     public class StockDto
     {
+        public int Id { get; set; }
         public int Quantity { get; set; }
         public RestockDto? NextRestock { get; set; }
     }
 
     public class RestockDto
     {
+        public int Id { get; set; }
         public int Quantity { get; set; }
         public DateTime RestockDate { get; set; }
     }

@@ -8,6 +8,7 @@ namespace WebshopShared
 {
     public interface IProduct
     {
+        public int Id { get; set; }
         public string ArtNr { get; set; } 
         public string Name { get; set; } 
         public PublisherDto Publisher { get; set; } 

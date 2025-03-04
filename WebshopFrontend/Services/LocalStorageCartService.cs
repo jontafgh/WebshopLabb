@@ -1,41 +1,74 @@
 ﻿using Microsoft.JSInterop;
+using System.Net.Http;
+using System.Text.Json;
 using WebshopFrontend.Services.Interfaces;
 using WebshopShared;
+using static System.Net.WebRequestMethods;
 
 namespace WebshopFrontend.Services
 {
-    public class LocalStorageCartService(IJSRuntime js) : ICartService
+    public class LocalStorageCartService(IJSRuntime js, HttpClient httpClient) : ICartService
     {
         private readonly IJSRuntime _js = js;
+        private readonly HttpClient _httpClient = httpClient;
 
-        public async Task<CartItemDto> AddItem(int productId)
+        public async Task CreateCart(int userId)
         {
-            throw new NotImplementedException();
+            await _js.InvokeVoidAsync("localStorage.setItem", "cart", "[]");
         }
 
-        public Task<CartItemDto> UpdateItem(int itemId, int quantity)
+        public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
         {
-            throw new NotImplementedException();
+            await _js.InvokeVoidAsync("AddItemToLocalStorage", cartItemToAdd);
+            return await GetCartItemDto(cartItemToAdd);
         }
 
-        public Task<CartItemDto> RemoveItem(int itemId)
+        public async Task<CartItemDto> UpdateItem(CartItemToUpdateDto cartItemToUpdate)
         {
-            throw new NotImplementedException();
+           var cartItem = await _js.InvokeAsync<CartItemToAddDto>("UpdateItemInLocalStorage", cartItemToUpdate);
+           return await GetCartItemDto(cartItem);
         }
 
-        public Task<CartItemDto> GetItem(int itemId)
+        public async Task<CartItemDto> RemoveItem(int itemId)
         {
-            throw new NotImplementedException();
+            var removedItem = await _js.InvokeAsync<CartItemToAddDto>("RemoveItemFromLocalStorage", itemId);
+            return await GetCartItemDto(removedItem);
         }
 
-        public Task<CartItemDto[]> GetAll()
+        public async Task<CartItemDto> GetItem(int itemId)
         {
-            throw new NotImplementedException();
+            var cartItem = await _js.InvokeAsync<CartItemToAddDto>("GetItemFromLocalStorage", itemId);
+            return await GetCartItemDto(cartItem);
         }
 
-        public Task ClearCart()
+        public async Task<List<CartItemDto>> GetAll(int userId)
         {
-            throw new NotImplementedException();
+            var cartItems = await _js.InvokeAsync<List<CartItemToAddDto>>("GetCartFromLocalStorage");
+            var cartItemDtos = new List<CartItemDto>();
+            foreach (var cartItem in cartItems)
+            {
+                cartItemDtos.Add(await GetCartItemDto(cartItem));
+            }
+            return cartItemDtos.ToList();
+        }
+
+        public async Task ClearCart(int userId)
+        {
+            await _js.InvokeVoidAsync("RemoveCartFromLocalStorage");
+        }
+
+        public async Task<CartItemDto> GetCartItemDto(CartItemToAddDto cartItemToAdd)
+        {
+            var product = await _httpClient.GetFromJsonAsync<IProduct>($"/products/{cartItemToAdd.ProductId}");
+
+            return new CartItemDto
+            {
+                ProductId = product!.Id,
+                CartId = cartItemToAdd.CartId,
+                Name = product.Name,
+                ArtNr = product.ArtNr,
+                Quantity = cartItemToAdd.Quantity
+            };
         }
     }
 }

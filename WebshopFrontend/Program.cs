@@ -1,5 +1,7 @@
 using WebshopFrontend.Components;
 using WebshopFrontend.EventHandlers;
+using WebshopFrontend.Services;
+using WebshopFrontend.Services.Interfaces;
 
 namespace WebshopFrontend;
 
@@ -15,6 +17,8 @@ public class Program
 
         builder.Services.AddScoped<NotifyCartUpdated>();
         builder.Services.AddScoped<OrderState>();
+        builder.Services.AddScoped<ICartService, LocalStorageCartService>();
+        builder.Services.AddSingleton<ICounterService, CartCounterService>();
 
         builder.Services.AddHttpClient("WebshopMinimalApi", client =>
         {
