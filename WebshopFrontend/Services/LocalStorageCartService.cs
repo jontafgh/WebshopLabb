@@ -19,37 +19,29 @@ namespace WebshopFrontend.Services
 
         public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
         {
-            await _js.InvokeVoidAsync("AddItemToLocalStorage", cartItemToAdd);
-            return await GetCartItemDto(cartItemToAdd);
+            var cartItem = await GetCartItemDto(cartItemToAdd);
+            await _js.InvokeVoidAsync("AddItemToLocalStorage", cartItem);
+            return cartItem;
         }
 
         public async Task<CartItemDto> UpdateItem(CartItemToUpdateDto cartItemToUpdate)
         {
-           var cartItem = await _js.InvokeAsync<CartItemToAddDto>("UpdateItemInLocalStorage", cartItemToUpdate);
-           return await GetCartItemDto(cartItem);
+           return await _js.InvokeAsync<CartItemDto>("UpdateItemInLocalStorage", cartItemToUpdate);
         }
 
         public async Task<CartItemDto> RemoveItem(int itemId)
         {
-            var removedItem = await _js.InvokeAsync<CartItemToAddDto>("RemoveItemFromLocalStorage", itemId);
-            return await GetCartItemDto(removedItem);
+            return await _js.InvokeAsync<CartItemDto>("RemoveItemFromLocalStorage", itemId);
         }
 
         public async Task<CartItemDto> GetItem(int itemId)
         {
-            var cartItem = await _js.InvokeAsync<CartItemToAddDto>("GetItemFromLocalStorage", itemId);
-            return await GetCartItemDto(cartItem);
+            return await _js.InvokeAsync<CartItemDto>("GetItemFromLocalStorage", itemId);
         }
 
         public async Task<List<CartItemDto>> GetAll(int userId)
         {
-            var cartItems = await _js.InvokeAsync<List<CartItemToAddDto>>("GetCartFromLocalStorage");
-            var cartItemDtos = new List<CartItemDto>();
-            foreach (var cartItem in cartItems)
-            {
-                cartItemDtos.Add(await GetCartItemDto(cartItem));
-            }
-            return cartItemDtos.ToList();
+           return await _js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
         }
 
         public async Task ClearCart(int userId)
@@ -59,10 +51,12 @@ namespace WebshopFrontend.Services
 
         public async Task<CartItemDto> GetCartItemDto(CartItemToAddDto cartItemToAdd)
         {
-            var product = await _httpClient.GetFromJsonAsync<IProduct>($"/products/{cartItemToAdd.ProductId}");
+            var id = cartItemToAdd.ProductId;
+            var product = await _httpClient.GetFromJsonAsync<BoardgameDto>($"/products/{id}");
 
             return new CartItemDto
             {
+                Id = product!.Id,
                 ProductId = product!.Id,
                 CartId = cartItemToAdd.CartId,
                 Name = product.Name,

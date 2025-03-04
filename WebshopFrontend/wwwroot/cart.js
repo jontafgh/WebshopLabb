@@ -1,7 +1,16 @@
 ﻿function AddItemToLocalStorage(item) {
     var cart = GetCartFromLocalStorage();
-    cart.push(item);
-    localStorage.setItem("cart", JSON.stringify(cart));
+
+    if (ItemExistsInLocalStorage(item.id)) {
+        var index = cart.findIndex(p => p.id === item.id);
+        cart[index].quantity += item.quantity;
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    else {
+        
+        cart.push(item);
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
 }
 
 function GetCartFromLocalStorage() {
@@ -14,34 +23,33 @@ function GetCartFromLocalStorage() {
 
 function GetItemFromLocalStorage(itemId) {
     var cart = GetCartFromLocalStorage();
-    var item = cart.find(p => p.Id === itemId);
-    return JSON.parse(item);
+    var item = cart.find(p => p.id === itemId);
+    return item;
 }
 
 function UpdateItemInLocalStorage(item) {
     var cart = GetCartFromLocalStorage();
-    var index = cart.findIndex(p => p.Id === item.Id);
-    var newItem = null;
-    if (index > -1) {
-        cart[index].Quantity += item.Quantity;
-        newItem = cart[index];
-    }
+    var index = cart.findIndex(p => p.id === item.id);
+    cart[index].quantity = item.quantity;
+    var newItem = GetItemFromLocalStorage(item.id);
     localStorage.setItem("cart", JSON.stringify(cart));
     return newItem;
 }
 
 function RemoveItemFromLocalStorage(itemId) {
     var cart = GetCartFromLocalStorage();
-    var index = cart.findIndex(p => p.Id === itemId);
-    var removedItem = null;
-    if (index > -1) {
-        removedItem = cart[index];
-        cart.splice(index, 1);
-    }
+    var index = cart.findIndex(p => p.id === itemId);
+    var removedItem = GetItemFromLocalStorage(itemId);
+    cart.splice(index, 1);
     localStorage.setItem("cart", JSON.stringify(cart));
     return removedItem;
 }
 
 function RemoveCartFromLocalStorage() {
     localStorage.removeItem("cart");
+}
+
+function ItemExistsInLocalStorage(itemId) {
+    var cart = GetCartFromLocalStorage();
+    return cart.some(p => p.id === itemId);
 }

@@ -7,8 +7,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebshopShared
 {
-    public class PersonDto
+    public class UserDto
     {
+        public int Id { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 2)]
         public string FirstName { get; set; }

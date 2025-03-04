@@ -33,7 +33,7 @@ namespace WebshopBackend
                         : Results.NotFound()
             );
 
-            app.MapGet("/products/{id}", async (int id, WebshopContext db) =>
+            app.MapGet("/products/{id:int}", async (int id, WebshopContext db) =>
                 await db.Boardgames.Include(b => b.Publisher)
                     .Include(b => b.Image)
                     .Include(b => b.Price!)

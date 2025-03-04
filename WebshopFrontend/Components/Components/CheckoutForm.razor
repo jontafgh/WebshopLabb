@@ -2,7 +2,7 @@
 @using WebshopShared
 
 
-<EditForm Model="Person" OnValidSubmit="Submit" FormName="User">
+<EditForm Model="User" OnValidSubmit="Submit" FormName="User">
     <ObjectGraphDataAnnotationsValidator />
     <div class="form-flex-container">
 
@@ -14,11 +14,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="firstname" @bind-Value="Person.FirstName" />
+                <InputText class="input-text" id="firstname" @bind-Value="User.FirstName" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.FirstName)" />
+                <ValidationMessage For="@(() => User.FirstName)" />
             </div>
         </div>
 
@@ -30,11 +30,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="lastname" @bind-Value="Person.LastName" />
+                <InputText class="input-text" id="lastname" @bind-Value="User.LastName" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.LastName)" />
+                <ValidationMessage For="@(() => User.LastName)" />
             </div>
         </div>
 
@@ -47,11 +47,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="email" @bind-Value="Person.Email" />
+                <InputText class="input-text" id="email" @bind-Value="User.Email" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.Email)" />
+                <ValidationMessage For="@(() => User.Email)" />
             </div>
         </div>
 
@@ -64,11 +64,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="country" @bind-Value="Person.Address.Country" />
+                <InputText class="input-text" id="country" @bind-Value="User.Address.Country" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.Address.Country)" />
+                <ValidationMessage For="@(() => User.Address.Country)" />
             </div>
         </div>
 
@@ -81,11 +81,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="city" @bind-Value="Person.Address.City" />
+                <InputText class="input-text" id="city" @bind-Value="User.Address.City" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.Address.City)" />
+                <ValidationMessage For="@(() => User.Address.City)" />
             </div>
         </div>
 
@@ -98,11 +98,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="street" @bind-Value="Person.Address.Street" />
+                <InputText class="input-text" id="street" @bind-Value="User.Address.Street" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.Address.Street)" />
+                <ValidationMessage For="@(() => User.Address.Street)" />
             </div>
         </div>
 
@@ -115,11 +115,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="postalcode" @bind-Value="Person.Address.PostalCode" />
+                <InputText class="input-text" id="postalcode" @bind-Value="User.Address.PostalCode" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.Address.PostalCode)" />
+                <ValidationMessage For="@(() => User.Address.PostalCode)" />
             </div>
         </div>
 
@@ -132,11 +132,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="phonenumber" @bind-Value="Person.PhoneNumber" />
+                <InputText class="input-text" id="phonenumber" @bind-Value="User.PhoneNumber" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => Person.PhoneNumber)" />
+                <ValidationMessage For="@(() => User.PhoneNumber)" />
             </div>
         </div>
     </div>
@@ -148,12 +148,13 @@
 
 @code {
 
-    [SupplyParameterFromForm] public PersonDto Person { get; set; } = new PersonDto();
+    [SupplyParameterFromForm] public UserDto User { get; set; } = new UserDto();
 
-    [Parameter] public EventCallback<PersonDto> OnFormSubmit { get; set; }
+    [Parameter] public EventCallback<UserDto> OnFormSubmit { get; set; }
 
     private void Submit()
     {
-        OnFormSubmit.InvokeAsync(Person);
+        User.Id = 1;
+        OnFormSubmit.InvokeAsync(User);
     }
 }

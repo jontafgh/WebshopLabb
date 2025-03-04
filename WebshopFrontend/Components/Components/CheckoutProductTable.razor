@@ -1,16 +1,14 @@
-﻿@using System.Text.Json
-@using WebshopFrontend.Components.Components
-@using WebshopFrontend.EventHandlers
-@using WebshopFrontend.Services.Interfaces
-@using WebshopFrontend.Services
-@inject NotifyCartUpdated NotifyCartUpdated
+﻿@using WebshopFrontend.Services.Interfaces
 @rendermode InteractiveServer
-@inject IJSRuntime Js
-@inject IHttpClientFactory Http
 @inject ICounterService CounterService
 @inject ICartService CartService
 
-@if (Products.Any())
+@if (CartItems == null || CartItems.Count == 0)
+{
+    <p>There are no products in the cart</p>
+
+}
+else
 {
     <table class="checkout-table">
         <caption>Products in cart</caption>
@@ -25,25 +23,25 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in _articlesQuantities)
+            @foreach (var cartItem in CartItems)
             {
                 <tr>
-                    <td data-label="Product">@GetProduct(product.Key).Name</td>
-                    <td data-label="ArNr">@GetProduct(product.Key).ArtNr</td>
-                    <td data-label="Price"><Price Product="GetProduct(product.Key)" FontSizePx="15"></Price></td>
-                    <td data-label="Total">@GetTotalPricePerProduct(product.Key)</td>
-                    <td data-label="Quantity">@product.Value</td>
+                    <td data-label="Product">@cartItem.Name</td>
+                    <td data-label="ArNr">@cartItem.ArtNr</td>
+                    <td data-label="Price">@cartItem.Price</td>
+                    <td data-label="Total">@(cartItem.Quantity * cartItem.Price)</td>
+                    <td data-label="Quantity">@cartItem.Quantity</td>
                     <td data-label="">
                         <button class="checkout-table-button">
-                            <i class="fa fa-plus" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(1, product.Key))"></i>
+                            <i class="fa fa-plus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(1, cartItem.Id))"></i>
                         </button>
 
                         <button class="margin-x checkout-table-button">
-                            <i class="fa fa-minus" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(-1, product.Key))"></i>
+                            <i class="fa fa-minus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(-1, cartItem.Id))"></i>
                         </button>
 
                         <button class="checkout-table-button">
-                            <i class="fa fa-times" aria-hidden="true" @key="@product.Key" @onclick="@(() => UpdateProductQuantity(0, product.Key))"></i>
+                            <i class="fa fa-times" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(0, cartItem.Id))"></i>
                         </button>
                     </td>
                 </tr>
@@ -62,121 +60,50 @@
 
 
 @code {
-    [Parameter] public List<IProduct> Products { get; set; } = [];
-    [Parameter] public EventCallback<List<IProduct>> ProductsChanged { get; set; }
-    
-    private Dictionary<string, int> _articlesQuantities = new();
-    private List<string> _articleNumbers = [];
 
+    public List<CartItemDto> CartItems { get; set; }
+
+    private int _userId = 1;
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var json = await Js.InvokeAsync<string>("GetProductsFromLocalStorageAsString");
-            
-            if (!string.IsNullOrEmpty(json))
-            {
-                _articleNumbers = JsonSerializer.Deserialize<List<string>>(json) ?? [];
-
-                await LoadProducts();
-                await InvokeAsync(StateHasChanged);
-                await ProductsChanged.InvokeAsync(Products);
-            }
+            CartItems = await CartService.GetAll(_userId);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
-    private async Task UpdateProductQuantity(int action, string artNr)
-    {
-        var product = Products.First(product => product.ArtNr == artNr);
+    private decimal GetTotalPrice() => CartItems.Sum(cartItem => cartItem.Quantity * cartItem.Price);
 
+    private async Task UpdateProductQuantity(int action, int id)
+    {
+        var cartItem = CartItems.First(cartItem => cartItem.Id == id);
         switch (action)
         {
             case 1:
-                _articlesQuantities[artNr]++;
-                await AddToCart(artNr);
+                await CartService.UpdateItem(new CartItemToUpdateDto { Id = cartItem.Id, Quantity = cartItem.Quantity + 1 });
+                CounterService.AddToCount(1);
                 break;
             case -1:
-                switch (_articlesQuantities[artNr])
+                if (cartItem.Quantity > 1)
                 {
-                    case > 1:
-                        _articlesQuantities[artNr]--;
-                        await RemoveFromCart(artNr);
-                        break;
-                    case 1:
-                        _articlesQuantities.Remove(artNr);
-                        Products.Remove(product);
-                        await RemoveFromCart(artNr);
-                        break;
-                    default:
-                        _articlesQuantities.Remove(artNr);
-                        NotifyCartUpdated.NotifyCartUpdate(this);
-                        break;
+                    await CartService.UpdateItem(new CartItemToUpdateDto { Id = cartItem.Id, Quantity = cartItem.Quantity - 1 });
+                    CounterService.AddToCount(-1);
+                }
+                else
+                {
+                    await CartService.RemoveItem(cartItem.Id);
+                    CounterService.AddToCount(-cartItem.Quantity);
                 }
                 break;
             case 0:
-                for (var i = 0; i < _articlesQuantities[artNr]; i++)
-                {
-                    await RemoveFromCart(artNr);
-                }
-                _articlesQuantities.Remove(artNr);
-                Products.Remove(product);
+                await CartService.RemoveItem(cartItem.Id);
+                CounterService.AddToCount(-cartItem.Quantity);
                 break;
         }
+        CartItems = await CartService.GetAll(_userId);
 
-        await ProductsChanged.InvokeAsync(Products);
-    }
-
-    public decimal GetTotalPricePerProduct(string artNr)
-    {
-        var boardgame = Products.First(product => product.ArtNr == artNr);
-
-        if (boardgame.Price.Discount != null)
-        {
-            return boardgame.Price.Discount.Price * _articlesQuantities[artNr];
-        }
-        return boardgame.Price.Regular * _articlesQuantities[artNr];
-    }
-
-
-    public IProduct GetProduct(string artNr)
-    {
-        return Products.First(product => product.ArtNr == artNr);
-    }
-
-    private async Task AddToCart(string artNr)
-    {
-        await Js.InvokeVoidAsync("AddProductToLocalStorage", artNr);
-        NotifyCartUpdated.NotifyCartUpdate(this);
-    }
-
-    private async Task RemoveFromCart(string artNr)
-    {
-        await Js.InvokeVoidAsync("RemoveProductFromLocalStorage", artNr);
-        NotifyCartUpdated.NotifyCartUpdate(this);
-    }
-
-    private decimal GetTotalPrice()
-    {
-        return Products!.Sum(b => b.Price.Regular * _articlesQuantities[b.ArtNr]);
-    }
-
-    private async Task LoadProducts()
-    {
-        using var client = Http.CreateClient("WebshopMinimalApi");
-
-        foreach (var articleNumber in _articleNumbers)
-        {
-            var boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{articleNumber}");
-
-            if (boardgame == null) continue;
-            if (!_articlesQuantities.TryAdd(boardgame.ArtNr, 1))
-            {
-                _articlesQuantities[boardgame.ArtNr]++;
-            }
-            else
-            {
-                Products.Add(boardgame);
-            }
-        }
+        await InvokeAsync(StateHasChanged);
     }
 }

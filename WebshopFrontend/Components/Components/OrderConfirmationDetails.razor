@@ -1,4 +1,9 @@
-﻿<table class="checkout-table">
+﻿
+@using WebshopFrontend.Services.Interfaces
+@inject IOrderService OrderService
+
+
+<table class="checkout-table">
     <caption>Order summary</caption>
     <thead>
         <tr>
@@ -9,7 +14,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var orderLine in Order.OrderLines)
+        @foreach (var orderLine in Order.CartItems)
         {
             <tr>
                 <td data-label="Product">@orderLine.Name</td>
@@ -31,21 +36,26 @@
 
 <div>
     <h4>Confirmation email sent to:</h4>
-    <p>@Order.Customer.Email</p>
+    <p>@Order.User.Email</p>
 </div>
 
 <div>
     <h4>Order will be sent to:</h4>
     <ul>
-        <li>@Order.Customer.FirstName @Order.Customer.LastName</li>
-        <li>@Order.Customer.Address.Street</li>
-        <li>@Order.Customer.Address.PostalCode @Order.Customer.Address.City</li>
-        <li>@Order.Customer.Address.Country</li>
+        <li>@Order.User.FirstName @Order.User.LastName</li>
+        <li>@Order.User.Address.Street</li>
+        <li>@Order.User.Address.PostalCode @Order.User.Address.City</li>
+        <li>@Order.User.Address.Country</li>
     </ul>
 </div>
 
 @code {
-    [Parameter] public required OrderDto Order { get; set; }
+    public OrderDto Order { get; set; }
 
-    private decimal GetTotalPrice() => Order.OrderLines.Sum(x => x.Price * x.Quantity);
+    protected override async Task OnInitializedAsync()
+    {
+        Order = await OrderService.GetOrder(1);
+    }
+
+    private decimal GetTotalPrice() => Order.CartItems.Sum(x => x.Price * x.Quantity);
 }

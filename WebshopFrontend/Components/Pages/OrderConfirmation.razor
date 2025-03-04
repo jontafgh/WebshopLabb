@@ -1,16 +1,10 @@
 ﻿@page "/orderconfirmation"
 @using WebshopFrontend.Components.Components
-@using WebshopFrontend.EventHandlers
-@inject OrderState OrderState
 
-<OrderConfirmationDetails Order="_order" />
+
+
+<OrderConfirmationDetails />
 
 @code {
-    private OrderDto? _order;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _order = OrderState.Order;
-    }
+    
 }
