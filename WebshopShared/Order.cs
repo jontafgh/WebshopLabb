@@ -8,9 +8,16 @@ namespace WebshopShared
 {
     public class OrderDto
     {
-        public int OrderId { get; set; }
-        public int CustomerId { get; set; }
+        public PersonDto Customer { get; set; } = null!;
         public DateTime OrderDate { get; set; }
-        //public List<IProduct> OrderLines { get; set; }
+        public List<OrderLineDto> OrderLines { get; set; } = new List<OrderLineDto>();
+    }
+
+    public class OrderLineDto
+    {
+        public string ArtNr { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
     }
 }

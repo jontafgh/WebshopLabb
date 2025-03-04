@@ -14,6 +14,7 @@ public class Program
             .AddInteractiveServerComponents();
 
         builder.Services.AddScoped<NotifyCartUpdated>();
+        builder.Services.AddScoped<OrderState>();
 
         builder.Services.AddHttpClient("WebshopMinimalApi", client =>
         {

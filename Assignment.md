@@ -21,10 +21,10 @@ I den här laborationen kommer ni att bygga en Webshop med Blazor Web App utifr�
 - [x] Man ska kunna navigera till varukorgen (page) via en knapp/länk
 - [x] Sidan ska visa vad som finns i varukorgen
   - [x] Innehålla ett formulär för att fylla i adressuppgifter
-- [ ] När formuläret skickas in ska användaren komma till en bekräftelsesida (page) där informationen om beställningen visas:
-  - [ ] Vilka produkter som köpts
-  - [ ] Namn och adress från formuläret
-- [ ] När beställningen är klar ska varukorgen tömmas
+- [x] När formuläret skickas in ska användaren komma till en bekräftelsesida (page) där informationen om beställningen visas:
+  - [x] Vilka produkter som köpts
+  - [x] Namn och adress från formuläret
+- [x] När beställningen är klar ska varukorgen tömmas
 - [x] Minst 2 komponenter (inte pages/Layout) ska användas
 - [ ] All data i "godkänt"-scenariot kan vara statisk (hårdkodad)
 - [ ] HTML ska användas på rätt sätt och valideras

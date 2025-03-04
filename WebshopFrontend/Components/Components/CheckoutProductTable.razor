@@ -6,7 +6,7 @@
 @inject IJSRuntime Js
 @inject IHttpClientFactory Http
 
-@if (_products.Any())
+@if (Products.Any())
 {
     <table class="checkout-table">
         <caption>Products in cart</caption>
@@ -58,26 +58,32 @@
 
 
 @code {
+    [Parameter] public List<IProduct> Products { get; set; } = [];
+    [Parameter] public EventCallback<List<IProduct>> ProductsChanged { get; set; }
+    
     private Dictionary<string, int> _articlesQuantities = new();
     private List<string> _articleNumbers = [];
-    private List<IProduct> _products = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             var json = await Js.InvokeAsync<string>("GetProductsFromLocalStorageAsString");
-            _articleNumbers = JsonSerializer.Deserialize<List<string>>(json) ?? [];
+            
+            if (!string.IsNullOrEmpty(json))
+            {
+                _articleNumbers = JsonSerializer.Deserialize<List<string>>(json) ?? [];
 
-            await LoadProducts();
-
-            await InvokeAsync(StateHasChanged);
+                await LoadProducts();
+                await InvokeAsync(StateHasChanged);
+                await ProductsChanged.InvokeAsync(Products);
+            }
         }
     }
 
     private async Task UpdateProductQuantity(int action, string artNr)
     {
-        var product = _products.First(product => product.ArtNr == artNr);
+        var product = Products.First(product => product.ArtNr == artNr);
 
         switch (action)
         {
@@ -94,7 +100,7 @@
                         break;
                     case 1:
                         _articlesQuantities.Remove(artNr);
-                        _products.Remove(product);
+                        Products.Remove(product);
                         await RemoveFromCart(artNr);
                         break;
                     default:
@@ -109,14 +115,16 @@
                     await RemoveFromCart(artNr);
                 }
                 _articlesQuantities.Remove(artNr);
-                _products.Remove(product);
+                Products.Remove(product);
                 break;
         }
+
+        await ProductsChanged.InvokeAsync(Products);
     }
 
     public decimal GetTotalPricePerProduct(string artNr)
     {
-        var boardgame = _products.First(product => product.ArtNr == artNr);
+        var boardgame = Products.First(product => product.ArtNr == artNr);
 
         if (boardgame.Price.Discount != null)
         {
@@ -128,7 +136,7 @@
 
     public IProduct GetProduct(string artNr)
     {
-        return _products.First(product => product.ArtNr == artNr);
+        return Products.First(product => product.ArtNr == artNr);
     }
 
     private async Task AddToCart(string artNr)
@@ -145,7 +153,7 @@
 
     private decimal GetTotalPrice()
     {
-        return _products!.Sum(b => b.Price.Regular * _articlesQuantities[b.ArtNr]);
+        return Products!.Sum(b => b.Price.Regular * _articlesQuantities[b.ArtNr]);
     }
 
     private async Task LoadProducts()
@@ -163,7 +171,7 @@
             }
             else
             {
-                _products.Add(boardgame);
+                Products.Add(boardgame);
             }
         }
     }

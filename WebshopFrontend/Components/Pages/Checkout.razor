@@ -1,16 +1,76 @@
 ﻿@page "/checkout"
 @using WebshopFrontend.Components.Components
+@using WebshopFrontend.EventHandlers
+@inject OrderState OrderState
+@inject NavigationManager NavigationManager
+@inject IJSRuntime Js
+@inject NotifyCartUpdated NotifyCartUpdated
+@implements IDisposable
 
 <h3>Checkout</h3>
 
 <div class="checkout-table-container">
-    <CheckoutProductTable />
+    <CheckoutProductTable ProductsChanged="OnProductsChanged" />
 </div>
 
 <div>
-    <CheckoutForm />
+    <CheckoutForm OnFormSubmit="OnFormSubmitted" />
 </div>
 
 @code {
-    
+    private OrderDto? _order;
+    private List<IProduct> _products = [];
+
+    private async Task OnFormSubmitted(PersonDto customer)
+    {
+        CreateOrder(customer);
+        SetOrder();
+        await EmptyCart();
+        NavigationManager.NavigateTo("/orderconfirmation");
+    }
+
+    private async Task EmptyCart()
+    {
+        await Js.InvokeVoidAsync("RemoveAllProductsFromLocalStorage");
+        NotifyCartUpdated.NotifyCartUpdate(this);
+    }
+
+    private void CreateOrder(PersonDto customer)
+    {
+        _order = new OrderDto
+        {
+            Customer = customer,
+            OrderLines = GetOrderLines()
+        };
+    }
+
+    private List<OrderLineDto> GetOrderLines()
+    {
+        return _products.Select(product => new OrderLineDto
+            {
+                ArtNr = product.ArtNr,
+                Name = product.Name,
+                Price = GetPrice(product),
+                Quantity = 1
+            }).ToList();
+    }
+
+    private void SetOrder()
+    {
+        OrderState.SetOrder(_order!);
+        OrderState.OnStateChange += StateHasChanged;
+    }
+
+    private static decimal GetPrice(IProduct product) => product.Price.Discount?.Price ?? product.Price.Regular;
+
+    private void OnProductsChanged(List<IProduct> products)
+    {
+        _products = products;
+    }
+
+    public void Dispose()
+    {
+        OrderState.OnStateChange -= StateHasChanged;
+    }
+
 }

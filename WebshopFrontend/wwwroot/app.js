@@ -17,6 +17,10 @@ function EmptyLocalStorage() {
     localStorage.clear();
 }
 
+function RemoveAllProductsFromLocalStorage() {
+    localStorage.removeItem("products");
+}
+
 function GetProductsFromLocalStorage() {
     var products = localStorage.getItem("products");
     if (products === null) {
