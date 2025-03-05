@@ -9,9 +9,24 @@ public static class DtoExtensions
     {
         return new Boardgame
         {
+            Description = boardgameDto.BoardgameDetails.Description,
+            MinPlayers = boardgameDto.BoardgameDetails.MinPlayers,
+            MaxPlayers = boardgameDto.BoardgameDetails.MaxPlayers,
+            MinAge = boardgameDto.BoardgameDetails.MinAge,
+            PlayTime = boardgameDto.BoardgameDetails.PlayTime,
+            Product = boardgameDto.ToProduct(),
+            Publisher = new Publisher
+            {
+                Name = boardgameDto.Publisher.Name
+            }
+        };
+    }
+    public static Product ToProduct(this BoardgameDto boardgameDto)
+    {
+        return new Product
+        {
             ArtNr = boardgameDto.ArtNr,
             Name = boardgameDto.Name,
-            Publisher = new Publisher { Name = boardgameDto.Publisher.Name },
             Image = new Image
             {
                 ImageText = boardgameDto.Image.ImageText,
@@ -24,18 +39,10 @@ public static class DtoExtensions
                 Regular = boardgameDto.Price.Regular,
                 Discount = (boardgameDto.Price.Discount == null) ? null : new Discount
                 {
-                    Price = boardgameDto.Price.Discount.Price,
+                    DiscountPrice = boardgameDto.Price.Discount.Price,
                     StartDate = boardgameDto.Price.Discount.StartDate,
                     EndDate = boardgameDto.Price.Discount.EndDate
                 }
-            },
-            BoardgameDetails = new BoardgameDetails
-            {
-                Description = boardgameDto.BoardgameDetails.Description,
-                MinPlayers = boardgameDto.BoardgameDetails.MinPlayers,
-                MaxPlayers = boardgameDto.BoardgameDetails.MaxPlayers,
-                MinAge = boardgameDto.BoardgameDetails.MinAge,
-                PlayTime = boardgameDto.BoardgameDetails.PlayTime
             },
             Stock = new Stock
             {

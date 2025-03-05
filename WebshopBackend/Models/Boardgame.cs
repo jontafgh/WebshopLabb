@@ -2,27 +2,42 @@
 
 namespace WebshopBackend.Models
 {
-    public class Boardgame
+    public class Product
     {
         public int Id { get; set; }
         public string ArtNr { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public Publisher? Publisher { get; set; } 
-        public Image? Image { get; set; } 
-        public Price? Price { get; set; } 
-        public BoardgameDetails? BoardgameDetails { get; set; }
-        public Stock? Stock { get; set; } 
+        public Image? Image { get; set; }
+        public Price? Price { get; set; }
+        public Stock? Stock { get; set; }
+    }
+
+    public class Boardgame
+    {
+        public int Id { get; set; }
+        public string Description { get; set; } = null!;
+        public int MinPlayers { get; set; }
+        public int MaxPlayers { get; set; }
+        public int MinAge { get; set; }
+        public int PlayTime { get; set; }
+        public int ProductId { get; set; }
+        public Product? Product { get; set; }
+        public Publisher? Publisher { get; set; }
     }
 
     public class Publisher
     {
         public int Id { get; set; }
+        public int? BoardgameId { get; set; }
+        public Boardgame? Boardgame { get; set; }
         public string Name { get; set; } = null!;
     }
 
     public class Image
     {
         public int Id { get; set; }
+        public int? ProductId { get; set; }
+        public Product? Product { get; set; }
         public string ImageText { get; set; } = null!;
         public string ImageSmallUrl { get; set; } = null!;
         public string ImageMediumUrl { get; set; } = null!;
@@ -32,6 +47,8 @@ namespace WebshopBackend.Models
     public class Price
     {
         public int Id { get; set; }
+        public int ProductId { get; set; }
+        public Product Product { get; set; } = null!;
         public decimal Regular { get; set; }
         public Discount? Discount { get; set; }
     }
@@ -39,24 +56,18 @@ namespace WebshopBackend.Models
     public class Discount
     {
         public int Id { get; set; }
-        public decimal Price { get; set; }
+        public int? PriceId { get; set; }
+        public Price? Price { get; set; }
+        public decimal DiscountPrice { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-    }
-
-    public class BoardgameDetails
-    {
-        public int Id { get; set; }
-        public string Description { get; set; } = null!;
-        public int MinPlayers { get; set; }
-        public int MaxPlayers { get; set; }
-        public int MinAge { get; set; }
-        public int PlayTime { get; set; }
     }
 
     public class Stock
     {
         public int Id { get; set; }
+        public int ProductId { get; set; }
+        public Product Product { get; set; } = null!;
         public int Quantity { get; set; }
         public Restock? NextRestock { get; set; }
     }
@@ -64,6 +75,8 @@ namespace WebshopBackend.Models
     public class Restock
     {
         public int Id { get; set; }
+        public int? StockId { get; set; }
+        public Stock? Stock { get; set; } = null!;
         public int Quantity { get; set; }
         public DateTime RestockDate { get; set; }
     }

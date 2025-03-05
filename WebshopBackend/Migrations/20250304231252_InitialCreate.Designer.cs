@@ -12,7 +12,7 @@ using WebshopBackend;
 namespace WebshopBackend.Migrations
 {
     [DbContext(typeof(WebshopContext))]
-    [Migration("20250228145759_InitialCreate")]
+    [Migration("20250304231252_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,52 +26,6 @@ namespace WebshopBackend.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("WebshopBackend.Models.Boardgame", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ArtNr")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("BoardgameDetailsId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ImageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PriceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PublisherId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StockId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoardgameDetailsId");
-
-                    b.HasIndex("ImageId");
-
-                    b.HasIndex("PriceId");
-
-                    b.HasIndex("PublisherId");
-
-                    b.HasIndex("StockId");
-
-                    b.ToTable("Boardgames");
-                });
-
-            modelBuilder.Entity("WebshopBackend.Models.BoardgameDetails", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,9 +49,15 @@ namespace WebshopBackend.Migrations
                     b.Property<int>("PlayTime")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("BoardgameDetails");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("Boardgame");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Discount", b =>
@@ -108,16 +68,23 @@ namespace WebshopBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("DiscountPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int?>("PriceId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PriceId")
+                        .IsUnique()
+                        .HasFilter("[PriceId] IS NOT NULL");
 
                     b.ToTable("Discounts");
                 });
@@ -146,7 +113,14 @@ namespace WebshopBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique()
+                        .HasFilter("[ProductId] IS NOT NULL");
 
                     b.ToTable("Images");
                 });
@@ -159,7 +133,7 @@ namespace WebshopBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("DiscountId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Regular")
@@ -167,9 +141,31 @@ namespace WebshopBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DiscountId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("Prices");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ArtNr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Publisher", b =>
@@ -180,11 +176,18 @@ namespace WebshopBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BoardgameId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BoardgameId")
+                        .IsUnique()
+                        .HasFilter("[BoardgameId] IS NOT NULL");
 
                     b.ToTable("Publishers");
                 });
@@ -203,7 +206,14 @@ namespace WebshopBackend.Migrations
                     b.Property<DateTime>("RestockDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("StockId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("StockId")
+                        .IsUnique()
+                        .HasFilter("[StockId] IS NOT NULL");
 
                     b.ToTable("Restock");
                 });
@@ -216,7 +226,7 @@ namespace WebshopBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("NextRestockId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -224,59 +234,102 @@ namespace WebshopBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NextRestockId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Boardgame", b =>
                 {
-                    b.HasOne("WebshopBackend.Models.BoardgameDetails", "BoardgameDetails")
-                        .WithMany()
-                        .HasForeignKey("BoardgameDetailsId");
+                    b.HasOne("WebshopBackend.Models.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("WebshopBackend.Models.Boardgame", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("WebshopBackend.Models.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId");
+                    b.Navigation("Product");
+                });
 
+            modelBuilder.Entity("WebshopBackend.Models.Discount", b =>
+                {
                     b.HasOne("WebshopBackend.Models.Price", "Price")
-                        .WithMany()
-                        .HasForeignKey("PriceId");
-
-                    b.HasOne("WebshopBackend.Models.Publisher", "Publisher")
-                        .WithMany()
-                        .HasForeignKey("PublisherId");
-
-                    b.HasOne("WebshopBackend.Models.Stock", "Stock")
-                        .WithMany()
-                        .HasForeignKey("StockId");
-
-                    b.Navigation("BoardgameDetails");
-
-                    b.Navigation("Image");
+                        .WithOne("Discount")
+                        .HasForeignKey("WebshopBackend.Models.Discount", "PriceId");
 
                     b.Navigation("Price");
+                });
 
-                    b.Navigation("Publisher");
+            modelBuilder.Entity("WebshopBackend.Models.Image", b =>
+                {
+                    b.HasOne("WebshopBackend.Models.Product", "Product")
+                        .WithOne("Image")
+                        .HasForeignKey("WebshopBackend.Models.Image", "ProductId");
 
-                    b.Navigation("Stock");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Price", b =>
                 {
-                    b.HasOne("WebshopBackend.Models.Discount", "Discount")
-                        .WithMany()
-                        .HasForeignKey("DiscountId");
+                    b.HasOne("WebshopBackend.Models.Product", "Product")
+                        .WithOne("Price")
+                        .HasForeignKey("WebshopBackend.Models.Price", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Discount");
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Publisher", b =>
+                {
+                    b.HasOne("WebshopBackend.Models.Boardgame", "Boardgame")
+                        .WithOne("Publisher")
+                        .HasForeignKey("WebshopBackend.Models.Publisher", "BoardgameId");
+
+                    b.Navigation("Boardgame");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Restock", b =>
+                {
+                    b.HasOne("WebshopBackend.Models.Stock", "Stock")
+                        .WithOne("NextRestock")
+                        .HasForeignKey("WebshopBackend.Models.Restock", "StockId");
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Stock", b =>
                 {
-                    b.HasOne("WebshopBackend.Models.Restock", "NextRestock")
-                        .WithMany()
-                        .HasForeignKey("NextRestockId");
+                    b.HasOne("WebshopBackend.Models.Product", "Product")
+                        .WithOne("Stock")
+                        .HasForeignKey("WebshopBackend.Models.Stock", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Boardgame", b =>
+                {
+                    b.Navigation("Publisher");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Price", b =>
+                {
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Product", b =>
+                {
+                    b.Navigation("Image");
+
+                    b.Navigation("Price");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Stock", b =>
+                {
                     b.Navigation("NextRestock");
                 });
 #pragma warning restore 612, 618

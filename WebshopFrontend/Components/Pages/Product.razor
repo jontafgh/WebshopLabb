@@ -1,7 +1,8 @@
 ﻿@page "/product/{ArtNr}"
 @rendermode InteractiveServer
 @using WebshopFrontend.Components.Components
-@inject IHttpClientFactory Http
+@using WebshopFrontend.Services.Interfaces
+@inject IBoardgameService BoardgameService
 
 @if (_boardgame == null)
 {
@@ -25,12 +26,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBoardgame();
-    }
-
-    private async Task LoadBoardgame()
-    {
-        using var client = Http.CreateClient("WebshopMinimalApi");
-        _boardgame = await client.GetFromJsonAsync<BoardgameDto>($"products/article/{ArtNr}");
+        _boardgame = await BoardgameService.GetBoardgameByArtNr(ArtNr);
     }
 }

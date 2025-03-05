@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebshopBackend.Models;
@@ -11,52 +12,63 @@ namespace WebshopBackend
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            
+
             builder.Services.AddDbContext<WebshopContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("WebshopDb"))
                 );
+            
+            builder.Services.ConfigureHttpJsonOptions(options => {
+                options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });
 
             var app = builder.Build();
 
             app.MapGet("/products", async (WebshopContext db) =>
-            
-                await db.Boardgames
-                   .Include(b => b.Publisher)
-                   .Include(b => b.Image)
-                   .Include(b => b.Price!)
-                       .ThenInclude(p => p.Discount)
-                   .Include(b => b.BoardgameDetails)
-                   .Include(b => b.Stock!)
-                       .ThenInclude(s => s.NextRestock)
+
+                await db.Boardgames.Include(b => b.Publisher)
+                        .Include(b => b.Product!)
+                        .ThenInclude(b => b.Image)
+                        .Include(b => b.Product!)
+                        .ThenInclude(p => p.Price)
+                        .ThenInclude(p => p.Discount)
+                        .Include(b => b.Product!)
+                        .ThenInclude(p => p.Stock!)
+                        .ThenInclude(s => s.NextRestock)
                    .ToListAsync()
-                   is List<Boardgame> boardgame
+                   is { } boardgame
                         ? Results.Ok(boardgame)
                         : Results.NotFound()
             );
 
             app.MapGet("/products/{id:int}", async (int id, WebshopContext db) =>
                 await db.Boardgames.Include(b => b.Publisher)
-                    .Include(b => b.Image)
-                    .Include(b => b.Price!)
-                        .ThenInclude(p => p.Discount)
-                    .Include(b => b.BoardgameDetails)
-                    .Include(b => b.Stock!)
-                        .ThenInclude(s => s.NextRestock)
+                        .Include(b => b.Product!)
+                            .ThenInclude(b => b.Image)
+                        .Include(b => b.Product!)
+                            .ThenInclude(p => p.Price)
+                                .ThenInclude(p => p.Discount)
+                        .Include(b => b.Product!)
+                            .ThenInclude(p => p.Stock!)
+                                .ThenInclude(s => s.NextRestock)
                     .FirstOrDefaultAsync(b => b.Id == id)
-                    is Boardgame boardgame
+                    is { } boardgame
                         ? Results.Ok(boardgame)
                         : Results.NotFound()
             );
 
             app.MapGet("/products/article/{artNr}", async (string artNr, WebshopContext db) =>
                 await db.Boardgames.Include(b => b.Publisher)
-                        .Include(b => b.Image)
-                        .Include(b => b.Price!)
-                        .ThenInclude(p => p.Discount)
-                        .Include(b => b.BoardgameDetails)
-                        .Include(b => b.Stock!)
-                        .ThenInclude(s => s.NextRestock)
-                        .FirstOrDefaultAsync(b => b.ArtNr == artNr)
-                    is Boardgame boardgame
+                        .Include(b => b.Product!)
+                            .ThenInclude(b => b.Image)
+                        .Include(b => b.Product!)
+                            .ThenInclude(p => p.Price!)
+                                .ThenInclude(p => p.Discount)
+                        .Include(b => b.Product!)
+                            .ThenInclude(p => p.Stock!)
+                                .ThenInclude(s => s.NextRestock)
+                        .FirstOrDefaultAsync(b => b.Product!.ArtNr == artNr)
+                    is { } boardgame
                     ? Results.Ok(boardgame)
                     : Results.NotFound()
             );
