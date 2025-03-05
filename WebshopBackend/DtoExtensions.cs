@@ -9,48 +9,49 @@ public static class DtoExtensions
     {
         return new Boardgame
         {
-            Description = boardgameDto.BoardgameDetails.Description,
-            MinPlayers = boardgameDto.BoardgameDetails.MinPlayers,
-            MaxPlayers = boardgameDto.BoardgameDetails.MaxPlayers,
-            MinAge = boardgameDto.BoardgameDetails.MinAge,
-            PlayTime = boardgameDto.BoardgameDetails.PlayTime,
-            Product = boardgameDto.ToProduct(),
+            Description = boardgameDto.Description,
+            MinPlayers = boardgameDto.MinPlayers,
+            MaxPlayers = boardgameDto.MaxPlayers,
+            MinAge = boardgameDto.MinAge,
+            PlayTime = boardgameDto.PlayTime,
             Publisher = new Publisher
             {
                 Name = boardgameDto.Publisher.Name
-            }
+            },
+            Product = boardgameDto.ToProduct(),
+            
         };
     }
     public static Product ToProduct(this BoardgameDto boardgameDto)
     {
         return new Product
         {
-            ArtNr = boardgameDto.ArtNr,
-            Name = boardgameDto.Name,
+            ArtNr = boardgameDto.Product.ArtNr,
+            Name = boardgameDto.Product.Name,
             Image = new Image
             {
-                ImageText = boardgameDto.Image.ImageText,
-                ImageSmallUrl = boardgameDto.Image.ImageSmallUrl,
-                ImageMediumUrl = boardgameDto.Image.ImageMediumUrl,
-                ImageLargeUrl = boardgameDto.Image.ImageLargeUrl
+                ImageText = boardgameDto.Product.Image.ImageText,
+                ImageSmallUrl = boardgameDto.Product.Image.ImageSmallUrl,
+                ImageMediumUrl = boardgameDto.Product.Image.ImageMediumUrl,
+                ImageLargeUrl = boardgameDto.Product.Image.ImageLargeUrl
             },
             Price = new Price
             {
-                Regular = boardgameDto.Price.Regular,
-                Discount = (boardgameDto.Price.Discount == null) ? null : new Discount
+                Regular = boardgameDto.Product.Price.Regular,
+                Discount = (boardgameDto.Product.Price.Discount == null) ? null : new Discount
                 {
-                    DiscountPrice = boardgameDto.Price.Discount.Price,
-                    StartDate = boardgameDto.Price.Discount.StartDate,
-                    EndDate = boardgameDto.Price.Discount.EndDate
+                    DiscountPrice = boardgameDto.Product.Price.Discount.Price,
+                    StartDate = boardgameDto.Product.Price.Discount.StartDate,
+                    EndDate = boardgameDto.Product.Price.Discount.EndDate
                 }
             },
             Stock = new Stock
             {
-                Quantity = boardgameDto.Stock.Quantity,
-                NextRestock = (boardgameDto.Stock.NextRestock == null) ? null : new Restock
+                Quantity = boardgameDto.Product.Stock.Quantity,
+                NextRestock = (boardgameDto.Product.Stock.NextRestock == null) ? null : new Restock
                 {
-                    Quantity = boardgameDto.Stock.NextRestock.Quantity,
-                    RestockDate = boardgameDto.Stock.NextRestock.RestockDate
+                    Quantity = boardgameDto.Product.Stock.NextRestock.Quantity,
+                    RestockDate = boardgameDto.Product.Stock.NextRestock.RestockDate
                 }
             }
         };

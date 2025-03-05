@@ -12,7 +12,7 @@ namespace WebshopBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,11 +22,11 @@ namespace WebshopBackend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Boardgame",
+                name: "Boardgames",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -40,11 +40,11 @@ namespace WebshopBackend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Boardgame", x => x.Id);
+                    table.PrimaryKey("PK_Boardgames", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Boardgame_Product_ProductId",
+                        name: "FK_Boardgames_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -65,9 +65,9 @@ namespace WebshopBackend.Migrations
                 {
                     table.PrimaryKey("PK_Images", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Images_Product_ProductId",
+                        name: "FK_Images_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id");
                 });
 
@@ -84,9 +84,9 @@ namespace WebshopBackend.Migrations
                 {
                     table.PrimaryKey("PK_Prices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Prices_Product_ProductId",
+                        name: "FK_Prices_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -104,9 +104,9 @@ namespace WebshopBackend.Migrations
                 {
                     table.PrimaryKey("PK_Stocks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Stocks_Product_ProductId",
+                        name: "FK_Stocks_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -124,9 +124,9 @@ namespace WebshopBackend.Migrations
                 {
                     table.PrimaryKey("PK_Publishers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Publishers_Boardgame_BoardgameId",
+                        name: "FK_Publishers_Boardgames_BoardgameId",
                         column: x => x.BoardgameId,
-                        principalTable: "Boardgame",
+                        principalTable: "Boardgames",
                         principalColumn: "Id");
                 });
 
@@ -172,8 +172,8 @@ namespace WebshopBackend.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Boardgame_ProductId",
-                table: "Boardgame",
+                name: "IX_Boardgames_ProductId",
+                table: "Boardgames",
                 column: "ProductId",
                 unique: true);
 
@@ -237,13 +237,13 @@ namespace WebshopBackend.Migrations
                 name: "Prices");
 
             migrationBuilder.DropTable(
-                name: "Boardgame");
+                name: "Boardgames");
 
             migrationBuilder.DropTable(
                 name: "Stocks");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Products");
         }
     }
 }

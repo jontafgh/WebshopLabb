@@ -10,7 +10,7 @@ namespace WebshopBackend
         public DbSet<Image> Images { get; set; }
         public DbSet<Price> Prices { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-        public DbSet<Boardgame> Boardgame{ get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<Stock> Stocks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

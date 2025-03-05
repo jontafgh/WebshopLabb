@@ -11,7 +11,6 @@ namespace WebshopShared
         public int Id { get; set; }
         public string ArtNr { get; set; } 
         public string Name { get; set; } 
-        public PublisherDto Publisher { get; set; } 
         public ImageDto Image { get; set; } 
         public PriceDto Price { get; set; } 
         public StockDto Stock { get; set; } 

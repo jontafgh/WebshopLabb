@@ -18,8 +18,4 @@
     <ProjectReference Include="..\WebshopShared\WebshopShared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

@@ -54,7 +54,7 @@ namespace WebshopBackend.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("Boardgame");
+                    b.ToTable("Boardgames");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Discount", b =>
@@ -162,7 +162,7 @@ namespace WebshopBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Publisher", b =>
