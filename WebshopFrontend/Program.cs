@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using WebshopFrontend.Components;
 using WebshopFrontend.EventHandlers;
@@ -16,13 +17,25 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        //builder.Services.AddScoped<NotifyCartUpdated>();
-        //builder.Services.AddScoped<OrderState>();
         builder.Services.AddHttpClient("WebshopMinimalApi", client =>
         {
             client.BaseAddress = new Uri("https://localhost:7003/");
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+        {
+            UseCookies = true,
+            CookieContainer = new CookieContainer()
         });
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7003/") });
+        builder.Services.AddScoped(sp => new HttpClient(
+            new HttpClientHandler()
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            })
+        {
+            BaseAddress = new Uri("https://localhost:7003/")
+
+        });
+
         builder.Services.AddScoped<ICartService, LocalStorageCartService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, MockOrderService>();

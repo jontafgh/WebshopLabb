@@ -1,10 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Models;
 
 namespace WebshopBackend
 {
-    public class WebshopContext(DbContextOptions options) : DbContext(options)
+    public class WebshopContext : IdentityDbContext<WebshopUser>
     {
+        public WebshopContext(DbContextOptions<WebshopContext> options) : base(options) {}
+       
         public DbSet<Boardgame> Boardgames { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Image> Images { get; set; }
@@ -15,9 +19,15 @@ namespace WebshopBackend
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Boardgame>()
                 .HasOne(b => b.Product)
                 .WithOne();
         }
+    }
+    public class WebshopUser : IdentityUser
+    {
+        
     }
 }
