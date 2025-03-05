@@ -17,9 +17,10 @@ namespace WebshopBackend
             builder.Services.AddDbContext<WebshopContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("WebshopDb"))
                 );
-            
-            builder.Services.ConfigureHttpJsonOptions(options => {
-                options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
             var app = builder.Build();
@@ -30,7 +31,8 @@ namespace WebshopBackend
                         .ThenInclude(p => p.Discount)
                     .Include(p => p.Stock)
                         .ThenInclude(s => s.NextRestock)
-                    .ToListAsync()
+                        
+                    .Select(p => p.ToProductDto()).ToListAsync()
                     is { } product
                     ? Results.Ok(product)
                     : Results.NotFound()

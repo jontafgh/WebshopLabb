@@ -9,17 +9,17 @@ namespace WebshopFrontend.Services
 
         public async Task<List<BoardgameDto?>> GetBoardgames()
         {
-            return await _httpClient.GetFromJsonAsync<List<BoardgameDto?>>("products") ?? [];
+            return await _httpClient.GetFromJsonAsync<List<BoardgameDto?>>("boardgames") ?? [];
         }
 
         public async Task<BoardgameDto?> GetBoardgameById(int id)
         {
-            return await _httpClient.GetFromJsonAsync<BoardgameDto>($"products/{id}");
+            return await _httpClient.GetFromJsonAsync<BoardgameDto>($"boardgames/{id}");
         }
 
         public async Task<BoardgameDto?> GetBoardgameByArtNr(string artNr)
         {
-            return await _httpClient.GetFromJsonAsync<BoardgameDto>($"products/article/{artNr}");
+            return await _httpClient.GetFromJsonAsync<BoardgameDto>($"boardgames/article/{artNr}");
         }
     }
 }

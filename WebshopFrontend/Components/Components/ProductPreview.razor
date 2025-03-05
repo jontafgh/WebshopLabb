@@ -27,7 +27,7 @@
 </div>
 
 @code {
-    [Parameter] public required IProduct Product { get; set; }
+    [Parameter] public required ProductDto Product { get; set; }
 
     private string ProductHref => $"product/{Product.ArtNr}";
 

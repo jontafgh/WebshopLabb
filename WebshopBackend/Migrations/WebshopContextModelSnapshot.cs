@@ -122,7 +122,7 @@ namespace WebshopBackend.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("WebshopBackend.Models.Price", b =>
+            modelBuilder.Entity("WebshopBackend.Models.DiscountPrice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,11 +250,11 @@ namespace WebshopBackend.Migrations
 
             modelBuilder.Entity("WebshopBackend.Models.Discount", b =>
                 {
-                    b.HasOne("WebshopBackend.Models.Price", "Price")
+                    b.HasOne("WebshopBackend.Models.DiscountPrice", "DiscountPrice")
                         .WithOne("Discount")
                         .HasForeignKey("WebshopBackend.Models.Discount", "PriceId");
 
-                    b.Navigation("Price");
+                    b.Navigation("DiscountPrice");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Image", b =>
@@ -266,11 +266,11 @@ namespace WebshopBackend.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("WebshopBackend.Models.Price", b =>
+            modelBuilder.Entity("WebshopBackend.Models.DiscountPrice", b =>
                 {
                     b.HasOne("WebshopBackend.Models.Product", "Product")
-                        .WithOne("Price")
-                        .HasForeignKey("WebshopBackend.Models.Price", "ProductId")
+                        .WithOne("DiscountPrice")
+                        .HasForeignKey("WebshopBackend.Models.DiscountPrice", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -311,7 +311,7 @@ namespace WebshopBackend.Migrations
                     b.Navigation("Publisher");
                 });
 
-            modelBuilder.Entity("WebshopBackend.Models.Price", b =>
+            modelBuilder.Entity("WebshopBackend.Models.DiscountPrice", b =>
                 {
                     b.Navigation("Discount");
                 });
@@ -320,7 +320,7 @@ namespace WebshopBackend.Migrations
                 {
                     b.Navigation("Image");
 
-                    b.Navigation("Price");
+                    b.Navigation("DiscountPrice");
 
                     b.Navigation("Stock");
                 });

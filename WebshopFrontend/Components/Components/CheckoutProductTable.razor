@@ -11,12 +11,12 @@
 else
 {
     <table class="checkout-table">
-        <caption>Products in cart</caption>
+        <caption>Boardgames in cart</caption>
         <thead>
             <tr>
-                <th>Product</th>
+                <th>Boardgame</th>
                 <th>ArNr</th>
-                <th>Price</th>
+                <th>DiscountPrice</th>
                 <th>Total</th>
                 <th>Quantity</th>
                 <th></th>
@@ -26,9 +26,9 @@ else
             @foreach (var cartItem in CartItems)
             {
                 <tr>
-                    <td data-label="Product">@cartItem.Name</td>
+                    <td data-label="Boardgame">@cartItem.Name</td>
                     <td data-label="ArNr">@cartItem.ArtNr</td>
-                    <td data-label="Price">@cartItem.Price</td>
+                    <td data-label="DiscountPrice">@cartItem.Price</td>
                     <td data-label="Total">@(cartItem.Quantity * cartItem.Price)</td>
                     <td data-label="Quantity">@cartItem.Quantity</td>
                     <td data-label="">

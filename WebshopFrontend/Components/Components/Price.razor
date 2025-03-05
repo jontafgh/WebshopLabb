@@ -1,11 +1,11 @@
 ﻿
 <div>
     <span class="@GetPriceClasses()" style="@_regularStyle">@(Product.Price.Regular)$</span>
-    <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Product.Price.Discount == null) ? "" : Product.Price.Discount.Price)$</span>
+    <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Product.Price.Discount == null) ? "" : Product.Price.Discount.DiscountPrice)$</span>
 </div>
 
 @code {
-    [Parameter] public required IProduct Product { get; set; }
+    [Parameter] public required ProductDto Product { get; set; }
     [Parameter] public int FontSizePx { get; set; } = 15;
 
     private string _regularStyle = "font-size: 15px;";

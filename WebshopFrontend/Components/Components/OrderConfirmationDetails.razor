@@ -7,9 +7,9 @@
     <caption>Order summary</caption>
     <thead>
         <tr>
-            <th>Product</th>
+            <th>Boardgame</th>
             <th>ArNr</th>
-            <th>Price</th>
+            <th>DiscountPrice</th>
             <th>Quantity</th>
         </tr>
     </thead>
@@ -17,9 +17,9 @@
         @foreach (var orderLine in Order.CartItems)
         {
             <tr>
-                <td data-label="Product">@orderLine.Name</td>
+                <td data-label="Boardgame">@orderLine.Name</td>
                 <td data-label="ArNr">@orderLine.ArtNr</td>
-                <td data-label="Price">@orderLine.Price</td>
+                <td data-label="DiscountPrice">@orderLine.Price</td>
                 <td data-label="Quantity">@orderLine.Quantity</td>
             </tr>
         }
