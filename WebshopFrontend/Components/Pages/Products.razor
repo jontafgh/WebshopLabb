@@ -1,8 +1,8 @@
 ﻿@page "/products"
 @rendermode InteractiveServer
-@using System.Reflection.Metadata.Ecma335
 @using WebshopFrontend.Components.Components
-@inject IHttpClientFactory Http
+@using WebshopFrontend.Services.Interfaces
+@inject IProductService ProductService
 
 
 <div class="product-flex-container">
@@ -26,13 +26,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBoardgames();
-    }
-
-    private async Task LoadBoardgames()
-    {
-        using var client = Http.CreateClient("WebshopMinimalApi");
-        _products = await client.GetFromJsonAsync<List<ProductDto>>("/products");
+        _products = await ProductService.GetProducts();
     }
 }
 

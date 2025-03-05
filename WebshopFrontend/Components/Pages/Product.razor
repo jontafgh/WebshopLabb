@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @using WebshopFrontend.Components.Components
 @using WebshopFrontend.Services.Interfaces
-@inject IBoardgameService BoardgameService
+@inject IProductService ProductService
 
 @if (_boardgame == null)
 {
@@ -11,7 +11,7 @@
 else
 {
     <div class="product-grid-container">
-        <ProductHeading Boardgame="_boardgame"></ProductHeading>
+        <ProductHeading Product="_boardgame.Product"></ProductHeading>
         <ProductImages Product="_boardgame.Product"></ProductImages>
         <ProductPrice Product="_boardgame.Product"></ProductPrice>
         <BoardgameDetails Boardgame="_boardgame"></BoardgameDetails>
@@ -26,6 +26,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _boardgame = await BoardgameService.GetBoardgameByArtNr(ArtNr);
+        _boardgame = await ProductService.GetBoardgameByArtNr(ArtNr);
     }
 }

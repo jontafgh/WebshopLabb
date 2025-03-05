@@ -39,7 +39,7 @@ public class Program
         builder.Services.AddScoped<ICartService, LocalStorageCartService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, MockOrderService>();
-        builder.Services.AddScoped<IBoardgameService, BoardgameService>();
+        builder.Services.AddScoped<IProductService, ProductService>();
 
         var app = builder.Build();
 

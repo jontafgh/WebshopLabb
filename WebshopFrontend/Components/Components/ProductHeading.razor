@@ -1,12 +1,11 @@
 ﻿<div class="product-grid-item-product padding-x padding-y">
-    <h1>@Boardgame.Product.Name</h1>
+    <h1>@Product.Name</h1>
     <hr/>
     <div class="text-gray">
-        <span>@Boardgame.Product.ArtNr</span>
-        <span>@Boardgame.Publisher.Name</span>
+        <span>@Product.ArtNr</span>
     </div>
 </div>
 
 @code {
-    [Parameter] public required BoardgameDto Boardgame { get; set; }
+    [Parameter] public required ProductDto Product { get; set; }
 }
