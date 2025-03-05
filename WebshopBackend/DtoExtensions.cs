@@ -5,41 +5,6 @@ namespace WebshopBackend;
 
 public static class DtoExtensions
 {
-    public static ProductDto ToProductDto(this Product product)
-    {
-        return new ProductDto
-        {
-            Id = product.Id,
-            ArtNr = product.ArtNr,
-            Name = product.Name,
-            Image = new ImageDto
-            {
-                ImageText = product.Image.ImageText,
-                ImageSmallUrl = product.Image.ImageSmallUrl,
-                ImageMediumUrl = product.Image.ImageMediumUrl,
-                ImageLargeUrl = product.Image.ImageLargeUrl
-            },
-            Price = new PriceDto
-            {
-                Regular = product.Price.Regular,
-                Discount = (product.Price.Discount == null) ? null : new DiscountDto
-                {
-                    DiscountPrice = product.Price.Discount.DiscountPrice,
-                    StartDate = product.Price.Discount.StartDate,
-                    EndDate = product.Price.Discount.EndDate
-                }
-            },
-            Stock = new StockDto
-            {
-                Quantity = product.Stock.Quantity,
-                NextRestock = (product.Stock.NextRestock == null) ? null : new RestockDto
-                {
-                    Quantity = product.Stock.NextRestock.Quantity,
-                    RestockDate = product.Stock.NextRestock.RestockDate
-                }
-            }
-        };
-    }
     public static Boardgame ToBoardgame(this BoardgameDto boardgameDto)
     {
         return new Boardgame

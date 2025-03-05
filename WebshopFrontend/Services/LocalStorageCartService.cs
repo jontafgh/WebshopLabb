@@ -52,16 +52,17 @@ namespace WebshopFrontend.Services
         public async Task<CartItemDto> GetCartItemDto(CartItemToAddDto cartItemToAdd)
         {
             var id = cartItemToAdd.ProductId;
-            var product = await _httpClient.GetFromJsonAsync<BoardgameDto>($"/boardgames/{id}");
+            var product = await _httpClient.GetFromJsonAsync<ProductDto>($"/products/{id}");
 
             return new CartItemDto
             {
                 Id = product!.Id,
                 ProductId = product!.Id,
                 CartId = cartItemToAdd.CartId,
-                Name = product.Product.Name,
-                ArtNr = product.Product.ArtNr,
-                Quantity = cartItemToAdd.Quantity
+                Name = product.Name,
+                ArtNr = product.ArtNr,
+                Quantity = cartItemToAdd.Quantity,
+                Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
             };
         }
     }

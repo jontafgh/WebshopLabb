@@ -47,7 +47,7 @@ namespace WebshopShared
     {
         public int Id { get; set; }
         public decimal Regular { get; set; }
-        public DiscountDto Discount { get; set; } = null!;
+        public DiscountDto? Discount { get; set; } = null!;
     }
 
     public class DiscountDto
@@ -62,7 +62,7 @@ namespace WebshopShared
     {
         public int Id { get; set; }
         public int Quantity { get; set; }
-        public RestockDto NextRestock { get; set; } = null!;
+        public RestockDto? NextRestock { get; set; } = null!;
     }
 
     public class RestockDto
