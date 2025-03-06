@@ -1,11 +1,12 @@
-﻿using WebshopFrontend.Services.Interfaces;
+﻿using System.Net.Http;
+using WebshopFrontend.Services.Interfaces;
 using WebshopShared;
 
 namespace WebshopFrontend.Services
 {
-    public class ProductService(HttpClient httpClient) : IProductService
+    public class ProductService(IHttpClientFactory httpClientFactory) : IProductService
     {
-        private readonly HttpClient _httpClient = httpClient;
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
 
         public async Task<List<ProductDto>> GetProducts()
         {

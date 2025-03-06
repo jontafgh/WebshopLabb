@@ -7,10 +7,10 @@ using static System.Net.WebRequestMethods;
 
 namespace WebshopFrontend.Services
 {
-    public class LocalStorageCartService(IJSRuntime js, HttpClient httpClient) : ICartService
+    public class LocalStorageCartService(IJSRuntime js, IHttpClientFactory httpClientFactory) : ICartService
     {
         private readonly IJSRuntime _js = js;
-        private readonly HttpClient _httpClient = httpClient;
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
 
         public async Task CreateCart(string userId)
         {

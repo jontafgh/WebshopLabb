@@ -1,0 +1,34 @@
+﻿@page "/profile"
+<h3>Profile</h3>
+
+<AuthorizeView>
+    <Authorized>
+        <p>Claims:</p>
+        <ul>
+            @foreach (var claim in _claims)
+            {
+                <li>@claim.Type: @claim.Value</li>
+            }
+        </ul>
+    </Authorized>
+    <NotAuthorized>
+        <p>You're not logged in.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private IEnumerable<Claim> _claims = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthenticationState == null)
+        {
+            return;
+        }
+
+        var authState = await AuthenticationState;
+        _claims = authState.User.Claims;
+    }
+}

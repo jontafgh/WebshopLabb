@@ -25,19 +25,6 @@ namespace WebshopBackend
                 return Results.Ok();
             }).RequireAuthorization();
 
-            app.MapPost("Account/userclaims", async (ClaimsPrincipal claims, WebshopContext context) =>
-            {
-                var user = await context.Users.FindAsync(claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier));
-                if (user == null) return Results.Unauthorized();
-                var userClaims = new UserClaimsDto
-                {
-                    Id = user.Id,
-                    UserName = user.UserName!,
-                    Email = user.Email!
-                };
-                return Results.Content(Convert.ToString(userClaims));
-            });
-
             app.MapPut("/Account/users/update", async (UserDto user, WebshopContext context) =>
             {
                 var dbUser = await context.Users.FindAsync(user.Id);
@@ -49,14 +36,6 @@ namespace WebshopBackend
                 await context.SaveChangesAsync();
                 return Results.Ok();
 
-            }).RequireAuthorization();
-
-            app.MapGet("/Account/users/{id}", async (string id, WebshopContext context) =>
-            {
-                var user = await context.Users.FindAsync(id);
-                if (user == null) return Results.NotFound();
-                var userDto = user.ToUserDto();
-                return Results.Ok(userDto);
             }).RequireAuthorization();
         }
     }

@@ -1,33 +1,48 @@
 ﻿@page "/register"
-@using WebshopFrontend.Services.Interfaces
 @rendermode InteractiveServer
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
-<label for="email">
-    Email:
-    <InputText id="email" @bind-value="@_registerUserDto.Email"></InputText>
-</label>
-<label for="password">
-    Password:
-    <InputText id="password" type="password" @bind-value="@_registerUserDto.Password"></InputText>
-</label>
-<button type="button" @onclick="RegisterUser">Sign in</button>
+<AuthorizeView>
+    <Authorized>
+        <h4>Already registered</h4>
+        <button type="button" @onclick="Logout">Log out</button>
+    </Authorized>
+    <NotAuthorized>
+        <h4>Register new user</h4>
+        <label for="email">
+            Email:
+            <InputText id="email" @bind-value="@_registerUserDto.Email"></InputText>
+        </label>
+        <label for="password">
+            Password:
+            <InputText id="password" type="password" @bind-value="@_registerUserDto.Password"></InputText>
+        </label>
+        <button type="button" @onclick="RegisterUser">Sign in</button>
+    </NotAuthorized>
+</AuthorizeView>
 
-@if (_success)
+@if (_registerLoginResponseDto.Succeeded)
 {
     GoToLoginPage();
 }
 else
 {
-    <p>@_message</p>
+    @foreach (var error in _registerLoginResponseDto.ErrorList)
+    {
+        <div>@error</div>
+    }
 }
 
 @code {
 
-    private RegisterUserDto _registerUserDto = new RegisterUserDto();
-    private string _message = string.Empty;
-    private bool _success = false;
+    private RegisterUserDto _registerUserDto = new();
+    private RegisterLoginResponseDto _registerLoginResponseDto = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UserService.CheckAuthenticatedAsync();
+    }
 
     private void GoToLoginPage()
     {
@@ -36,14 +51,13 @@ else
 
     private async Task RegisterUser()
     {
-        try
-        {
-            _success = await UserService.RegisterUser(_registerUserDto);
-        }
-        catch (Exception e)
-        {
-            _message = e.Message;
-        }
+        _registerLoginResponseDto = await UserService.RegisterAsync(_registerUserDto);
+    }
+
+    private async Task Logout()
+    {
+        _registerLoginResponseDto = new RegisterLoginResponseDto();
+        await UserService.LogoutAsync();
     }
 
 }
