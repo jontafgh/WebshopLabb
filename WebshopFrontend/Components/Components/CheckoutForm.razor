@@ -1,12 +1,4 @@
-﻿@rendermode InteractiveServer
-@using System.Text.Json
-@using WebshopFrontend.Services.Interfaces
-@using WebshopShared
-
-
-@inject IUserService UserService
-
-
+﻿@inject IUserService UserService
 
 <EditForm Model="User" OnValidSubmit="Submit" FormName="User">
     <ObjectGraphDataAnnotationsValidator />

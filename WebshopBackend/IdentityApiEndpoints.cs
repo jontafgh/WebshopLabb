@@ -11,13 +11,6 @@ namespace WebshopBackend
     {
         public static void MapMyIdentityApiEndpoints(this WebApplication app)
         {
-            app.MapGet("/Account/users/me", async (ClaimsPrincipal claims, WebshopContext context) =>
-            {
-                var userId = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-                var user = await context.Users.FindAsync(userId);
-                return user.ToUserDto();
-            }).RequireAuthorization();
-
             app.MapPost("Account/logout", async (SignInManager<WebshopUser> signInManager, [FromBody] object? empty) =>
             {
                 if (empty == null) return Results.Unauthorized();

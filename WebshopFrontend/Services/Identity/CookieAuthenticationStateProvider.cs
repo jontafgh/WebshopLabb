@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;

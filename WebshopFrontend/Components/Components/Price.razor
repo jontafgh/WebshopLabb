@@ -1,5 +1,4 @@
-﻿
-<div>
+﻿<div>
     <span class="@GetPriceClasses()" style="@_regularStyle">@(Product.Price.Regular)$</span>
     <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Product.Price.Discount == null) ? "" : Product.Price.Discount.DiscountPrice)$</span>
 </div>
