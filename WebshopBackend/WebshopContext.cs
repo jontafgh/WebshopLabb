@@ -28,6 +28,17 @@ namespace WebshopBackend
     }
     public class WebshopUser : IdentityUser
     {
-        
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public Address Address { get; set; } = null!;
+
+    }
+
+    public class Address
+    {
+        public string Street { get; set; } = null!;
+        public string PostalCode { get; set; } = null!;
+        public string City { get; set; } = null!;
+        public string Country { get; set; } = null!;
     }
 }

@@ -1,7 +1,5 @@
 ﻿@page "/login"
 @rendermode InteractiveServer
-@using System.Text
-@using System.Text.Json
 @using WebshopFrontend.Services.Interfaces
 @inject IHttpClientFactory HttpClientFactory
 @inject IUserService UserService
@@ -15,11 +13,11 @@ else
 
     <label for="email">
         Email:
-        <InputText id="email" @bind-value="@_registerUserDto.Email"></InputText>
+        <InputText id="email" @bind-value="@_loginDto.Email"></InputText>
     </label>
     <label for="password">
         Password:
-        <InputText id="password" type="password" @bind-value="@_registerUserDto.Password"></InputText>
+        <InputText id="password" type="password" @bind-value="@_loginDto.Password"></InputText>
     </label>
     <button type="button" @onclick="SignIn">Sign in</button>
 
@@ -27,30 +25,25 @@ else
 }
 
 @code {
-    private RegisterUserDto _registerUserDto = new RegisterUserDto();
+    private LoginDto _loginDto = new LoginDto();
     private bool _isLoggedIn = false;
     private string _message = string.Empty;
 
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoggedIn = await UserService.GetIfLoggedIn();
+    }
 
     private async Task SignIn()
     {
         try
         {
-            _isLoggedIn = await UserService.LogInUser(_registerUserDto);
+            _isLoggedIn = await UserService.LogInUser(_loginDto);
         }
         catch (Exception e)
         {
             _message = e.Message;
         }
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            using var client = HttpClientFactory.CreateClient("WebshopMinimalApi");
-            var response = await client.GetAsync("/Account/users/me");
-            _isLoggedIn = response.IsSuccessStatusCode;
-            StateHasChanged();
-        }
-    }
+    
 }

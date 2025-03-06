@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using WebshopShared;
 
 namespace WebshopBackend
 {
@@ -20,6 +21,19 @@ namespace WebshopBackend
                 await signInManager.SignOutAsync();
                 return Results.Ok();
             }).RequireAuthorization();
+
+            app.MapPost("Account/userclaims", async (ClaimsPrincipal claims, WebshopContext context) =>
+            {
+                var user = await context.Users.FindAsync(claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier));
+                if (user == null) return Results.Unauthorized();
+                var userClaims = new UserClaimsDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName!,
+                    Email = user.Email!
+                };
+                return Results.Content(Convert.ToString(userClaims));
+            });
         }
     }
 }
