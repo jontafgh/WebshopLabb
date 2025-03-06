@@ -1,5 +1,8 @@
 ﻿@rendermode InteractiveServer
+@using System.Text.Json
+@using WebshopFrontend.Services.Interfaces
 @using WebshopShared
+@inject IUserService UserService
 
 
 <EditForm Model="User" OnValidSubmit="Submit" FormName="User">
@@ -37,24 +40,6 @@
                 <ValidationMessage For="@(() => User.LastName)" />
             </div>
         </div>
-
-
-        <div class="form-flex-row">
-            <div class="form-flex-item">
-                <label for="email">
-                    Email:
-                </label>
-            </div>
-
-            <div class="form-flex-item">
-                <InputText class="input-text" id="email" @bind-Value="User.Email" />
-            </div>
-
-            <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.Email)" />
-            </div>
-        </div>
-
 
         <div class="form-flex-row">
             <div class="form-flex-item">
@@ -145,6 +130,11 @@
     </div>
 </EditForm>
 
+@if (_success)
+{
+    <p>Form submitted successfully</p>
+}
+
 
 @code {
 
@@ -152,9 +142,13 @@
 
     [Parameter] public EventCallback<UserDto> OnFormSubmit { get; set; }
 
-    private void Submit()
+    private bool _success = false;
+
+    private async Task Submit()
     {
-        User.Id = 1;
-        OnFormSubmit.InvokeAsync(User);
+        var currntUserInfo = await UserService.GetUserId();
+        var currentUser = JsonSerializer.Deserialize<UserDto>(currntUserInfo, JsonSerializerOptions.Web);
+        User.Id = currentUser.Id;
+        _success = await UserService.UpdateUserInfo(User);
     }
 }

@@ -12,7 +12,7 @@ namespace WebshopFrontend.Services
         private readonly IJSRuntime _js = js;
         private readonly HttpClient _httpClient = httpClient;
 
-        public async Task CreateCart(int userId)
+        public async Task CreateCart(string userId)
         {
             await _js.InvokeVoidAsync("localStorage.setItem", "cart", "[]");
         }
@@ -39,12 +39,12 @@ namespace WebshopFrontend.Services
             return await _js.InvokeAsync<CartItemDto>("GetItemFromLocalStorage", itemId);
         }
 
-        public async Task<List<CartItemDto>> GetAll(int userId)
+        public async Task<List<CartItemDto>> GetAll(string userId)
         {
            return await _js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
         }
 
-        public async Task ClearCart(int userId)
+        public async Task ClearCart(string userId)
         {
             await _js.InvokeVoidAsync("RemoveCartFromLocalStorage");
         }

@@ -42,5 +42,18 @@ namespace WebshopFrontend.Services
             var response = await _httpClient.GetAsync("/Account/users/me");
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<string> GetUserId()
+        {
+            var response = await _httpClient.GetAsync("/Account/users/me");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return response.IsSuccessStatusCode ? responseContent : throw new Exception($"Failed to get user id: {responseContent}");
+        }
+
+        public async Task<bool> UpdateUserInfo(UserDto userDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync("/Account/users/update", userDto);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

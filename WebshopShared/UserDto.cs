@@ -9,7 +9,7 @@ namespace WebshopShared
 {
     public class UserDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 2)]
         public string FirstName { get; set; }
@@ -17,10 +17,6 @@ namespace WebshopShared
         [Required]
         [StringLength(50, MinimumLength = 2)]
         public string LastName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Phone]
         public string PhoneNumber { get; set; }

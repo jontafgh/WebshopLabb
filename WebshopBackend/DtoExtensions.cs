@@ -5,6 +5,37 @@ namespace WebshopBackend;
 
 public static class DtoExtensions
 {
+    public static AddressDto ToAddressDto(this Address address)
+    {
+        return new AddressDto
+        {
+            Street = address.Street,
+            PostalCode = address.PostalCode,
+            City = address.City,
+            Country = address.Country
+        };
+    }
+    public static UserDto ToUserDto(this WebshopUser user)
+    {
+        return new UserDto
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = user.PhoneNumber,
+            Address = user.Address?.ToAddressDto() ?? new AddressDto()
+        };
+    }
+    public static Address ToAddress(this AddressDto addressDto)
+    {
+        return new Address
+        {
+            Street = addressDto.Street,
+            PostalCode = addressDto.PostalCode,
+            City = addressDto.City,
+            Country = addressDto.Country
+        };
+    }
     public static Boardgame ToBoardgame(this BoardgameDto boardgameDto)
     {
         return new Boardgame
