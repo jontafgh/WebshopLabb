@@ -1,0 +1,49 @@
+﻿@page "/register"
+@using WebshopFrontend.Services.Interfaces
+@rendermode InteractiveServer
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<label for="email">
+    Email:
+    <InputText id="email" @bind-value="@_registerUserDto.Email"></InputText>
+</label>
+<label for="password">
+    Password:
+    <InputText id="password" type="password" @bind-value="@_registerUserDto.Password"></InputText>
+</label>
+<button type="button" @onclick="RegisterUser">Sign in</button>
+
+@if (_success)
+{
+    GoToLoginPage();
+}
+else
+{
+    <p>@_message</p>
+}
+
+@code {
+
+    private RegisterUserDto _registerUserDto = new RegisterUserDto();
+    private string _message = string.Empty;
+    private bool _success = false;
+
+    private void GoToLoginPage()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private async Task RegisterUser()
+    {
+        try
+        {
+            _success = await UserService.RegisterUser(_registerUserDto);
+        }
+        catch (Exception e)
+        {
+            _message = e.Message;
+        }
+    }
+
+}

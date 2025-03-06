@@ -2,6 +2,8 @@ using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebshopBackend.Models;
 using WebshopShared;
@@ -40,13 +42,8 @@ namespace WebshopBackend
             app.MapMinimalApiEndpoints();
 
             app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
-
-            app.MapGet("/Account/users/me", async (ClaimsPrincipal claims, WebshopContext context) =>
-            {
-                var userId = claims.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-                return await context.Users.FindAsync(userId);
-            }).RequireAuthorization();
-
+            app.MapMyIdentityApiEndpoints();
+            
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

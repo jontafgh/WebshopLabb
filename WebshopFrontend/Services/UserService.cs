@@ -1,0 +1,33 @@
+﻿using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
+using WebshopFrontend.Services.Interfaces;
+using WebshopShared;
+
+namespace WebshopFrontend.Services
+{
+    public class UserService(HttpClient httpClient) : IUserService
+    {
+        private readonly HttpClient _httpClient = httpClient;
+
+        public async Task<bool> RegisterUser(RegisterUserDto user)
+        {
+            var json = JsonSerializer.Serialize(user);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("/Account/register", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return response.IsSuccessStatusCode ? true : throw new Exception($"Failed to register user: {responseContent}"); ;
+        }
+
+        public async Task<bool> LogInUser(RegisterUserDto user)
+        {
+            var json = JsonSerializer.Serialize(user);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("/Account/login?useCookies=true", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return response.IsSuccessStatusCode ? true : throw new Exception($"Failed to login user: {responseContent}");
+        }
+    }
+}

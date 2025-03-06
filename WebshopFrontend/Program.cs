@@ -40,6 +40,7 @@ public class Program
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, MockOrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
         var app = builder.Build();
 

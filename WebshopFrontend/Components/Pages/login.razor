@@ -1,0 +1,56 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+@using System.Text
+@using System.Text.Json
+@using WebshopFrontend.Services.Interfaces
+@inject IHttpClientFactory HttpClientFactory
+@inject IUserService UserService
+
+@if (_isLoggedIn)
+{
+    <p>Logged in</p>
+}
+else
+{    <p>Log in:</p>
+
+    <label for="email">
+        Email:
+        <InputText id="email" @bind-value="@_registerUserDto.Email"></InputText>
+    </label>
+    <label for="password">
+        Password:
+        <InputText id="password" type="password" @bind-value="@_registerUserDto.Password"></InputText>
+    </label>
+    <button type="button" @onclick="SignIn">Sign in</button>
+
+    <p>@_message</p>
+}
+
+@code {
+    private RegisterUserDto _registerUserDto = new RegisterUserDto();
+    private bool _isLoggedIn = false;
+    private string _message = string.Empty;
+
+
+    private async Task SignIn()
+    {
+        try
+        {
+            _isLoggedIn = await UserService.LogInUser(_registerUserDto);
+        }
+        catch (Exception e)
+        {
+            _message = e.Message;
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            using var client = HttpClientFactory.CreateClient("WebshopMinimalApi");
+            var response = await client.GetAsync("/Account/users/me");
+            _isLoggedIn = response.IsSuccessStatusCode;
+            StateHasChanged();
+        }
+    }
+}
