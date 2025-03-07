@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using System.Net.Http;
 using System.Text.Json;
 using WebshopFrontend.Services.Interfaces;
@@ -12,19 +13,21 @@ namespace WebshopFrontend.Services
         private readonly IJSRuntime _js = js;
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
         public int CartId { get; set; }
+        public string UserId { get; set; } = string.Empty;
+        public bool Authenticated { get; set; }
         private string _cartName = string.Empty;
 
-        public async Task CreateCart(string userId)
+        public async Task CreateCart()
         {
             CartId = 1;
-            _cartName = $"{userId}-cart{CartId}";
+            _cartName = $"-cart{CartId}";
             await _js.InvokeVoidAsync("localStorage.setItem", $"{_cartName}", "[]");
         }
 
-        public async Task<bool> CartExists(string userId)
+        public async Task<int> GetCartId()
         {
-            _cartName = $"{userId}-cart{CartId}";
-            return await _js.InvokeAsync<bool>("GetIfKeyExistsInLocalStorage", _cartName);
+            _cartName = $"-cart{CartId}";
+            return await _js.InvokeAsync<int>("GetIfKeyExistsInLocalStorage", _cartName);
         }
 
         public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
@@ -49,14 +52,19 @@ namespace WebshopFrontend.Services
             return await _js.InvokeAsync<CartItemDto>("GetItemFromLocalStorage", itemId);
         }
 
-        public async Task<List<CartItemDto>> GetAll(int cartId)
+        public async Task<List<CartItemDto>> GetAll()
         {
            return await _js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
         }
 
-        public async Task ClearCart(int cartId)
+        public async Task ClearCart()
         {
             await _js.InvokeVoidAsync("RemoveCartFromLocalStorage");
+        }
+
+        public Task<CartItemDto> GetCartItemByProductAndCart(int cartId, int productId)
+        {
+            throw new System.NotImplementedException();
         }
 
         public async Task<CartItemDto> GetCartItemDto(CartItemToAddDto cartItemToAdd)

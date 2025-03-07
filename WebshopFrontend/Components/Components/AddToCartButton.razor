@@ -10,50 +10,56 @@
 @code {
     [Parameter] public required int ProductId { get; set; }
     [Parameter] public required int Stock { get; set; }
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    // [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private const int Quantity = 1;
-    private string _userId = string.Empty;
-    private bool? _isAuthenticated;
+    // private string _userId = string.Empty;
+    // private int _cartId;
+    // private bool? _isAuthenticated;
 
     protected override async Task OnInitializedAsync()
     {
 
-        await GetUserId();
+        // await GetUserId();
     }
 
     private async Task AddToCart()
     {
-        if(AuthenticationState != null)
-        {
-            var authState = await AuthenticationState;
-            _isAuthenticated = authState.User.Identity?.IsAuthenticated;
+        var cartItem = await CartService.AddItem(new CartItemToAddDto { ProductId = ProductId, Quantity = Quantity});
+        if (cartItem.Id != 0) CartCounterService.AddToCount(Quantity);
+        
+        // if(AuthenticationState != null)
+        // {
+        //     var authState = await AuthenticationState;
+        //     _isAuthenticated = authState.User.Identity?.IsAuthenticated;
 
-            var claims = authState.User.Claims;
-            _userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        }
-        if (CartService.CartId == 0 && _isAuthenticated == true)
-        {
-            await CartService.CreateCart(_userId);
-        }
-        if (_isAuthenticated == true && CartService.CartId > 0)
-        {
-            var cartItem = await CartService.AddItem(new CartItemToAddDto { ProductId = ProductId, Quantity = Quantity, CartId = CartService.CartId});
-            CartCounterService.AddToCount(Quantity);
-        }
+        //     var claims = authState.User.Claims;
+        //     _userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+        //     _cartId = Convert.ToInt32(claims.FirstOrDefault(c => c.Type == "CartId")?.Value);
+        // }
+        // if (CartService.CartId == 0 && _isAuthenticated == true)
+        // {
+        //     await CartService.CreateCart(_userId);
+        // }
+        // if (_isAuthenticated == true && CartService.CartId > 0)
+        // {
+        //     var cartItem = await CartService.AddItem(new CartItemToAddDto { ProductId = ProductId, Quantity = Quantity, CartId = CartService.CartId});
+        //     CartCounterService.AddToCount(Quantity);
+        // }
     }
 
-    private async Task GetUserId()
-    {
-        if (AuthenticationState == null)
-        {
-            return;
-        }
+    // private async Task GetUserId()
+    // {
+    //     if (AuthenticationState == null)
+    //     {
+    //         return;
+    //     }
 
-        var authState = await AuthenticationState;
-        var claims = authState.User.Claims;
-        _userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-    }
+    //     var authState = await AuthenticationState;
+    //     var claims = authState.User.Claims;
+    //     _userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+    // }
 
     private string GetButtonText() => Stock > 0 ? "Buy" : "Reserve";
 

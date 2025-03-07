@@ -36,7 +36,7 @@ namespace WebshopBackend
         public string? LastName { get; set; }
         public int? AddressId { get; set; }
         public Address? Address { get; set; }
-        public List<Cart> Carts { get; set; } = [];
+        public Cart? Cart { get; set; }
     }
 
     public class Address

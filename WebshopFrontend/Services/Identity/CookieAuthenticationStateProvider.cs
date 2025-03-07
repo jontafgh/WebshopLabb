@@ -7,14 +7,14 @@ using WebshopShared;
 
 namespace WebshopFrontend.Services.Identity
 {
-    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory) : AuthenticationStateProvider, IUserService
+    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory, ICartService cartService) : AuthenticationStateProvider, IUserService
     {
-        private readonly JsonSerializerOptions _jsonSerializerOptions =
-            new()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            };
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
+        private readonly ICartService _cartService = cartService;
         private bool _authenticated = false;
         private readonly ClaimsPrincipal _unauthenticated = new(new ClaimsIdentity());
 
@@ -38,13 +38,13 @@ namespace WebshopFrontend.Services.Identity
                     new Claim(ClaimTypes.Name, userInfo.Email),
                     new Claim(ClaimTypes.Email, userInfo.Email),
                     new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
-                    new Claim("CurrentCardId", JsonSerializer.Serialize(userInfo.CurrentCardId)),
-                    new Claim("CartIds", JsonSerializer.Serialize(userInfo.CartIds))
+                    new Claim("CartId", JsonSerializer.Serialize(userInfo.CartId))
                 };
 
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                 user = new ClaimsPrincipal(id);
                 _authenticated = true;
+                SetCartUser(userInfo.CartId, userInfo.UserId);
             }
             catch (Exception e)
             {
@@ -119,6 +119,13 @@ namespace WebshopFrontend.Services.Identity
         {
             await GetAuthenticationStateAsync();
             return _authenticated;
+        }
+
+        private void SetCartUser(int cartId, string userId)
+        {
+            _cartService.CartId = cartId;
+            _cartService.UserId = userId;
+            _cartService.Authenticated = _authenticated;
         }
     }
 }

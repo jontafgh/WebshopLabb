@@ -1,17 +1,21 @@
-﻿using WebshopShared;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using WebshopShared;
 
 namespace WebshopFrontend.Services.Interfaces
 {
     public interface ICartService
     {
+        public string UserId { get; set; }
         public int CartId { get; set; }
-        Task CreateCart(string userId);
+        public bool Authenticated { get; set; }
+        Task CreateCart();
         Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd);
         Task<CartItemDto> UpdateItem(CartItemToUpdateDto cartItemToUpdate);
         Task<CartItemDto> RemoveItem(int itemId);
         Task<CartItemDto> GetItem(int itemId);
-        Task<List<CartItemDto>> GetAll(int cartId);
-        Task ClearCart(int cartId);
-        Task<bool> CartExists(string userId);
+        Task<List<CartItemDto>> GetAll();
+        Task ClearCart();
+        Task<int> GetCartId();
+        Task<CartItemDto> GetCartItemByProductAndCart(int cartId, int productId);
     }
 }

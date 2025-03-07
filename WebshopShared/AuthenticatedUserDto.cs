@@ -10,7 +10,6 @@ namespace WebshopShared
     {
         public string UserId { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public int CurrentCardId { get; set; }
-        public List<int> CartIds { get; set; } = [];
+        public int CartId { get; set; }
     }
 }

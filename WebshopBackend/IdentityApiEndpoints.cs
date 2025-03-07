@@ -35,7 +35,7 @@ namespace WebshopBackend
             {
                 var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 var user = await context.Users.Where(u => u.Id == userId)
-                    .Include(u => u.Carts)
+                    .Include(u => u.Cart)
                     .FirstOrDefaultAsync();
                 if (user == null) return Results.NotFound();
 
@@ -43,7 +43,7 @@ namespace WebshopBackend
                 {
                     UserId = user.Id,
                     Email = user.Email ?? string.Empty,
-                    CartIds = user.Carts.Select(c => c.Id).ToList()
+                    CartId = user.Cart?.Id ?? 0,
                 };
                 return Results.Ok(authenticatedUserDto);
 
