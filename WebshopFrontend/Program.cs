@@ -30,13 +30,8 @@ public class Program
             UseCookies = true,
             CookieContainer = new CookieContainer()
         });
-
-        //builder.Services.AddScoped<ICartService, LocalStorageCartService>();
+        
         builder.Services.AddScoped<ICartService, CartService>();
-
-        //builder.Services.AddKeyedScoped<ICartService, LocalStorageCartService>("LocalStorage");
-        //builder.Services.AddKeyedScoped<ICartService, CartService>("Api");
-
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, MockOrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();

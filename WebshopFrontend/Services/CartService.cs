@@ -1,21 +1,21 @@
-﻿using System.Diagnostics.Contracts;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
+﻿using Microsoft.JSInterop;
+using System.Text;
 using System.Text.Json;
-using WebshopFrontend.Services.Identity;
 using WebshopFrontend.Services.Interfaces;
 using WebshopShared;
 
 namespace WebshopFrontend.Services
 {
-    public class CartService(IHttpClientFactory httpClientFactory) : ICartService
+    public class CartService(IHttpClientFactory httpClientFactory, IJSRuntime js, ICounterService counterService) : ICartService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
+        private readonly IJSRuntime _js = js;
+        private readonly ICounterService _counterService = counterService;
         public int CartId { get; set; }
         public string UserId { get; set; } = string.Empty;
         public bool Authenticated { get; set; }
+
+        private const string LocalCartName = "cart";
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
@@ -26,16 +26,12 @@ namespace WebshopFrontend.Services
         {
             if (Authenticated && CartId == 0)
             {
-                CartId = await GetCartId();
-                if (CartId == 0)
+                var result = await _httpClient.PostAsJsonAsync("/cart", new CreateCartDto { UserId = UserId });
+                if (result.IsSuccessStatusCode)
                 {
-                    var result = await _httpClient.PostAsJsonAsync("/cart", new CreateCartDto { UserId = UserId });
-                    if (result.IsSuccessStatusCode)
-                    {
-                        var cartJson = await result.Content.ReadAsStringAsync();
-                        var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
-                        if (cart != null) CartId = cart.Id;
-                    }
+                    var cartJson = await result.Content.ReadAsStringAsync();
+                    var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
+                    if (cart != null) CartId = cart.Id;
                 }
             }
         }
@@ -43,80 +39,87 @@ namespace WebshopFrontend.Services
         public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
         {
             await CreateCart();
-
-            if (!Authenticated) return new CartItemDto();
-            cartItemToAdd.CartId = CartId;
-
-            var existingItem = await GetCartItemByProductAndCart(cartItemToAdd.CartId, cartItemToAdd.ProductId);
-            if (existingItem.Id != 0)
-            {
-                var updatedExistingItem = await UpdateItem(new CartItemToUpdateDto { Id = existingItem.Id, Quantity = existingItem.Quantity + 1 });
-                return updatedExistingItem;
-            }
-
-            var result = await _httpClient.PostAsJsonAsync("/cart/cartitem", cartItemToAdd);
-            if (!result.IsSuccessStatusCode) return new CartItemDto();
-
-            var cartItemJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<CartItemDto>(cartItemJson, _jsonSerializerOptions) ?? new CartItemDto();
+            var cartItem = await GetCartItemDto(cartItemToAdd);
+            await _js.InvokeVoidAsync("AddItemToLocalStorage", cartItem);
+            return cartItem;
         }
 
         public async Task<CartItemDto> UpdateItem(CartItemToUpdateDto cartItemToUpdate)
         {
-            var result = await _httpClient.PutAsJsonAsync("/cart/cartitem", cartItemToUpdate);
-            if (!result.IsSuccessStatusCode) return new CartItemDto();
-            var cartItemJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<CartItemDto>(cartItemJson, _jsonSerializerOptions) ?? new CartItemDto();
+            return await _js.InvokeAsync<CartItemDto>("UpdateItemInLocalStorage", cartItemToUpdate);
         }
 
         public async Task<CartItemDto> RemoveItem(int itemId)
         {
-            var result = await _httpClient.DeleteAsync($"/cart/cartitem/{itemId}");
-            if (!result.IsSuccessStatusCode) return new CartItemDto();
-            var cartItemJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<CartItemDto>(cartItemJson, _jsonSerializerOptions) ?? new CartItemDto();
-        }
-
-        public async Task<CartItemDto> GetItem(int itemId)
-        {
-            var result = await _httpClient.GetAsync($"/cart/cartitem/{itemId}");
-            if (!result.IsSuccessStatusCode) return new CartItemDto();
-            var cartItemJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<CartItemDto>(cartItemJson, _jsonSerializerOptions) ?? new CartItemDto();
-
+            return await _js.InvokeAsync<CartItemDto>("RemoveItemFromLocalStorage", itemId);
         }
 
         public async Task<List<CartItemDto>> GetAll()
         {
-            if (CartId == 0 && Authenticated)
-            {
-                CartId = await GetCartId();
-            }
+            var cartItems = await _js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
+            await SetDbCart(cartItems);
+            return cartItems;
+        }
+
+        public async Task OnLogin()
+        {
+            await CreateCart();
+            await SetLocalStorageCart();
+            var dbCart = await GetDbCart();
+            _counterService.SetCount(dbCart.Sum(ci => ci.Quantity));
+        }
+        public async Task OnLogout()
+        {
+            await GetAll();
+            await ClearLocalStorage();
+            _counterService.SetCount(0);
+        }
+
+        public async Task ClearLocalStorage()
+        {
+            await _js.InvokeVoidAsync("RemoveCartFromLocalStorage");
+        }
+
+        public async Task<List<CartItemDto>> GetDbCart()
+        {
+            if (CartId == 0) return [];
             var result = await _httpClient.GetAsync($"/cart/{CartId}/cartitems");
-            if (!result.IsSuccessStatusCode) return [];
+            var content = await result.Content.ReadAsStreamAsync();
+            return JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
+        }
+        
+        public async Task SetDbCart(List<CartItemDto> cartItems)
+        {
+            if (CartId == 0) return;
+            var json = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var result = await _httpClient.PutAsync($"/cart/{CartId}", content);
+        }
+
+        public async Task SetLocalStorageCart()
+        {
+            if (CartId == 0) return;
+            var result = await _httpClient.GetAsync($"/cart/{CartId}/cartitems");
+            if (!result.IsSuccessStatusCode) return;
             var cartItemsJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<CartItemDto>>(cartItemsJson, _jsonSerializerOptions) ?? [];
+            await _js.InvokeVoidAsync("localStorage.setItem", $"{LocalCartName}", cartItemsJson);
         }
 
-        public async Task ClearCart()
+        public async Task<CartItemDto> GetCartItemDto(CartItemToAddDto cartItemToAdd)
         {
-            var result = await _httpClient.DeleteAsync($"/cart/{UserId}");
-        }
+            var id = cartItemToAdd.ProductId;
+            var product = await _httpClient.GetFromJsonAsync<ProductDto>($"/products/{id}");
 
-        public async Task<int> GetCartId()
-        {
-            var result = await _httpClient.GetAsync($"/cart/{UserId}");
-            if (!result.IsSuccessStatusCode) return 0;
-            var resultJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<int>(resultJson, _jsonSerializerOptions);
-        }
-
-        public async Task<CartItemDto> GetCartItemByProductAndCart(int cartId, int productId)
-        {
-            var result = await _httpClient.GetAsync($"/cart/{cartId}/product/{productId}/");
-            if (!result.IsSuccessStatusCode) return new CartItemDto();
-            var cartItemJson = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<CartItemDto>(cartItemJson, _jsonSerializerOptions) ?? new CartItemDto();
+            return new CartItemDto
+            {
+                Id = product!.Id,
+                ProductId = product!.Id,
+                CartId = CartId,
+                Name = product.Name,
+                ArtNr = product.ArtNr,
+                Quantity = cartItemToAdd.Quantity,
+                Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
+            };
         }
     }
 }

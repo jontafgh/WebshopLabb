@@ -12,10 +12,10 @@ namespace WebshopFrontend.Services.Interfaces
         Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd);
         Task<CartItemDto> UpdateItem(CartItemToUpdateDto cartItemToUpdate);
         Task<CartItemDto> RemoveItem(int itemId);
-        Task<CartItemDto> GetItem(int itemId);
         Task<List<CartItemDto>> GetAll();
-        Task ClearCart();
-        Task<int> GetCartId();
-        Task<CartItemDto> GetCartItemByProductAndCart(int cartId, int productId);
+        Task SetLocalStorageCart();
+        Task ClearLocalStorage();
+        Task OnLogin();
+        Task OnLogout();
     }
 }

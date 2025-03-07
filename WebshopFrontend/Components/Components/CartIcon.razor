@@ -21,9 +21,9 @@
         {
             var cart = await CartService.GetAll();
             CounterService.SetCount(cart.Sum(c => c.Quantity));
+            _noOfItemsInCart = CounterService.GetCount();
         }
     }
-
 
     private async void UpdateCartCounter(object? sender, int newCount)
     {

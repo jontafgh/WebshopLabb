@@ -43,8 +43,11 @@ namespace WebshopFrontend.Services.Identity
 
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                 user = new ClaimsPrincipal(id);
-                _authenticated = true;
+
                 SetCartUser(userInfo.CartId, userInfo.UserId);
+                if (!_authenticated) await _cartService.OnLogin();
+                _authenticated = true;
+                _cartService.Authenticated = _authenticated;
             }
             catch (Exception e)
             {
@@ -106,6 +109,8 @@ namespace WebshopFrontend.Services.Identity
             var response = await _httpClient.PostAsync("/Account/logout", emptyContent);
             var responseContent = await response.Content.ReadAsStringAsync();
 
+            await _cartService.OnLogout();
+
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
@@ -125,7 +130,6 @@ namespace WebshopFrontend.Services.Identity
         {
             _cartService.CartId = cartId;
             _cartService.UserId = userId;
-            _cartService.Authenticated = _authenticated;
         }
     }
 }

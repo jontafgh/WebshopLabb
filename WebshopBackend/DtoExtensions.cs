@@ -27,6 +27,16 @@ public static class DtoExtensions
             CartId = cartItemToAddDto.CartId
         };
     }
+
+    public static CartItem ToCartItem(this CartItemDto cartItemDto)
+    {
+        return new CartItem
+        {
+            ProductId = cartItemDto.ProductId,
+            CartId = cartItemDto.CartId,
+            Quantity = cartItemDto.Quantity
+        };
+    }
     public static Cart ToCart(this CreateCartDto createCartDto)
     {
         return new Cart

@@ -1,4 +1,5 @@
-﻿function AddItemToLocalStorage(item) {
+﻿
+function AddItemToLocalStorage(item) {
     var cart = GetCartFromLocalStorage();
 
     if (ItemExistsInLocalStorage(item.id)) {
