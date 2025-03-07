@@ -11,6 +11,6 @@ namespace WebshopFrontend.Services.Interfaces
         Task<CartItemDto> GetItem(int itemId);
         Task<List<CartItemDto>> GetAll(string userId);
         Task ClearCart(string userId);
-
+        Task<bool> CartExists(string userId);
     }
 }

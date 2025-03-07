@@ -22,8 +22,8 @@ namespace WebshopFrontend.Services.Identity
         {
             _authenticated = false;
             var user = _unauthenticated;
-
-            var userResponse = await _httpClient.GetAsync("Account/manage/info");
+            
+            var userResponse = await _httpClient.GetAsync("/Account/users/me");
             try
             {
                 userResponse.EnsureSuccessStatusCode();
@@ -36,11 +36,10 @@ namespace WebshopFrontend.Services.Identity
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userInfo.Email),
-                    new Claim(ClaimTypes.Email, userInfo.Email)
+                    new Claim(ClaimTypes.Email, userInfo.Email),
+                    new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
+                    new Claim("CartIds", JsonSerializer.Serialize(userInfo.CartIds))
                 };
-                claims.AddRange(
-                    userInfo.Claims.Where(c => c.Key != ClaimTypes.Name && c.Key != ClaimTypes.Email)
-                        .Select(c => new Claim(c.Key, c.Value)));
 
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                 user = new ClaimsPrincipal(id);

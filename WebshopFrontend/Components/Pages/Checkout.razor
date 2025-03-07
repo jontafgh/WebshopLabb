@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject ICartService CartService
 @inject IOrderService OrderService
+@inject IUserService UserService
 
 <h3>Checkout</h3>
 
@@ -9,19 +10,46 @@
     <CheckoutProductTable />
 </div>
 
-<div>
-    <CheckoutForm OnFormSubmit="OnFormSubmitted" />
-</div>
+<AuthorizeView>
+    <Authorized>
+        <div>
+            <UserDetailsForm OnFormSubmit="OnFormSubmitted" />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div>
+            <p>Please log in to continue</p>
+            <LoginBox />
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
     private OrderDto _order;
 
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
     private async Task OnFormSubmitted(UserDto user)
     {
-        await CreateOrder(user);
-        await CartService.ClearCart(user.Id);
-        await OrderService.AddOrder(_order);
-        NavigationManager.NavigateTo("/orderconfirmation");
+        user.Id = await GetUserId() ?? string.Empty;
+        await UserService.UpdateUserInfo(user);
+
+        // await CreateOrder(user);
+        // await CartService.ClearCart(user.Id);
+        // await OrderService.AddOrder(_order);
+        // NavigationManager.NavigateTo("/orderconfirmation");
+    }
+
+    private async Task<string?> GetUserId()
+    {
+        if (AuthenticationState == null)
+        {
+            return null;
+        }
+        var authState = await AuthenticationState;
+        return authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
     }
 
     private async Task CreateOrder(UserDto user)

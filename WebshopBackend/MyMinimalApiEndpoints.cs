@@ -84,11 +84,79 @@ namespace WebshopBackend
                 var boardgame = boardgameDto.ToBoardgame();
                 db.Boardgames.Add(boardgame);
                 await db.SaveChangesAsync();
-
                 return Results.Created($"/boardgames/{boardgame.Id}", boardgame);
             });
 
-            
+            app.MapPost("/cart", async (CreateCartDto createCartDto, WebshopContext db) =>
+            {
+                var cart = createCartDto.ToCart();
+                db.Carts.Add(cart);
+                await db.SaveChangesAsync();
+                return Results.Created($"/cart/{cart.Id}", cart);
+            });
+
+            app.MapPost("/cart/cartitem", async (CartItemToAddDto cartItemToAddDto, WebshopContext db) =>
+            {
+                var cartItem = cartItemToAddDto.ToCartItem();
+                db.CartItems.Add(cartItem);
+                await db.SaveChangesAsync();
+                return Results.Created($"/cart/cartitem/{cartItem.Id}", cartItem);
+            });
+
+            app.MapPut("/cart/cartitem", async (CartItemToUpdateDto cartItemToUpdateDto, WebshopContext db) =>
+            {
+                var cartItem = await db.CartItems.FindAsync(cartItemToUpdateDto.Id);
+                if (cartItem is null)
+                {
+                    return Results.NotFound();
+                }
+                cartItem.Quantity = cartItemToUpdateDto.Quantity;
+                await db.SaveChangesAsync();
+                return Results.Ok(cartItem);
+            });
+
+            app.MapDelete("/cart/cartitem", async (int id, WebshopContext db) =>
+            {
+                var cartItem = await db.CartItems.FindAsync(id);
+                if (cartItem is null)
+                {
+                    return Results.NotFound();
+                }
+                db.CartItems.Remove(cartItem);
+                await db.SaveChangesAsync();
+                return Results.Ok(cartItem);
+            });
+
+            app.MapGet("/cart/{id:int}", async (int id, WebshopContext db) =>
+            {
+                var cart = await db.Carts.Include(c => c.CartItems)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+                return cart is not null
+                    ? Results.Ok(cart)
+                    : Results.NotFound();
+            });
+
+            app.MapGet("/cart/{userId}", async (string userId, WebshopContext db) =>
+            {
+                var cart = await db.Carts.Include(c => c.CartItems)
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
+                return cart is not null
+                    ? Results.Ok(cart)
+                    : Results.NotFound();
+            });
+
+            app.MapDelete("/cart", async (int id, WebshopContext db) =>
+            {
+                var cart = await db.Carts.FindAsync(id);
+                if (cart is null)
+                {
+                    return Results.NotFound();
+                }
+                db.Carts.Remove(cart);
+                await db.SaveChangesAsync();
+                return Results.Ok(cart);
+            });
+
         }
     }
 }

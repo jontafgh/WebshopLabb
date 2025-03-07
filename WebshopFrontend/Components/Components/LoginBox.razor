@@ -1,12 +1,10 @@
-﻿@page "/login"
-@inject IUserService UserService
+﻿@inject IUserService UserService
 
 <AuthorizeView>
     <Authorized>
         <div>You're logged in as @context.User.Identity?.Name.</div>
     </Authorized>
     <NotAuthorized>
-        <p>Log in:</p>
         <label for="email">
             Email:
             <InputText id="email" @bind-value="@_loginDto.Email"></InputText>
@@ -15,7 +13,7 @@
             Password:
             <InputText id="password" type="password" @bind-value="@_loginDto.Password"></InputText>
         </label>
-        <button type="button" @onclick="LogIn">Sign in</button>
+        <button type="button" @onclick="LogIn">Log In</button>
 
         @foreach (var error in _registerLoginResponseDto.ErrorList)
         {
@@ -28,14 +26,16 @@
     private LoginDto _loginDto = new();
     private RegisterLoginResponseDto _registerLoginResponseDto = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        //await UserService.CheckAuthenticatedAsync();
-    }
+    [Parameter] public EventCallback OnLogin { get; set; }
 
     private async Task LogIn()
     {
         _registerLoginResponseDto = await UserService.LoginAsync(_loginDto);
+
+        if (_registerLoginResponseDto.Succeeded)
+        {
+            await OnLogin.InvokeAsync();
+        }
     }
 
 }

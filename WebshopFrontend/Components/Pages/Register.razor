@@ -37,12 +37,7 @@ else
 
     private RegisterUserDto _registerUserDto = new();
     private RegisterLoginResponseDto _registerLoginResponseDto = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await UserService.CheckAuthenticatedAsync();
-    }
-
+    
     private void GoToLoginPage()
     {
         NavigationManager.NavigateTo("/login");

@@ -125,25 +125,14 @@
     </div>
 </EditForm>
 
-@if (_success)
-{
-    <p>Form submitted successfully</p>
-}
-
-
 @code {
 
     [SupplyParameterFromForm] public UserDto User { get; set; } = new UserDto();
 
     [Parameter] public EventCallback<UserDto> OnFormSubmit { get; set; }
 
-    private bool _success = false;
-
     private async Task Submit()
     {
-        //var currntUserInfo = await UserService.GetUserId();
-        //var currentUser = JsonSerializer.Deserialize<UserDto>(currntUserInfo, JsonSerializerOptions.Web);
-        // User.Id = currentUser.Id;
-        // _success = await UserService.UpdateUserInfo(User);
+        await OnFormSubmit.InvokeAsync(User);
     }
 }

@@ -57,3 +57,7 @@ function ItemExistsInLocalStorage(itemId) {
 function GetCartTotalQuantityFromLocalStorage() {
     return GetCartFromLocalStorage().length;
 }
+
+function GetIfKeyExistsInLocalStorage(key) {
+    return localStorage.getItem(key) !== null;
+}

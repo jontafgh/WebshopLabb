@@ -16,6 +16,10 @@ namespace WebshopBackend
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<Restock> Restocks { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,13 +34,15 @@ namespace WebshopBackend
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public Address? Address { get; set; } = null!;
-
+        public int? AddressId { get; set; }
+        public Address? Address { get; set; }
+        public List<Cart> Carts { get; set; } = [];
     }
 
     public class Address
     {
         public int Id { get; set; }
+        public List<WebshopUser> Users { get; set; } = [];
         public string Street { get; set; } = null!;
         public string PostalCode { get; set; } = null!;
         public string City { get; set; } = null!;

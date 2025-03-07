@@ -30,6 +30,26 @@ namespace WebshopBackend
                 return Results.Ok();
 
             }).RequireAuthorization();
+
+            app.MapGet("/Account/users/me", async (ClaimsPrincipal claims, WebshopContext context) =>
+            {
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var user = await context.Users.Where(u => u.Id == userId)
+                    .Include(u => u.Carts)
+                    .FirstOrDefaultAsync();
+                if (user == null) return Results.NotFound();
+
+                var authenticatedUserDto = new AuthenticatedUserDto
+                {
+                    UserId = user.Id,
+                    Email = user.Email ?? string.Empty,
+                    CartIds = user.Carts.Select(c => c.Id).ToList()
+                };
+                return Results.Ok(authenticatedUserDto);
+
+            }).RequireAuthorization();
+
+
         }
     }
 }

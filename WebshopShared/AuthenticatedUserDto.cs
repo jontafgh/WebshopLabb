@@ -8,8 +8,8 @@ namespace WebshopShared
 {
     public class AuthenticatedUserDto
     {
-        public string Email { get; set; } = string.Empty;
-        public bool IsEmailConfirmed { get; set; }
-        public Dictionary<string, string> Claims { get; set; } = [];
+        public string UserId { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public List<int> CartIds { get; set; } = [];
     }
 }

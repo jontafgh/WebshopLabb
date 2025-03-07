@@ -11,10 +11,20 @@ namespace WebshopFrontend.Services
     {
         private readonly IJSRuntime _js = js;
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
+        private int _cartId;
+        private string _cartName = string.Empty;
 
         public async Task CreateCart(string userId)
         {
-            await _js.InvokeVoidAsync("localStorage.setItem", "cart", "[]");
+            _cartId = 1;
+            _cartName = $"{userId}-cart{_cartId}";
+            await _js.InvokeVoidAsync("localStorage.setItem", $"{_cartName}", "[]");
+        }
+
+        public async Task<bool> CartExists(string userId)
+        {
+            _cartName = $"{userId}-cart{_cartId}";
+            return await _js.InvokeAsync<bool>("GetIfKeyExistsInLocalStorage", _cartName);
         }
 
         public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
@@ -58,7 +68,7 @@ namespace WebshopFrontend.Services
             {
                 Id = product!.Id,
                 ProductId = product!.Id,
-                CartId = cartItemToAdd.CartId,
+                CartId = _cartId,
                 Name = product.Name,
                 ArtNr = product.ArtNr,
                 Quantity = cartItemToAdd.Quantity,
