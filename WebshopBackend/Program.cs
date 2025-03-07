@@ -16,6 +16,9 @@ namespace WebshopBackend
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var connectionStringPc =builder.Configuration.GetConnectionString("WebshopDbPc");
+            var connectionStringLaptop = builder.Configuration.GetConnectionString("WebshopDbLaptop");
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -29,7 +32,7 @@ namespace WebshopBackend
                 
 
             builder.Services.AddDbContext<WebshopContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("WebshopDb"))
+                options.UseSqlServer(connectionStringLaptop)
                 );
 
             builder.Services.ConfigureHttpJsonOptions(options =>
