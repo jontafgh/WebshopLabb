@@ -11,19 +11,19 @@ namespace WebshopFrontend.Services
     {
         private readonly IJSRuntime _js = js;
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
-        private int _cartId;
+        public int CartId { get; set; }
         private string _cartName = string.Empty;
 
         public async Task CreateCart(string userId)
         {
-            _cartId = 1;
-            _cartName = $"{userId}-cart{_cartId}";
+            CartId = 1;
+            _cartName = $"{userId}-cart{CartId}";
             await _js.InvokeVoidAsync("localStorage.setItem", $"{_cartName}", "[]");
         }
 
         public async Task<bool> CartExists(string userId)
         {
-            _cartName = $"{userId}-cart{_cartId}";
+            _cartName = $"{userId}-cart{CartId}";
             return await _js.InvokeAsync<bool>("GetIfKeyExistsInLocalStorage", _cartName);
         }
 
@@ -49,12 +49,12 @@ namespace WebshopFrontend.Services
             return await _js.InvokeAsync<CartItemDto>("GetItemFromLocalStorage", itemId);
         }
 
-        public async Task<List<CartItemDto>> GetAll(string userId)
+        public async Task<List<CartItemDto>> GetAll(int cartId)
         {
            return await _js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
         }
 
-        public async Task ClearCart(string userId)
+        public async Task ClearCart(int cartId)
         {
             await _js.InvokeVoidAsync("RemoveCartFromLocalStorage");
         }
@@ -68,7 +68,7 @@ namespace WebshopFrontend.Services
             {
                 Id = product!.Id,
                 ProductId = product!.Id,
-                CartId = _cartId,
+                CartId = CartId,
                 Name = product.Name,
                 ArtNr = product.ArtNr,
                 Quantity = cartItemToAdd.Quantity,

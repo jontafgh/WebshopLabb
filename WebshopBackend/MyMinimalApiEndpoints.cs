@@ -97,10 +97,18 @@ namespace WebshopBackend
 
             app.MapPost("/cart/cartitem", async (CartItemToAddDto cartItemToAddDto, WebshopContext db) =>
             {
-                var cartItem = cartItemToAddDto.ToCartItem();
-                db.CartItems.Add(cartItem);
+                var item2 = db.CartItems.FirstOrDefault(c => c.ProductId == cartItemToAddDto.ProductId && c.CartId == cartItemToAddDto.CartId);
+
+                if (item2 == null)
+                {
+                    var cartItem = cartItemToAddDto.ToCartItem();
+                    db.CartItems.Add(cartItem);
+                    await db.SaveChangesAsync();
+                    return Results.Created($"/cart/cartitem/{cartItem.Id}", cartItem);
+                }
+                item2.Quantity++;
                 await db.SaveChangesAsync();
-                return Results.Created($"/cart/cartitem/{cartItem.Id}", cartItem);
+                return Results.Created($"/cart/cartitem/{item2.Id}", item2);
             });
 
             app.MapPut("/cart/cartitem", async (CartItemToUpdateDto cartItemToUpdateDto, WebshopContext db) =>
@@ -115,7 +123,7 @@ namespace WebshopBackend
                 return Results.Ok(cartItem);
             });
 
-            app.MapDelete("/cart/cartitem", async (int id, WebshopContext db) =>
+            app.MapDelete("/cart/cartitem/{id:int}", async (int id, WebshopContext db) =>
             {
                 var cartItem = await db.CartItems.FindAsync(id);
                 if (cartItem is null)
@@ -136,13 +144,22 @@ namespace WebshopBackend
                     : Results.NotFound();
             });
 
-            app.MapGet("/cart/{userId}", async (string userId, WebshopContext db) =>
+            app.MapGet("/cart/{id:int}/cartitems/", async (int id, WebshopContext db) =>
             {
-                var cart = await db.Carts.Include(c => c.CartItems)
-                    .FirstOrDefaultAsync(c => c.UserId == userId);
-                return cart is not null
-                    ? Results.Ok(cart)
-                    : Results.NotFound();
+                var cart = await db.CartItems.Where(ci => ci.CartId == id)
+                    .Include(p => p.Product)
+                    .ThenInclude(p => p.Price)
+                    .ThenInclude(d => d.Discount)
+                    .Select(c => c.ToCartItemDto())
+                    .ToListAsync();
+                return Results.Ok(cart);
+            });
+
+            app.MapGet("/carts/{userId}", async (string userId, WebshopContext db) =>
+            {
+                var cart = await db.Carts.Where(c => c.UserId == userId)
+                    .ToListAsync();
+                return Results.Ok(cart);
             });
 
             app.MapDelete("/cart", async (int id, WebshopContext db) =>

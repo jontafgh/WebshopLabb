@@ -48,8 +48,6 @@ namespace WebshopBackend
                 return Results.Ok(authenticatedUserDto);
 
             }).RequireAuthorization();
-
-
         }
     }
 }

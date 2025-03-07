@@ -38,6 +38,7 @@ namespace WebshopFrontend.Services.Identity
                     new Claim(ClaimTypes.Name, userInfo.Email),
                     new Claim(ClaimTypes.Email, userInfo.Email),
                     new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
+                    new Claim("CurrentCardId", JsonSerializer.Serialize(userInfo.CurrentCardId)),
                     new Claim("CartIds", JsonSerializer.Serialize(userInfo.CartIds))
                 };
 
@@ -83,7 +84,6 @@ namespace WebshopFrontend.Services.Identity
 
         public async Task<RegisterLoginResponseDto> LoginAsync(LoginDto user)
         {
-            
             var result = await _httpClient.PostAsJsonAsync("/Account/login?useCookies=true", user);
 
             if (result.IsSuccessStatusCode)

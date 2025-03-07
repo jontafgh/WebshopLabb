@@ -19,7 +19,7 @@
     {
         if (firstRender)
         {
-            var cart = await CartService.GetAll("");
+            var cart = await CartService.GetAll(CartService.CartId);
             CounterService.SetCount(cart.Sum(c => c.Quantity));
         }
     }

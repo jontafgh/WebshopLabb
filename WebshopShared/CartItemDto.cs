@@ -6,6 +6,17 @@ using System.Threading.Tasks;
 
 namespace WebshopShared
 {
+    public class CreateCartDto
+    {
+        public string UserId { get; set; } = null!;
+    }
+    public class CartDto
+    {
+        public int Id { get; set; }
+        public string UserId { get; set; } = null!;
+        public UserDto User { get; set; } = null!;
+        public List<CartItemDto> CartItems { get; set; } = [];
+    }
     public class CartItemDto
     {
         public int Id { get; set; }

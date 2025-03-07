@@ -52,14 +52,14 @@
         return authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
     }
 
-    private async Task CreateOrder(UserDto user)
-    {
-        _order = new OrderDto
-            {
-                Id = 1,
-                User = user,
-                CartItems = await CartService.GetAll(user.Id),
-                OrderDate = DateTime.Now
-            };
-    }
+    // private async Task CreateOrder(UserDto user)
+    // {
+    //     _order = new OrderDto
+    //         {
+    //             Id = 1,
+    //             User = user,
+    //             CartItems = await CartService.GetAll(user.Id),
+    //             OrderDate = DateTime.Now
+    //         };
+    // }
 }

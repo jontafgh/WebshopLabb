@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime Js
 @inject ICounterService CartCounterService
 @inject ICartService CartService
+@inject IUserService UserService
 
 <button class="@GetButtonClasses()" @onclick="AddToCart">
     <span>@GetButtonText()</span>
@@ -13,16 +14,33 @@
 
     private const int Quantity = 1;
     private string _userId = string.Empty;
+    private bool? _isAuthenticated;
 
     protected override async Task OnInitializedAsync()
     {
+
         await GetUserId();
     }
 
     private async Task AddToCart()
     {
-        var cartItem = await CartService.AddItem(new CartItemToAddDto { ProductId = ProductId, Quantity = Quantity });
-        CartCounterService.AddToCount(Quantity);
+        if(AuthenticationState != null)
+        {
+            var authState = await AuthenticationState;
+            _isAuthenticated = authState.User.Identity?.IsAuthenticated;
+
+            var claims = authState.User.Claims;
+            _userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        }
+        if (CartService.CartId == 0 && _isAuthenticated == true)
+        {
+            await CartService.CreateCart(_userId);
+        }
+        if (_isAuthenticated == true && CartService.CartId > 0)
+        {
+            var cartItem = await CartService.AddItem(new CartItemToAddDto { ProductId = ProductId, Quantity = Quantity, CartId = CartService.CartId});
+            CartCounterService.AddToCount(Quantity);
+        }
     }
 
     private async Task GetUserId()
@@ -34,7 +52,7 @@
 
         var authState = await AuthenticationState;
         var claims = authState.User.Claims;
-        _userId = claims.FirstOrDefault()?.Value ?? string.Empty;
+        _userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
     }
 
     private string GetButtonText() => Stock > 0 ? "Buy" : "Reserve";

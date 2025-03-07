@@ -5,6 +5,19 @@ namespace WebshopBackend;
 
 public static class DtoExtensions
 {
+    public static CartItemDto ToCartItemDto(this CartItem cartItem)
+    {
+        return new CartItemDto
+        {
+            Id = cartItem.Id,
+            ProductId = cartItem.ProductId,
+            CartId = cartItem.CartId,
+            Name = cartItem.Product.Name,
+            ArtNr = cartItem.Product.ArtNr,
+            Price = (cartItem.Product.Price!.Discount == null) ? cartItem.Product.Price!.Regular : cartItem.Product.Price!.Discount.DiscountPrice,
+            Quantity = cartItem.Quantity
+        };
+    }
     public static CartItem ToCartItem(this CartItemToAddDto cartItemToAddDto)
     {
         return new CartItem
