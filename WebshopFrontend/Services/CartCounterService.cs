@@ -20,5 +20,11 @@ namespace WebshopFrontend.Services
             return _counter;
         }
 
+        public int SetCount(int numberToSet)
+        {
+            _counter = numberToSet;
+            CounterChanged?.Invoke(this, _counter);
+            return _counter;
+        }
     }
 }
