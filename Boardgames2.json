@@ -26,7 +26,7 @@
         "Regular": 44.99,
         "Discount": {
           "Id": 1,
-          "Price": 39.99,
+          "DiscountPrice": 39.99,
           "StartDate": "2025-03-01T00:00:00",
           "EndDate": "2025-04-15T00:00:00"
         }
