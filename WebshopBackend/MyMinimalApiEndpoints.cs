@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Models;
 using WebshopShared;
 namespace WebshopBackend
@@ -88,36 +90,82 @@ namespace WebshopBackend
                 return Results.Created($"/boardgames/{boardgame.Id}", boardgame);
             });
 
-            app.MapPost("/cart", async (CreateCartDto createCartDto, WebshopContext db) =>
+            app.MapPost("/cart", async (ClaimsPrincipal claims, WebshopContext db, [FromBody] object? empty) =>
             {
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var existingCart = await db.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+
+                if (existingCart is not null)
+                {
+                    return Results.Conflict();
+                }
+
+                var createCartDto = new CreateCartDto { UserId = userId };
+
                 var cart = createCartDto.ToCart();
                 db.Carts.Add(cart);
                 await db.SaveChangesAsync();
                 return Results.Created($"/cart/{cart.Id}", cart);
             }).RequireAuthorization();
 
-            app.MapGet("/cart/{id:int}/cartitems/", async (int id, WebshopContext db) =>
+            app.MapGet("/cart/cartitems/", async (ClaimsPrincipal claims, WebshopContext db) =>
             {
-                var cart = await db.CartItems.Where(ci => ci.CartId == id)
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var cartId = await db.Carts.Where(c => c.UserId == userId)
+                    .AsNoTracking()
+                    .Select(c => c.Id)
+                    .FirstOrDefaultAsync();
+
+                if (cartId == 0)
+                {
+                    return Results.NotFound();
+                }
+
+                var cart = await db.CartItems.Where(ci => ci.CartId == cartId)
+                    .AsNoTracking()
                     .Include(p => p.Product)
                     .ThenInclude(p => p.Price)
                     .ThenInclude(d => d.Discount)
                     .Select(c => c.ToCartItemDto())
                     .ToListAsync();
+
                 return Results.Ok(cart);
+
             }).RequireAuthorization();
 
-            app.MapPut("/cart/{cartid:int}", async (int cartid, List<CartItemDto> cartItems, WebshopContext db) =>
+            app.MapPut("/cart", async (ClaimsPrincipal claims, List<CartItemDto> cartItems, WebshopContext db) =>
             {
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+
                 var cart = await db.Carts.Include(c => c.CartItems)
-                    .FirstOrDefaultAsync(c => c.Id == cartid);
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
+
                 if (cart is null)
                 {
                     return Results.NotFound();
                 }
+
                 cart.CartItems = cartItems.Select(ci => ci.ToCartItem()).ToList();
                 await db.SaveChangesAsync();
                 return Results.Ok(cart);
+
             }).RequireAuthorization();
 
             app.MapPost("/order", async (PlaceOrderDto placeOrderDto, WebshopContext db) =>

@@ -43,9 +43,9 @@ namespace WebshopFrontend.Services.Identity
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                 user = new ClaimsPrincipal(id);
 
-                if (!_authenticated) 
-                    await cartService.Login(userInfo.CartId, userInfo.UserId);
-                
+                if (!_authenticated)
+                    await cartService.Login();
+
                 _authenticated = true;
             }
             catch (Exception e)

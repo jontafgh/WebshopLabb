@@ -10,9 +10,7 @@ namespace WebshopFrontend.Services
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
         public int CartId { get; set; }
-        public string UserId { get; set; } = string.Empty;
-        private bool _loggedIn = false;
-
+        
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -20,7 +18,10 @@ namespace WebshopFrontend.Services
 
         public async Task SetUserCart()
         {
-            var result = await _httpClient.PostAsJsonAsync("/cart", new CreateCartDto { UserId = UserId });
+            const string empty = "{}";
+            var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
+
+            var result = await _httpClient.PostAsJsonAsync("/cart", emptyContent);
             if (result.IsSuccessStatusCode)
             {
                 var cartJson = await result.Content.ReadAsStringAsync();
@@ -52,23 +53,13 @@ namespace WebshopFrontend.Services
         {
             var cartItems = await js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
 
-            if (_loggedIn)
-                await SetUserCart(cartItems);
+            await UpdateUserCart(cartItems);
 
             return cartItems;
         }
 
-        public void SetUser(int cartId, string userId)
+        public async Task Login()
         {
-            CartId = cartId;
-            UserId = userId;
-            _loggedIn = true;
-        }
-
-        public async Task Login(int cartId, string userId)
-        {
-            SetUser(cartId, userId);
-
             if (CartId == 0) 
                 await SetUserCart();
 
@@ -76,7 +67,6 @@ namespace WebshopFrontend.Services
             var cart = await GetUserCart();
 
             counterService.SetCount(cart.Sum(ci => ci.Quantity));
-            _loggedIn = true;
         }
         public async Task Logout()
         {
@@ -84,7 +74,6 @@ namespace WebshopFrontend.Services
             await ClearLocalStorageCart();
 
             counterService.SetCount(0);
-            _loggedIn = false;
         }
 
         public async Task ClearLocalStorageCart()
@@ -94,21 +83,21 @@ namespace WebshopFrontend.Services
 
         public async Task<List<CartItemDto>> GetUserCart()
         {
-            var result = await _httpClient.GetAsync($"/cart/{CartId}/cartitems");
+            var result = await _httpClient.GetAsync($"/cart/cartitems");
             var content = await result.Content.ReadAsStreamAsync();
             return JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
         }
 
-        public async Task SetUserCart(List<CartItemDto> cartItems)
+        public async Task UpdateUserCart(List<CartItemDto> cartItems)
         {
             var json = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var result = await _httpClient.PutAsync($"/cart/{CartId}", content);
+            var result = await _httpClient.PutAsync($"/cart", content);
         }
 
         public async Task SetLocalStorageCart()
         {
-            var result = await _httpClient.GetAsync($"/cart/{CartId}/cartitems");
+            var result = await _httpClient.GetAsync($"/cart/cartitems");
 
             if (!result.IsSuccessStatusCode) 
                 return;
