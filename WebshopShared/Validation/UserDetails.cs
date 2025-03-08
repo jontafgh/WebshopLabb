@@ -1,46 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
-namespace WebshopShared
+namespace WebshopShared.Validation
 {
-    public class UserDto
+    public class UserDetails
     {
-        public string Id { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 2)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
         [Required]
         [StringLength(50, MinimumLength = 2)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = null!;
 
         [Phone]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = null!;
 
         [ValidateComplexType]
-        public AddressDto Address { get; set; } = new AddressDto();
+        public AddressDetails Address { get; set; } = new();
     }
 
-    public class AddressDto
+    public class AddressDetails
     {
         [Required]
         [StringLength(50, MinimumLength = 2)]
-        public string Street { get; set; }
+        public string Street { get; set; } = null!;
 
         [Required]
         [StringLength(20, MinimumLength = 1)]
-        public string PostalCode { get; set; }
+        public string PostalCode { get; set; } = null!;
 
         [Required]
         [StringLength(50, MinimumLength = 2)]
-        public string City { get; set; }
+        public string City { get; set; } = null!;
 
         [Required]
         [StringLength(50, MinimumLength = 2)]
-        public string Country { get; set; }
+        public string Country { get; set; } = null!;
     }
 }

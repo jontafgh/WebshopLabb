@@ -18,26 +18,67 @@ namespace WebshopBackend
                 return Results.Ok();
             }).RequireAuthorization();
 
-            app.MapPut("/Account/users/update", async (UserDto user, WebshopContext context) =>
+            app.MapPut("/Account/users/update", async (ClaimsPrincipal claims, UserDetailsDto user, WebshopContext context) =>
             {
-                var dbUser = await context.Users.FindAsync(user.Id);
-                if (dbUser == null) return Results.NotFound();
-                dbUser.FirstName = user.FirstName;
-                dbUser.LastName = user.LastName;
-                dbUser.PhoneNumber = user.PhoneNumber;
-                dbUser.Address = user.Address.ToAddress();
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId == null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var userToUpdate = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+
+                if (userToUpdate == null)
+                {
+                    return Results.NotFound();
+                }
+
+                userToUpdate.FirstName = user.FirstName;
+                userToUpdate.LastName = user.LastName;
+                userToUpdate.PhoneNumber = user.PhoneNumber;
+                userToUpdate.Address = user.Address.ToAddress();
+
                 await context.SaveChangesAsync();
                 return Results.Ok();
+
+            }).RequireAuthorization();
+
+            app.MapGet("/Account/users/details", async (ClaimsPrincipal claims, WebshopContext context) =>
+            {
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId == null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var user = await context.Users.Where(u => u.Id == userId)
+                    .Include(u => u.Address)
+                    .Select(u => u.ToUserDetailsDto())
+                    .FirstOrDefaultAsync();
+
+                return user == null ? Results.NotFound() : Results.Ok(user);
 
             }).RequireAuthorization();
 
             app.MapGet("/Account/users/me", async (ClaimsPrincipal claims, WebshopContext context) =>
             {
                 var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId == null)
+                {
+                    return Results.Unauthorized();
+                }
+
                 var user = await context.Users.Where(u => u.Id == userId)
                     .Include(u => u.Cart)
                     .FirstOrDefaultAsync();
-                if (user == null) return Results.NotFound();
+
+                if (user == null)
+                {
+                    return Results.NotFound();
+                }
 
                 var authenticatedUserDto = new AuthenticatedUserDto
                 {
@@ -45,6 +86,7 @@ namespace WebshopBackend
                     Email = user.Email ?? string.Empty,
                     CartId = user.Cart?.Id ?? 0,
                 };
+
                 return Results.Ok(authenticatedUserDto);
 
             }).RequireAuthorization();

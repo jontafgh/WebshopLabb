@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using WebshopFrontend.Services.Interfaces;
 using WebshopShared;
+using WebshopShared.Validation;
 
 namespace WebshopFrontend.Services.Identity
 {
@@ -113,10 +114,17 @@ namespace WebshopFrontend.Services.Identity
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
-        public async Task<bool> UpdateUserInfo(UserDto userDto)
+        public async Task<bool> UpdateUserDetails(UserDetails userDetails)
         {
-            var response = await _httpClient.PutAsJsonAsync("/Account/users/update", userDto);
+            var response = await _httpClient.PutAsJsonAsync("/Account/users/update", userDetails);
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task<UserDetailsDto> GetUserDetails()
+        {
+            var response = await _httpClient.GetAsync("/Account/users/details");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<UserDetailsDto>(responseContent, _jsonSerializerOptions) ?? new UserDetailsDto();
         }
 
         public async Task<bool> CheckAuthenticatedAsync()

@@ -107,11 +107,13 @@ namespace WebshopBackend
                 }
 
                 var createCartDto = new CreateCartDto { UserId = userId };
-
                 var cart = createCartDto.ToCart();
+
                 db.Carts.Add(cart);
                 await db.SaveChangesAsync();
+
                 return Results.Created($"/cart/{cart.Id}", cart);
+
             }).RequireAuthorization();
 
             app.MapGet("/cart/cartitems/", async (ClaimsPrincipal claims, WebshopContext db) =>
@@ -168,21 +170,58 @@ namespace WebshopBackend
 
             }).RequireAuthorization();
 
-            app.MapPost("/order", async (PlaceOrderDto placeOrderDto, WebshopContext db) =>
+            app.MapPost("/order", async (ClaimsPrincipal claims, PlaceOrderDto placeOrderDto, WebshopContext db) =>
             {
-                var order = placeOrderDto.ToOrder();
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var order = placeOrderDto.ToOrder(userId);
                 db.Orders.Add(order);
                 await db.SaveChangesAsync();
+
                 return Results.Created($"/order/{order.Id}", order);
+
             }).RequireAuthorization();
 
-            app.MapGet("/order/{id:int}", async (int id, WebshopContext db) =>
+            app.MapGet("/order/{orderId:int}", async (int orderId, ClaimsPrincipal claims, WebshopContext db) =>
             {
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+
                 var order = await db.Orders.Include(o => o.OrderLines)
-                    .FirstOrDefaultAsync(o => o.Id == id);
-                return order is not null
-                    ? Results.Ok(order)
-                    : Results.NotFound();
+                    .ThenInclude(ol => ol.Product)
+                    .ThenInclude(p => p.Price)
+                    .ThenInclude(d => d.Discount)
+                    .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
+
+                return order == null ? Results.NotFound() : Results.Ok(order.ToOrderDto());
+
+            }).RequireAuthorization();
+
+            app.MapGet("/orders", async (ClaimsPrincipal claims, WebshopContext db) =>
+            {
+                var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var orders = await db.Orders
+                    .Where(o => o.UserId == userId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return Results.Ok(orders);
+
             }).RequireAuthorization();
         }
     }

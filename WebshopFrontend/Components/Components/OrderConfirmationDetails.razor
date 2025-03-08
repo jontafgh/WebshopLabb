@@ -1,4 +1,5 @@
 ﻿@inject IOrderService OrderService
+@inject IUserService UserService
 
 <table class="checkout-table">
     <caption>Order summary</caption>
@@ -33,25 +34,35 @@
 
 <div>
     <h4>Confirmation email sent to:</h4>
-    @* <p>@Order.User.Email</p> *@
+    <p>@UserDetails.Email</p>
 </div>
 
 <div>
     <h4>Order will be sent to:</h4>
     <ul>
-        <li>@Order.User.FirstName @Order.User.LastName</li>
-        <li>@Order.User.Address.Street</li>
-        <li>@Order.User.Address.PostalCode @Order.User.Address.City</li>
-        <li>@Order.User.Address.Country</li>
+        <li>@UserDetails.FirstName @UserDetails.LastName</li>
+        <li>@UserDetails.Address!.Street</li>
+        <li>@UserDetails.Address.PostalCode @UserDetails.Address.City</li>
+        <li>@UserDetails.Address.Country</li>
     </ul>
 </div>
 
 @code {
-    public OrderDto Order { get; set; }
+    [Parameter] public required int OrderId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    public required OrderDto Order { get; set; }
+    public required UserDetailsDto UserDetails { get; set; }
+
+    protected override void OnInitialized()
     {
-        Order = await OrderService.GetOrder(1);
+        Order = new OrderDto();
+        UserDetails = new UserDetailsDto();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Order = await OrderService.GetOrder(OrderId);
+        UserDetails = await UserService.GetUserDetails();
     }
 
     private decimal GetTotalPrice() => Order.CartItems.Sum(x => x.Price * x.Quantity);

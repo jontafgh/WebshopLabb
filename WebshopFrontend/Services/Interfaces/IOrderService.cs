@@ -4,8 +4,8 @@ namespace WebshopFrontend.Services.Interfaces
 {
     public interface IOrderService
     {
-        public Task<OrderDto> GetOrder(int id);
-        public Task<List<OrderDto>> GetOrders(int userId);
-        public Task<OrderDto> AddOrder(OrderDto order);
+        public Task<List<OrderDto>> GetOrders();
+        public Task<OrderDto> GetOrder(int orderId);
+        public Task<OrderDto> PlaceOrder();
     }
 }

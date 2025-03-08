@@ -585,13 +585,13 @@ namespace WebshopBackend.Migrations
 
             modelBuilder.Entity("WebshopBackend.Models.Cart", b =>
                 {
-                    b.HasOne("WebshopBackend.WebshopUser", "User")
+                    b.HasOne("WebshopBackend.WebshopUser", "UserDetails")
                         .WithOne("Cart")
                         .HasForeignKey("WebshopBackend.Models.Cart", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("UserDetails");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.CartItem", b =>

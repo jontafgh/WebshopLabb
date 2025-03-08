@@ -1,6 +1,9 @@
-﻿@inject IUserService UserService
+﻿@using WebshopShared.Validation
+@inject IUserService UserService
 
-<EditForm Model="User" OnValidSubmit="Submit" FormName="User">
+<h3>Please comfirm your shipping details</h3>
+
+<EditForm Model="UserDetails" OnValidSubmit="Submit" FormName="UserDetails">
     <ObjectGraphDataAnnotationsValidator />
     <div class="form-flex-container">
 
@@ -12,11 +15,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="firstname" @bind-Value="User.FirstName" />
+                <InputText class="input-text" id="firstname" @bind-Value="UserDetails.FirstName" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.FirstName)" />
+                <ValidationMessage For="@(() => UserDetails.FirstName)" />
             </div>
         </div>
 
@@ -28,11 +31,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="lastname" @bind-Value="User.LastName" />
+                <InputText class="input-text" id="lastname" @bind-Value="UserDetails.LastName" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.LastName)" />
+                <ValidationMessage For="@(() => UserDetails.LastName)" />
             </div>
         </div>
 
@@ -44,11 +47,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="country" @bind-Value="User.Address.Country" />
+                <InputText class="input-text" id="country" @bind-Value="UserDetails.Address.Country" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.Address.Country)" />
+                <ValidationMessage For="@(() => UserDetails.Address.Country)" />
             </div>
         </div>
 
@@ -61,11 +64,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="city" @bind-Value="User.Address.City" />
+                <InputText class="input-text" id="city" @bind-Value="UserDetails.Address.City" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.Address.City)" />
+                <ValidationMessage For="@(() => UserDetails.Address.City)" />
             </div>
         </div>
 
@@ -78,11 +81,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="street" @bind-Value="User.Address.Street" />
+                <InputText class="input-text" id="street" @bind-Value="UserDetails.Address.Street" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.Address.Street)" />
+                <ValidationMessage For="@(() => UserDetails.Address.Street)" />
             </div>
         </div>
 
@@ -95,11 +98,11 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="postalcode" @bind-Value="User.Address.PostalCode" />
+                <InputText class="input-text" id="postalcode" @bind-Value="UserDetails.Address.PostalCode" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.Address.PostalCode)" />
+                <ValidationMessage For="@(() => UserDetails.Address.PostalCode)" />
             </div>
         </div>
 
@@ -112,27 +115,56 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="phonenumber" @bind-Value="User.PhoneNumber" />
+                <InputText class="input-text" id="phonenumber" @bind-Value="UserDetails.PhoneNumber" />
             </div>
 
             <div class="form-flex-item">
-                <ValidationMessage For="@(() => User.PhoneNumber)" />
+                <ValidationMessage For="@(() => UserDetails.PhoneNumber)" />
             </div>
         </div>
     </div>
     <div>
-        <button type="submit">Submit</button>
+        <button type="submit">Comfirm</button>
     </div>
 </EditForm>
 
 @code {
 
-    [SupplyParameterFromForm] public UserDto User { get; set; } = new UserDto();
+    [SupplyParameterFromForm] private UserDetails? UserDetails { get; set; }
 
-    [Parameter] public EventCallback<UserDto> OnFormSubmit { get; set; }
+    [Parameter] public EventCallback<UserDetails> OnFormSubmit { get; set; }
+
+    protected override void OnInitialized()
+    {
+        UserDetails = new UserDetails();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        UserDetails = await GetExistingUserDetails();
+    }
+
+    private async Task<UserDetails> GetExistingUserDetails()
+    {
+        var existingUserDetails = await UserService.GetUserDetails();
+
+        return new UserDetails
+            {
+                FirstName = existingUserDetails.FirstName ?? string.Empty,
+                LastName = existingUserDetails.LastName ?? string.Empty,
+                Address = existingUserDetails.Address == null ? new AddressDetails() : new AddressDetails
+                {
+                    Country = existingUserDetails.Address.Country ?? string.Empty,
+                    City = existingUserDetails.Address.City ?? string.Empty,
+                    Street = existingUserDetails.Address.Street ?? string.Empty,
+                    PostalCode = existingUserDetails.Address.PostalCode ?? string.Empty
+                },
+                PhoneNumber = existingUserDetails.PhoneNumber ?? string.Empty
+            };
+    }
 
     private async Task Submit()
     {
-        await OnFormSubmit.InvokeAsync(User);
+        await OnFormSubmit.InvokeAsync(UserDetails);
     }
 }

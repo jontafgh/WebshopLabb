@@ -5,11 +5,39 @@ namespace WebshopBackend;
 
 public static class DtoExtensions
 {
-    public static Order ToOrder(this PlaceOrderDto placeOrderDto)
+    public static UserDetailsDto ToUserDetailsDto(this WebshopUser user)
+    {
+        return new UserDetailsDto
+        {
+            Email = user.Email,
+            FirstName = user.FirstName ?? string.Empty,
+            LastName = user.LastName ?? string.Empty,
+            PhoneNumber = user.PhoneNumber ?? string.Empty,
+            Address = (user.Address == null) ? new AddressDto() : user.Address.ToAddressDto()
+        };
+    }
+
+    public static OrderDto ToOrderDto(this Order order)
+    {
+        return new OrderDto
+        {
+            Id = order.Id,
+            OrderDate = order.OrderDate,
+            CartItems = order.OrderLines.Select(ol => new CartItemDto
+            {
+                Name = ol.Product.Name,
+                ArtNr = ol.Product.ArtNr,
+                Quantity = ol.Quantity,
+                Price = ol.Price
+            }).ToList()
+        };
+    }
+
+    public static Order ToOrder(this PlaceOrderDto placeOrderDto, string userId)
     {
         return new Order
         {
-            UserId = placeOrderDto.UserId,
+            UserId = userId,
             OrderDate = DateTime.Now,
             OrderLines = placeOrderDto.CartItems.Select(ci => new OrderLine
             {
@@ -66,17 +94,6 @@ public static class DtoExtensions
             PostalCode = address.PostalCode,
             City = address.City,
             Country = address.Country
-        };
-    }
-    public static UserDto ToUserDto(this WebshopUser user)
-    {
-        return new UserDto
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            PhoneNumber = user.PhoneNumber,
-            Address = user.Address?.ToAddressDto() ?? new AddressDto()
         };
     }
     public static Address ToAddress(this AddressDto addressDto)

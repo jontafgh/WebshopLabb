@@ -1,4 +1,5 @@
 ﻿@page "/checkout"
+@using WebshopShared.Validation
 @inject NavigationManager NavigationManager
 @inject ICartService CartService
 @inject IOrderService OrderService
@@ -27,39 +28,11 @@
 
 
 @code {
-    private OrderDto _order;
 
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-
-    private async Task OnFormSubmitted(UserDto user)
+    private async Task OnFormSubmitted(UserDetails userDetails)
     {
-        user.Id = await GetUserId() ?? string.Empty;
-        await UserService.UpdateUserInfo(user);
-
-        // await CreateOrder(user);
-        // await CartService.ClearCart(user.Id);
-        // await OrderService.AddOrder(_order);
-        // NavigationManager.NavigateTo("/orderconfirmation");
+        await UserService.UpdateUserDetails(userDetails);
+        var order = OrderService.PlaceOrder();
+        NavigationManager.NavigateTo($"/orderconfirmation/{order.Id}");
     }
-
-    private async Task<string?> GetUserId()
-    {
-        if (AuthenticationState == null)
-        {
-            return null;
-        }
-        var authState = await AuthenticationState;
-        return authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-    }
-
-    // private async Task CreateOrder(UserDto user)
-    // {
-    //     _order = new OrderDto
-    //         {
-    //             Id = 1,
-    //             User = user,
-    //             CartItems = await CartService.GetAllItems(user.Id),
-    //             OrderDate = DateTime.Now
-    //         };
-    // }
 }

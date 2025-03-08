@@ -14,7 +14,7 @@ namespace WebshopShared
     {
         public int Id { get; set; }
         public string UserId { get; set; } = null!;
-        public UserDto User { get; set; } = null!;
+        public UserDetailsDto UserDetails { get; set; } = null!;
         public List<CartItemDto> CartItems { get; set; } = [];
     }
     public class CartItemDto

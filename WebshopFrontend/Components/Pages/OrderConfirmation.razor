@@ -1,7 +1,10 @@
-﻿@page "/orderconfirmation"
+﻿@page "/orderconfirmation/{OrderId}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
-<OrderConfirmationDetails />
+<OrderConfirmationDetails OrderId="OrderId" />
 
 @code {
-    
+
+    [Parameter] public required int OrderId { get; set; }
 }
