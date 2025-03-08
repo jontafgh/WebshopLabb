@@ -170,6 +170,25 @@ namespace WebshopBackend
 
             }).RequireAuthorization();
 
+            app.MapDelete("/cart", async (ClaimsPrincipal Claim, WebshopContext db) =>
+            {
+                var userId = Claim.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                if (userId is null)
+                {
+                    return Results.Unauthorized();
+                }
+                var cart = await db.Carts.Include(c => c.CartItems)
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
+                if (cart is null)
+                {
+                    return Results.NotFound();
+                }
+                db.Carts.Remove(cart);
+                await db.SaveChangesAsync();
+                return Results.Ok();
+
+            }).RequireAuthorization();
+
             app.MapPost("/order", async (ClaimsPrincipal claims, PlaceOrderDto placeOrderDto, WebshopContext db) =>
             {
                 var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

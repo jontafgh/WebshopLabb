@@ -81,6 +81,11 @@ namespace WebshopFrontend.Services
             await js.InvokeVoidAsync("RemoveCartFromLocalStorage");
         }
 
+        public async Task ClearUserCart()
+        {
+            await _httpClient.DeleteAsync($"/cart");
+        }
+
         public async Task<List<CartItemDto>> GetUserCart()
         {
             var result = await _httpClient.GetAsync($"/cart/cartitems");

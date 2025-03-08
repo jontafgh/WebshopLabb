@@ -60,6 +60,8 @@ else
 @code {
 
     public List<CartItemDto> CartItems { get; set; }
+
+    [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -67,6 +69,11 @@ else
         {
             CartItems = await CartService.GetAllItems();
             await InvokeAsync(StateHasChanged);
+        }
+
+        if (CartItems.Count == 0)
+        {
+            await OnEmptyCart.InvokeAsync(true);
         }
     }
 

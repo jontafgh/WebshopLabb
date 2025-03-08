@@ -1,17 +1,23 @@
 ﻿@inject IOrderService OrderService
 @inject IUserService UserService
 
-<table class="checkout-table">
-    <caption>Order summary</caption>
-    <thead>
+@if (!_loaded)
+{ 
+    <p>Loading...</p>
+}
+else
+{
+    <table class="checkout-table">
+        <caption>Order summary</caption>
+        <thead>
         <tr>
             <th>Product</th>
             <th>ArNr</th>
             <th>DiscountPrice</th>
             <th>Quantity</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @foreach (var orderLine in Order.CartItems)
         {
             <tr>
@@ -21,37 +27,40 @@
                 <td data-label="Quantity">@orderLine.Quantity</td>
             </tr>
         }
-    </tbody>
-    <tfoot>
+        </tbody>
+        <tfoot>
         <tr>
             <th colspan="3">Total: </th>
             <td>
                 @GetTotalPrice()
             </td>
         </tr>
-    </tfoot>
-</table>
+        </tfoot>
+    </table>
 
-<div>
-    <h4>Confirmation email sent to:</h4>
-    <p>@UserDetails.Email</p>
-</div>
+    <div>
+        <h4>Confirmation email sent to:</h4>
+        <p>@UserDetails.Email</p>
+    </div>
 
-<div>
-    <h4>Order will be sent to:</h4>
-    <ul>
-        <li>@UserDetails.FirstName @UserDetails.LastName</li>
-        <li>@UserDetails.Address!.Street</li>
-        <li>@UserDetails.Address.PostalCode @UserDetails.Address.City</li>
-        <li>@UserDetails.Address.Country</li>
-    </ul>
-</div>
+    <div>
+        <h4>Order will be sent to:</h4>
+        <ul>
+            <li>@UserDetails.FirstName @UserDetails.LastName</li>
+            <li>@UserDetails.Address!.Street</li>
+            <li>@UserDetails.Address.PostalCode @UserDetails.Address.City</li>
+            <li>@UserDetails.Address.Country</li>
+        </ul>
+    </div>
+}
 
 @code {
     [Parameter] public required int OrderId { get; set; }
 
     public required OrderDto Order { get; set; }
     public required UserDetailsDto UserDetails { get; set; }
+
+    private bool _loaded = false;
 
     protected override void OnInitialized()
     {
@@ -63,6 +72,7 @@
     {
         Order = await OrderService.GetOrder(OrderId);
         UserDetails = await UserService.GetUserDetails();
+        _loaded = true;
     }
 
     private decimal GetTotalPrice() => Order.CartItems.Sum(x => x.Price * x.Quantity);

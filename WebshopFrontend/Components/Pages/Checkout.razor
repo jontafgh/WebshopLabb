@@ -3,36 +3,62 @@
 @inject NavigationManager NavigationManager
 @inject ICartService CartService
 @inject IOrderService OrderService
+@inject ICounterService CounterService
 @inject IUserService UserService
 
 <h3>Checkout</h3>
 
-<div class="checkout-table-container">
-    <CheckoutProductTable />
-</div>
+@if (_formSubmitted)
+{
+    <AuthorizeView>
+        <OrderConfirmationDetails OrderId="_orderId" />
+    </AuthorizeView>
+}
 
-<AuthorizeView>
-    <Authorized>
-        <div>
-            <UserDetailsForm OnFormSubmit="OnFormSubmitted" />
-        </div>
-    </Authorized>
-    <NotAuthorized>
-        <div>
-            <p>Please log in to continue</p>
-            <LoginBox />
-        </div>
-    </NotAuthorized>
-</AuthorizeView>
-
-
+else
+{
+    <div class="checkout-table-container">
+        <CheckoutProductTable OnEmptyCart="HideUserDetailsForm" />
+    </div>
+    <AuthorizeView>
+        <Authorized>
+            @if (!_cartEmpty)
+            {
+                <div>
+                    <UserDetailsForm OnFormSubmit="OnFormSubmitted"/>
+                </div>
+            }
+        </Authorized>
+        <NotAuthorized>
+            <div>
+                <p>Please log in to continue</p>
+                <LoginBox />
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+}
 
 @code {
+    private bool _formSubmitted;
+    private bool _cartEmpty;
+
+    private int _orderId;
 
     private async Task OnFormSubmitted(UserDetails userDetails)
     {
         await UserService.UpdateUserDetails(userDetails);
-        var order = OrderService.PlaceOrder();
-        NavigationManager.NavigateTo($"/orderconfirmation/{order.Id}");
+        var order = await OrderService.PlaceOrder();
+        await CartService.ClearLocalStorageCart();
+        await CartService.ClearUserCart();
+        CounterService.SetCount(0);
+        _orderId = order.Id;
+        _formSubmitted = true;
+        await InvokeAsync(StateHasChanged);
     }
+
+    private void HideUserDetailsForm(bool arg)
+    {
+        _cartEmpty = arg;
+    }
+
 }

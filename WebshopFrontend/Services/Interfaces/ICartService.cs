@@ -13,6 +13,7 @@ namespace WebshopFrontend.Services.Interfaces
         Task SetUserCart();
         Task UpdateUserCart(List<CartItemDto> cartItems);
         Task SetLocalStorageCart();
+        Task ClearUserCart();
         Task ClearLocalStorageCart();
         Task Login();
         Task Logout();
