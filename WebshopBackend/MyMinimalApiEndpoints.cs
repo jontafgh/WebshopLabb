@@ -94,7 +94,7 @@ namespace WebshopBackend
                 db.Carts.Add(cart);
                 await db.SaveChangesAsync();
                 return Results.Created($"/cart/{cart.Id}", cart);
-            });
+            }).RequireAuthorization();
 
             app.MapGet("/cart/{id:int}/cartitems/", async (int id, WebshopContext db) =>
             {
@@ -105,7 +105,7 @@ namespace WebshopBackend
                     .Select(c => c.ToCartItemDto())
                     .ToListAsync();
                 return Results.Ok(cart);
-            });
+            }).RequireAuthorization();
 
             app.MapPut("/cart/{cartid:int}", async (int cartid, List<CartItemDto> cartItems, WebshopContext db) =>
             {
@@ -118,7 +118,24 @@ namespace WebshopBackend
                 cart.CartItems = cartItems.Select(ci => ci.ToCartItem()).ToList();
                 await db.SaveChangesAsync();
                 return Results.Ok(cart);
-            });
+            }).RequireAuthorization();
+
+            app.MapPost("/order", async (PlaceOrderDto placeOrderDto, WebshopContext db) =>
+            {
+                var order = placeOrderDto.ToOrder();
+                db.Orders.Add(order);
+                await db.SaveChangesAsync();
+                return Results.Created($"/order/{order.Id}", order);
+            }).RequireAuthorization();
+
+            app.MapGet("/order/{id:int}", async (int id, WebshopContext db) =>
+            {
+                var order = await db.Orders.Include(o => o.OrderLines)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+                return order is not null
+                    ? Results.Ok(order)
+                    : Results.NotFound();
+            }).RequireAuthorization();
         }
     }
 }

@@ -5,6 +5,20 @@ namespace WebshopBackend;
 
 public static class DtoExtensions
 {
+    public static Order ToOrder(this PlaceOrderDto placeOrderDto)
+    {
+        return new Order
+        {
+            UserId = placeOrderDto.UserId,
+            OrderDate = DateTime.Now,
+            OrderLines = placeOrderDto.CartItems.Select(ci => new OrderLine
+            {
+                ProductId = ci.ProductId,
+                Quantity = ci.Quantity,
+                Price = ci.Price
+            }).ToList()
+        };
+    }
     public static CartItemDto ToCartItemDto(this CartItem cartItem)
     {
         return new CartItemDto

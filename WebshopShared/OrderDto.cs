@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace WebshopShared
 {
+    public class PlaceOrderDto
+    {
+        public string UserId { get; set; } = null!;
+        public List<CartItemDto> CartItems { get; set; } = [];
+    }
     public class OrderDto
     {
         public int Id { get; set; }
