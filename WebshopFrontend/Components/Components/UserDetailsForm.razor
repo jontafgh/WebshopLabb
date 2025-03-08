@@ -125,14 +125,19 @@
     </div>
     <div>
         <button type="submit">Comfirm</button>
+
     </div>
 </EditForm>
+
+<button @onclick="FillForm" type="submit">Get Info</button>
 
 @code {
 
     [SupplyParameterFromForm] private UserDetails? UserDetails { get; set; }
 
     [Parameter] public EventCallback<UserDetails> OnFormSubmit { get; set; }
+
+    private bool _formSet;
 
     protected override void OnInitialized()
     {
@@ -141,7 +146,9 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        UserDetails = await GetExistingUserDetails();
+        if (!_formSet)
+            UserDetails = await GetExistingUserDetails();
+        _formSet = true;
     }
 
     private async Task<UserDetails> GetExistingUserDetails()
@@ -167,4 +174,10 @@
     {
         await OnFormSubmit.InvokeAsync(UserDetails);
     }
+
+    private async Task FillForm()
+    {
+        UserDetails = await GetExistingUserDetails();
+    }
+
 }

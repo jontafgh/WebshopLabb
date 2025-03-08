@@ -100,10 +100,10 @@ public static class DtoExtensions
     {
         return new Address
         {
-            Street = addressDto.Street,
-            PostalCode = addressDto.PostalCode,
-            City = addressDto.City,
-            Country = addressDto.Country
+            Street = addressDto.Street ?? string.Empty,
+            PostalCode = addressDto.PostalCode ?? string.Empty,
+            City = addressDto.City ?? string.Empty,
+            Country = addressDto.Country ?? string.Empty
         };
     }
     public static Boardgame ToBoardgame(this BoardgameDto boardgameDto)

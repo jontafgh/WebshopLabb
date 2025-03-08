@@ -22,14 +22,12 @@ namespace WebshopFrontend.Services
             var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
 
             var result = await _httpClient.PostAsJsonAsync("/cart", emptyContent);
-            if (result.IsSuccessStatusCode)
-            {
-                var cartJson = await result.Content.ReadAsStringAsync();
-                var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
+            if (!result.IsSuccessStatusCode) return;
 
-                if (cart != null) 
-                    CartId = cart.Id;
-            }
+            var cartJson = await result.Content.ReadAsStringAsync();
+            var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
+
+            if (cart != null) CartId = cart.Id;
         }
 
         public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
@@ -60,8 +58,7 @@ namespace WebshopFrontend.Services
 
         public async Task Login()
         {
-            if (CartId == 0) 
-                await SetUserCart();
+            if (CartId == 0) await SetUserCart();
 
             await SetLocalStorageCart();
             var cart = await GetUserCart();
@@ -104,8 +101,7 @@ namespace WebshopFrontend.Services
         {
             var result = await _httpClient.GetAsync($"/cart/cartitems");
 
-            if (!result.IsSuccessStatusCode) 
-                return;
+            if (!result.IsSuccessStatusCode) return;
 
             var cartItemsJson = await result.Content.ReadAsStringAsync();
             await js.InvokeVoidAsync("localStorage.setItem", "cart", cartItemsJson);

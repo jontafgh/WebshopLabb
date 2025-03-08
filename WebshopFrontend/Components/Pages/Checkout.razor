@@ -1,6 +1,5 @@
 ﻿@page "/checkout"
 @using WebshopShared.Validation
-@inject NavigationManager NavigationManager
 @inject ICartService CartService
 @inject IOrderService OrderService
 @inject ICounterService CounterService
@@ -47,12 +46,16 @@ else
     private async Task OnFormSubmitted(UserDetails userDetails)
     {
         await UserService.UpdateUserDetails(userDetails);
+
         var order = await OrderService.PlaceOrder();
+
         await CartService.ClearLocalStorageCart();
         await CartService.ClearUserCart();
         CounterService.SetCount(0);
+
         _orderId = order.Id;
         _formSubmitted = true;
+
         await InvokeAsync(StateHasChanged);
     }
 

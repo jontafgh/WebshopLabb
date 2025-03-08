@@ -37,8 +37,7 @@ namespace WebshopFrontend.Services.Identity
                 {
                     new Claim(ClaimTypes.Name, userInfo.Email),
                     new Claim(ClaimTypes.Email, userInfo.Email),
-                    new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
-                    new Claim("CartId", JsonSerializer.Serialize(userInfo.CartId))
+                    new Claim(ClaimTypes.NameIdentifier, userInfo.UserId)
                 };
 
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));

@@ -26,7 +26,7 @@ I den här laborationen kommer ni att bygga en Webshop med Blazor Web App utifr�
   - [x] Namn och adress från formuläret
 - [x] När beställningen är klar ska varukorgen tömmas
 - [x] Minst 2 komponenter (inte pages/Layout) ska användas
-- [ ] All data i "godkänt"-scenariot kan vara statisk (hårdkodad)
+- [x] All data i "godkänt"-scenariot kan vara statisk (hårdkodad)
 - [ ] HTML ska användas på rätt sätt och valideras
   - [ ] Semantiska element där det finns möjlighet
 - [ ] CSS ska vara tydligt strukturerad och bidra till GUI/UX
@@ -38,7 +38,7 @@ I den här laborationen kommer ni att bygga en Webshop med Blazor Web App utifr�
 
 #### För Väl Godkänt:
 - [ ] Alla kriterier för godkänt ska uppfyllas (localStorage kan väljas bort)
-- [ ] Blazor Web App ska användas med både Server-rendering och Client-side rendering
+# - [ ] Blazor Web App ska användas med både Server-rendering och Client-side rendering
 - [x] Minst 4 komponenter (inte pages/Layout) ska designas och användas
 - [ ] Produkternas kvantiteter ska hanteras:
   - [ ] Produkter ska kunna bli slutsålda
@@ -47,11 +47,11 @@ I den här laborationen kommer ni att bygga en Webshop med Blazor Web App utifr�
   - [ ] APIet måste användas på ett sätt som gör att slutanvändaren inte kan komma åt API-nyckeln
 - [x] En databas och ett rest API ska användas för att få åtkomst till produkterna
   - [x] Produktdatan ska lagras i databasen (OBS! Inte valutakurserna)
-- [ ] Användaren ska kunna registrera ett användarkonto med användarnamn och lösenord
-- [ ] En användare ska kunna logga in på sidan med hjälp av användarnamn och lösenord
-- [ ] Sidan ska komma ihåg vad en användare har lagt i sin varukorg när den loggar in nästa gång
-- [ ] Ett köp ska inte kunna slutföras utan att vara inloggad
-- [ ] Informationen hämtas från Servern via ett HTTP-anrop till en API-endpoint
+- [x] Användaren ska kunna registrera ett användarkonto med användarnamn och lösenord
+- [x] En användare ska kunna logga in på sidan med hjälp av användarnamn och lösenord
+- [x] Sidan ska komma ihåg vad en användare har lagt i sin varukorg när den loggar in nästa gång
+- [x] Ett köp ska inte kunna slutföras utan att vara inloggad
+- [x] Informationen hämtas från Servern via ett HTTP-anrop till en API-endpoint
 - [x] Delade klasser ska kunna användas från både Frontend och Backend
 - [x] Dela upp din app i 3 projekt, exempelvis:
   - [x] WebshopFrontend (UI, sidor, komponenter)

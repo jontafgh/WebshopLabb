@@ -1,13 +1,10 @@
-using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebshopBackend.Models;
-using WebshopShared;
-using static System.Net.WebRequestMethods;
+using WebshopBackend.Contracts;
+using WebshopBackend.Endpoints;
+using WebshopBackend.Services;
+
 namespace WebshopBackend
 {
     public class Program
@@ -29,7 +26,6 @@ namespace WebshopBackend
             builder.Services.AddIdentityCore<WebshopUser>()
                 .AddEntityFrameworkStores<WebshopContext>()
                 .AddApiEndpoints();
-                
 
             builder.Services.AddDbContext<WebshopContext>(options =>
                 options.UseSqlServer(connectionStringPc)
@@ -39,13 +35,21 @@ namespace WebshopBackend
             {
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
-            
+
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+
+            builder.Services.AddScoped<IEndpoints, UserEndpoints>();
+            builder.Services.AddScoped<IEndpoints, CartEndpoints>();
+            builder.Services.AddScoped<IEndpoints, ProductEndpoints>();
+            builder.Services.AddScoped<IEndpoints, OrderEndpoints>();
+
             var app = builder.Build();
 
-            app.MapMinimalApiEndpoints();
-
             app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
-            app.MapMyIdentityApiEndpoints();
+            app.MapMyEndpoints();
             
             if (app.Environment.IsDevelopment())
             {

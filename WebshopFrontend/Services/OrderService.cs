@@ -15,11 +15,10 @@ namespace WebshopFrontend.Services
         public async Task<OrderDto> GetOrder(int orderId)
         {
             var response = await _httpClient.GetAsync($"/order/{orderId}");
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
-            }
-            return new OrderDto();
+
+            if (!response.IsSuccessStatusCode) return new OrderDto();
+
+            return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
         }
 
         public async Task<OrderDto> PlaceOrder()
@@ -27,20 +26,16 @@ namespace WebshopFrontend.Services
             var order = await CreatePlaceOrderDto();
             var response = await _httpClient.PostAsJsonAsync("/order", order);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
-            }
-            return new OrderDto();
+            if (!response.IsSuccessStatusCode) return new OrderDto();
+
+            return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
         }
 
         private async Task<PlaceOrderDto> CreatePlaceOrderDto()
         {
             var cartItems = await cartService.GetAllItems();
-            return new PlaceOrderDto
-            {
-                CartItems = cartItems
-            };
+
+            return new PlaceOrderDto { CartItems = cartItems };
         }
     }
 }

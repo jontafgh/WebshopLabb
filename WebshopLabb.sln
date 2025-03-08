@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebshopFrontend", "WebshopFrontend\WebshopFrontend.csproj", "{272B1678-7EA5-42D8-9156-B353A3FC85B6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A41EA588-92A2-4F53-A4BE-0FEF1BFA141F} = {A41EA588-92A2-4F53-A4BE-0FEF1BFA141F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebshopShared", "WebshopShared\WebshopShared.csproj", "{BBBAE296-BDA6-4208-A5FE-51ACD2BD4DAE}"
 EndProject
