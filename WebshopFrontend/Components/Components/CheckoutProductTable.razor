@@ -65,7 +65,7 @@ else
     {
         if (firstRender)
         {
-            CartItems = await CartService.GetAll();
+            CartItems = await CartService.GetAllItems();
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -98,7 +98,7 @@ else
                 CounterService.AddToCount(-cartItem.Quantity);
                 break;
         }
-        CartItems = await CartService.GetAll();
+        CartItems = await CartService.GetAllItems();
 
         await InvokeAsync(StateHasChanged);
     }
