@@ -12,11 +12,10 @@
     [Parameter] public required int Stock { get; set; }
 
     private const int Quantity = 1;
-    
 
     private async Task AddToCart()
     {
-        var cartItem = await CartService.AddItem(new CartItemToAddDto { ProductId = ProductId, Quantity = Quantity});
+        var cartItem = await CartService.AddItem(ProductId, Quantity);
         if (cartItem.Id != 0) CartCounterService.AddToCount(Quantity);
     }
 

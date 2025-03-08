@@ -12,6 +12,12 @@ namespace WebshopFrontend.Services
         {
             return await _httpClient.GetFromJsonAsync<List<ProductDto>>("products") ?? [];
         }
+
+        public async Task<ProductDto> GetProductById(int id)
+        {
+            return await _httpClient.GetFromJsonAsync<ProductDto>($"/products/{id}") ?? new ProductDto();
+        }
+
         public async Task<List<BoardgameDto>> GetBoardgames()
         {
             return await _httpClient.GetFromJsonAsync<List<BoardgameDto>>("boardgames") ?? [];

@@ -1,7 +1,7 @@
 ﻿@inject ICounterService CounterService
 @inject ICartService CartService
 
-@if (CartItems == null || CartItems.Count == 0)
+@if (CartItems.Count == 0)
 {
     <p>There are no products in the cart</p>
 
@@ -58,11 +58,10 @@ else
 
 
 @code {
-
-    public List<CartItemDto> CartItems { get; set; }
+    private List<CartItemDto> CartItems { get; set; } = [];
 
     [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -78,35 +77,57 @@ else
     }
 
     private decimal GetTotalPrice() => CartItems.Sum(cartItem => cartItem.Quantity * cartItem.Price);
-
+    
     private async Task UpdateProductQuantity(int action, int id)
     {
         var cartItem = CartItems.First(cartItem => cartItem.Id == id);
+
         switch (action)
         {
             case 1:
-                await CartService.UpdateItem(new CartItemToUpdateDto { Id = cartItem.Id, Quantity = cartItem.Quantity + 1 });
-                CounterService.AddToCount(1);
+                IncrementQuantity(cartItem);
                 break;
             case -1:
-                if (cartItem.Quantity > 1)
-                {
-                    await CartService.UpdateItem(new CartItemToUpdateDto { Id = cartItem.Id, Quantity = cartItem.Quantity - 1 });
-                    CounterService.AddToCount(-1);
-                }
-                else
-                {
-                    await CartService.RemoveItem(cartItem.Id);
-                    CounterService.AddToCount(-cartItem.Quantity);
-                }
+                DecrementQuantity(cartItem);
                 break;
             case 0:
-                await CartService.RemoveItem(cartItem.Id);
-                CounterService.AddToCount(-cartItem.Quantity);
+                RemoveItem(cartItem);
                 break;
         }
-        CartItems = await CartService.GetAllItems();
 
+        await UpdateCartAsync();
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpdateCartAsync()
+    {
+        await CartService.UpdateUserCart(CartItems);
+        await CartService.UpdateLocalStorageCart(CartItems);
+        CartItems = await CartService.GetAllItems();
+    }
+
+    private void RemoveItem(CartItemDto cartItem)
+    {
+        CounterService.AddToCount(-cartItem.Quantity);
+        CartItems.Remove(cartItem);
+    }
+
+    private void IncrementQuantity(CartItemDto cartItem)
+    {
+        cartItem.Quantity++;
+        CounterService.AddToCount(1);
+    }
+
+    private void DecrementQuantity(CartItemDto cartItem)
+    {
+        if (cartItem.Quantity > 1)
+        {
+            cartItem.Quantity--;
+            CounterService.AddToCount(-1);
+        }
+        else
+        {
+            RemoveItem(cartItem);
+        }
     }
 }

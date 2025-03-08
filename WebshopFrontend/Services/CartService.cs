@@ -6,7 +6,7 @@ using WebshopShared;
 
 namespace WebshopFrontend.Services
 {
-    public class CartService(IHttpClientFactory httpClientFactory, IJSRuntime js, ICounterService counterService) : ICartService
+    public class CartService(IHttpClientFactory httpClientFactory, IJSRuntime js, ICounterService counterService, IProductService productService) : ICartService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
         public int CartId { get; set; }
@@ -15,6 +15,47 @@ namespace WebshopFrontend.Services
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
+
+        public async Task Login()
+        {
+            if (CartId == 0) await SetUserCart();
+
+            var cart = await GetUserCart();
+            await UpdateLocalStorageCart(cart);
+
+            counterService.SetCount(cart.Sum(ci => ci.Quantity));
+        }
+
+        public async Task Logout()
+        {
+            await ClearLocalStorageCart();
+            counterService.SetCount(0);
+        }
+
+        public async Task<CartItemDto> AddItem(int productId, int quantity)
+        {
+            var cartItem = await GetCartItem(productId, quantity);
+            await js.InvokeVoidAsync("AddItemToLocalStorage", cartItem);
+            return cartItem;
+        }
+
+        public async Task<List<CartItemDto>> GetAllItems()
+        {
+            return await js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
+        }
+
+        public async Task UpdateLocalStorageCart(List<CartItemDto> cartItems)
+        {
+            var cartItemsJson = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
+            await js.InvokeVoidAsync("localStorage.setItem", "cart", cartItemsJson);
+        }
+
+        public async Task UpdateUserCart(List<CartItemDto> cartItems)
+        {
+            var json = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var result = await _httpClient.PutAsync($"/cart", content);
+        }
 
         public async Task SetUserCart()
         {
@@ -30,49 +71,12 @@ namespace WebshopFrontend.Services
             if (cart != null) CartId = cart.Id;
         }
 
-        public async Task<CartItemDto> AddItem(CartItemToAddDto cartItemToAdd)
+        public async Task<List<CartItemDto>> GetUserCart()
         {
-            var cartItem = await GetProduct(cartItemToAdd);
-            await js.InvokeVoidAsync("AddItemToLocalStorage", cartItem);
-            return cartItem;
+            var result = await _httpClient.GetAsync($"/cart/cartitems");
+            var content = await result.Content.ReadAsStreamAsync();
+            return JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
         }
-
-        public async Task<CartItemDto> UpdateItem(CartItemToUpdateDto cartItemToUpdate)
-        {
-            return await js.InvokeAsync<CartItemDto>("UpdateItemInLocalStorage", cartItemToUpdate);
-        }
-
-        public async Task<CartItemDto> RemoveItem(int itemId)
-        {
-            return await js.InvokeAsync<CartItemDto>("RemoveItemFromLocalStorage", itemId);
-        }
-
-        public async Task<List<CartItemDto>> GetAllItems()
-        {
-            var cartItems = await js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
-
-            await UpdateUserCart(cartItems);
-
-            return cartItems;
-        }
-
-        public async Task Login()
-        {
-            if (CartId == 0) await SetUserCart();
-
-            await SetLocalStorageCart();
-            var cart = await GetUserCart();
-
-            counterService.SetCount(cart.Sum(ci => ci.Quantity));
-        }
-        public async Task Logout()
-        {
-            await GetAllItems();
-            await ClearLocalStorageCart();
-
-            counterService.SetCount(0);
-        }
-
         public async Task ClearLocalStorageCart()
         {
             await js.InvokeVoidAsync("RemoveCartFromLocalStorage");
@@ -83,45 +87,22 @@ namespace WebshopFrontend.Services
             await _httpClient.DeleteAsync($"/cart");
         }
 
-        public async Task<List<CartItemDto>> GetUserCart()
+        private async Task<CartItemDto> GetCartItem(int productId, int quantity)
         {
-            var result = await _httpClient.GetAsync($"/cart/cartitems");
-            var content = await result.Content.ReadAsStreamAsync();
-            return JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
-        }
-
-        public async Task UpdateUserCart(List<CartItemDto> cartItems)
-        {
-            var json = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var result = await _httpClient.PutAsync($"/cart", content);
-        }
-
-        public async Task SetLocalStorageCart()
-        {
-            var result = await _httpClient.GetAsync($"/cart/cartitems");
-
-            if (!result.IsSuccessStatusCode) return;
-
-            var cartItemsJson = await result.Content.ReadAsStringAsync();
-            await js.InvokeVoidAsync("localStorage.setItem", "cart", cartItemsJson);
-        }
-
-        public async Task<CartItemDto> GetProduct(CartItemToAddDto cartItemToAdd)
-        {
-            var id = cartItemToAdd.ProductId;
-            var product = await _httpClient.GetFromJsonAsync<ProductDto>($"/products/{id}");
+            var product = await productService.GetProductById(productId);
 
             return new CartItemDto
             {
-                Id = product!.Id,
-                ProductId = product!.Id,
+                Id = product.Id,
+                ProductId = product.Id,
                 CartId = CartId,
                 Name = product.Name,
                 ArtNr = product.ArtNr,
-                Quantity = cartItemToAdd.Quantity,
+                Quantity = quantity,
                 Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
             };
         }
+
+        
     }
 }
