@@ -5,7 +5,7 @@ namespace WebshopFrontend.Services.Interfaces
 {
     public interface ICartService
     {
-        Task<int> GetUserCartId();
+        Task<CartDto?> GetUserCart();
         Task<CartDto?> SetUserCart();
         Task<CartItemDto> AddItem(int productId, int quantity);
         Task<List<CartItemDto>> GetLocalStorageCartItems();

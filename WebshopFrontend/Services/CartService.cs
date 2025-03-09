@@ -17,10 +17,9 @@ namespace WebshopFrontend.Services
 
         public async Task Login()
         {
-            var userCartId = await GetUserCartId();
-
-            //TODO: Handle errors
-            if (userCartId == 0) await SetUserCart();
+            var userCart = await GetUserCart();
+            
+            if (userCart == null || userCart.Id == 0) await SetUserCart();
 
             var cart = await GetUserCartItems();
             await UpdateLocalStorageCart(cart);
@@ -30,6 +29,8 @@ namespace WebshopFrontend.Services
 
         public async Task Logout()
         {
+            var cart = await GetLocalStorageCartItems();
+            await UpdateUserCart(cart);
             await ClearLocalStorageCart();
             counterService.SetCount(0);
         }
@@ -77,17 +78,18 @@ namespace WebshopFrontend.Services
         {
             var result = await _httpClient.GetAsync($"/cart/cartitems");
             var content = await result.Content.ReadAsStreamAsync();
-            return JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
+            var cartitems = JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
+            return cartitems;
         }
 
-        public async Task<int> GetUserCartId()
+        public async Task<CartDto?> GetUserCart()
         {
             var result = await _httpClient.GetAsync("/cart");
-            if (!result.IsSuccessStatusCode) return 0;
+            if (!result.IsSuccessStatusCode) return null;   
 
-            var content = await result.Content.ReadAsStringAsync();
-
-            return int.TryParse(content, out var cartId) ? cartId : 0;
+            var cartJson = await result.Content.ReadAsStringAsync();
+            var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
+            return cart ?? null;
         }
 
         public async Task ClearLocalStorageCart()
@@ -103,13 +105,13 @@ namespace WebshopFrontend.Services
         private async Task<CartItemDto> GetCartItem(int productId, int quantity)
         {
             var product = await productService.GetProductById(productId);
-            var cartId = await GetUserCartId();
+            var cartId = await GetUserCart();
 
             return new CartItemDto
             {
                 Id = product.Id,
                 ProductId = product.Id,
-                CartId = cartId,
+                CartId = cartId?.Id ?? 0,
                 Name = product.Name,
                 ArtNr = product.ArtNr,
                 Quantity = quantity,

@@ -102,13 +102,13 @@ namespace WebshopFrontend.Services.Identity
 
         public async Task LogoutAsync()
         {
+            await cartService.Logout();
+
             const string empty = "{}";
             var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("/Account/logout", emptyContent);
             var responseContent = await response.Content.ReadAsStringAsync();
-
-            await cartService.Logout();
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
