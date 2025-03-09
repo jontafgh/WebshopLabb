@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebshopBackend.Contracts;
 using WebshopShared;
@@ -33,6 +34,15 @@ public class CartEndpoints(ICartService cartService, IUserService userService) :
             var cart = await cartService.GetCartItemsByCartIdAsync(cartId);
             return Results.Ok(cart);
 
+        }).RequireAuthorization();
+
+        app.MapGet("/cart", async (ClaimsPrincipal claims) =>
+        {
+            var userId = userService.GetUserId(claims);
+            if (userId is null) return Results.Unauthorized();
+
+            var cartId = await cartService.GetCartIdByUserIdAsync(userId);
+            return Results.Ok(new { CartId = cartId });
         }).RequireAuthorization();
 
         app.MapPut("/cart", async (ClaimsPrincipal claims, List<CartItemDto> cartItems) =>

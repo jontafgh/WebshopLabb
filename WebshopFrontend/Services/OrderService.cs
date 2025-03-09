@@ -33,7 +33,7 @@ namespace WebshopFrontend.Services
 
         private async Task<PlaceOrderDto> CreatePlaceOrderDto()
         {
-            var cartItems = await cartService.GetAllItems();
+            var cartItems = await cartService.GetLocalStorageCartItems();
 
             return new PlaceOrderDto { CartItems = cartItems };
         }

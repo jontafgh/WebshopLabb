@@ -62,11 +62,14 @@ else
 
     [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
 
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            CartItems = await CartService.GetAllItems();
+            CartItems = await CartService.GetLocalStorageCartItems();
+            await UpdateUserCart();
             await InvokeAsync(StateHasChanged);
         }
 
@@ -77,7 +80,7 @@ else
     }
 
     private decimal GetTotalPrice() => CartItems.Sum(cartItem => cartItem.Quantity * cartItem.Price);
-    
+
     private async Task UpdateProductQuantity(int action, int id)
     {
         var cartItem = CartItems.First(cartItem => cartItem.Id == id);
@@ -101,9 +104,9 @@ else
 
     private async Task UpdateCartAsync()
     {
-        await CartService.UpdateUserCart(CartItems);
         await CartService.UpdateLocalStorageCart(CartItems);
-        CartItems = await CartService.GetAllItems();
+        await UpdateUserCart();
+        CartItems = await CartService.GetLocalStorageCartItems();
     }
 
     private void RemoveItem(CartItemDto cartItem)
@@ -128,6 +131,16 @@ else
         else
         {
             RemoveItem(cartItem);
+        }
+    }
+
+    private async Task UpdateUserCart()
+    {
+        if (AuthenticationState != null)
+        {
+            var authState = await AuthenticationState;
+            if (authState.User?.Identity is not null && authState.User.Identity.IsAuthenticated)
+                await CartService.UpdateUserCart(CartItems);
         }
     }
 }

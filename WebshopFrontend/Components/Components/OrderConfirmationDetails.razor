@@ -1,7 +1,7 @@
 ﻿@inject IOrderService OrderService
 @inject IUserService UserService
 
-@if (!_loaded)
+@if (Order == null)
 { 
     <p>Loading...</p>
 }
@@ -57,14 +57,11 @@ else
 @code {
     [Parameter] public required int OrderId { get; set; }
 
-    public required OrderDto Order { get; set; }
+    public OrderDto? Order { get; set; }
     public required UserDetailsDto UserDetails { get; set; }
-
-    private bool _loaded = false;
 
     protected override void OnInitialized()
     {
-        Order = new OrderDto();
         UserDetails = new UserDetailsDto();
     }
 
@@ -72,8 +69,7 @@ else
     {
         Order = await OrderService.GetOrder(OrderId);
         UserDetails = await UserService.GetUserDetails();
-        _loaded = true;
     }
 
-    private decimal GetTotalPrice() => Order.CartItems.Sum(x => x.Price * x.Quantity);
+    private decimal GetTotalPrice() => Order!.CartItems.Sum(x => x.Price * x.Quantity);
 }

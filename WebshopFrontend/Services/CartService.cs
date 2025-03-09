@@ -9,7 +9,6 @@ namespace WebshopFrontend.Services
     public class CartService(IHttpClientFactory httpClientFactory, IJSRuntime js, ICounterService counterService, IProductService productService) : ICartService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
-        public int CartId { get; set; }
         
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
@@ -18,9 +17,12 @@ namespace WebshopFrontend.Services
 
         public async Task Login()
         {
-            if (CartId == 0) await SetUserCart();
+            var userCartId = await GetUserCartId();
 
-            var cart = await GetUserCart();
+            //TODO: Handle errors
+            if (userCartId == 0) await SetUserCart();
+
+            var cart = await GetUserCartItems();
             await UpdateLocalStorageCart(cart);
 
             counterService.SetCount(cart.Sum(ci => ci.Quantity));
@@ -39,7 +41,7 @@ namespace WebshopFrontend.Services
             return cartItem;
         }
 
-        public async Task<List<CartItemDto>> GetAllItems()
+        public async Task<List<CartItemDto>> GetLocalStorageCartItems()
         {
             return await js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
         }
@@ -57,26 +59,37 @@ namespace WebshopFrontend.Services
             var result = await _httpClient.PutAsync($"/cart", content);
         }
 
-        public async Task SetUserCart()
+        public async Task<CartDto?> SetUserCart()
         {
             const string empty = "{}";
             var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
 
             var result = await _httpClient.PostAsJsonAsync("/cart", emptyContent);
-            if (!result.IsSuccessStatusCode) return;
+            if (!result.IsSuccessStatusCode) return null;
 
             var cartJson = await result.Content.ReadAsStringAsync();
             var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
 
-            if (cart != null) CartId = cart.Id;
+            return cart ?? null;
         }
 
-        public async Task<List<CartItemDto>> GetUserCart()
+        public async Task<List<CartItemDto>> GetUserCartItems()
         {
             var result = await _httpClient.GetAsync($"/cart/cartitems");
             var content = await result.Content.ReadAsStreamAsync();
             return JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
         }
+
+        public async Task<int> GetUserCartId()
+        {
+            var result = await _httpClient.GetAsync("/cart");
+            if (!result.IsSuccessStatusCode) return 0;
+
+            var content = await result.Content.ReadAsStringAsync();
+
+            return int.TryParse(content, out var cartId) ? cartId : 0;
+        }
+
         public async Task ClearLocalStorageCart()
         {
             await js.InvokeVoidAsync("RemoveCartFromLocalStorage");
@@ -90,19 +103,18 @@ namespace WebshopFrontend.Services
         private async Task<CartItemDto> GetCartItem(int productId, int quantity)
         {
             var product = await productService.GetProductById(productId);
+            var cartId = await GetUserCartId();
 
             return new CartItemDto
             {
                 Id = product.Id,
                 ProductId = product.Id,
-                CartId = CartId,
+                CartId = cartId,
                 Name = product.Name,
                 ArtNr = product.ArtNr,
                 Quantity = quantity,
                 Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
             };
         }
-
-        
     }
 }

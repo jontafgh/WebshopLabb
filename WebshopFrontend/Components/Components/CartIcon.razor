@@ -19,7 +19,7 @@
     {
         if (firstRender)
         {
-            var cart = await CartService.GetAllItems();
+            var cart = await CartService.GetLocalStorageCartItems();
             CounterService.SetCount(cart.Sum(c => c.Quantity));
             _noOfItemsInCart = CounterService.GetCount();
         }

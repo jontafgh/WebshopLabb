@@ -14,6 +14,6 @@ namespace WebshopShared
     {
         public int Id { get; set; }
         public DateTime OrderDate { get; set; }
-        public List<CartItemDto> CartItems { get; set; }
+        public List<CartItemDto> CartItems { get; set; } = [];
     }
 }
