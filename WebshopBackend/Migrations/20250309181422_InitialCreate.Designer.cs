@@ -12,8 +12,8 @@ using WebshopBackend;
 namespace WebshopBackend.Migrations
 {
     [DbContext(typeof(WebshopContext))]
-    [Migration("20250307124332_updatedUserAndProductModels")]
-    partial class updatedUserAndProductModels
+    [Migration("20250309181422_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -224,19 +224,10 @@ namespace WebshopBackend.Migrations
 
             modelBuilder.Entity("WebshopBackend.Models.Cart", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Carts");
                 });
@@ -249,8 +240,9 @@ namespace WebshopBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
+                    b.Property<string>("CartId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -330,6 +322,57 @@ namespace WebshopBackend.Migrations
                         .HasFilter("[ProductId] IS NOT NULL");
 
                     b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.OrderLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderLines");
                 });
 
             modelBuilder.Entity("WebshopBackend.Models.Price", b =>
@@ -588,8 +631,8 @@ namespace WebshopBackend.Migrations
             modelBuilder.Entity("WebshopBackend.Models.Cart", b =>
                 {
                     b.HasOne("WebshopBackend.WebshopUser", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
+                        .WithOne("Cart")
+                        .HasForeignKey("WebshopBackend.Models.Cart", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -629,6 +672,36 @@ namespace WebshopBackend.Migrations
                     b.HasOne("WebshopBackend.Models.Product", "Product")
                         .WithOne("Image")
                         .HasForeignKey("WebshopBackend.Models.Image", "ProductId");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.Order", b =>
+                {
+                    b.HasOne("WebshopBackend.WebshopUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebshopBackend.Models.OrderLine", b =>
+                {
+                    b.HasOne("WebshopBackend.Models.Order", "Order")
+                        .WithMany("OrderLines")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebshopBackend.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -697,6 +770,11 @@ namespace WebshopBackend.Migrations
                     b.Navigation("CartItems");
                 });
 
+            modelBuilder.Entity("WebshopBackend.Models.Order", b =>
+                {
+                    b.Navigation("OrderLines");
+                });
+
             modelBuilder.Entity("WebshopBackend.Models.Price", b =>
                 {
                     b.Navigation("Discount");
@@ -718,7 +796,7 @@ namespace WebshopBackend.Migrations
 
             modelBuilder.Entity("WebshopBackend.WebshopUser", b =>
                 {
-                    b.Navigation("Carts");
+                    b.Navigation("Cart");
                 });
 #pragma warning restore 612, 618
         }

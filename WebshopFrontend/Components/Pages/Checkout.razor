@@ -49,7 +49,7 @@ else
 
         var order = await OrderService.PlaceOrder();
 
-        await CartService.ClearLocalStorageCart();
+        await CartService.ClearCart();
         await CartService.ClearUserCart();
         CounterService.SetCount(0);
 

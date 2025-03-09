@@ -8,14 +8,17 @@
 </button>
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public required int ProductId { get; set; }
     [Parameter] public required int Stock { get; set; }
+    private string _cartId = string.Empty;
 
     private const int Quantity = 1;
 
     private async Task AddToCart()
     {
-        var cartItem = await CartService.AddItem(ProductId, Quantity);
+        _cartId = await GetCartId();
+        var cartItem = await CartService.AddItem(ProductId, Quantity, _cartId);
         if (cartItem.Id != 0) CartCounterService.AddToCount(Quantity);
     }
 
@@ -29,5 +32,12 @@
         return defaultClasses + addedClass;
     }
 
-
+    private async Task<string> GetCartId()
+    {
+        if (AuthenticationState == null) return string.Empty;
+        var authState = await AuthenticationState;
+        if (authState.User?.Identity is not null && authState.User.Identity.IsAuthenticated)
+            return authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        return string.Empty;
+    }
 }

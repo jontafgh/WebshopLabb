@@ -15,24 +15,24 @@ public class CartEndpoints(ICartService cartService, IUserService userService) :
             var userId = userService.GetUserId(claims);
             if (userId is null) return Results.Unauthorized();
 
-            var existingCart = await cartService.GetCartByUserIdAsync(userId);
+            var existingCart = await cartService.GetCartAsync(userId);
             if (existingCart is not null) return Results.Conflict();
 
-            var cart = await cartService.AddCartAsync(new CreateCartDto { UserId = userId });
+            var cart = await cartService.CreateCartAsync(new CreateCartDto { Id = userId });
             return Results.Created($"/cart/{cart.Id}", cart);
 
         }).RequireAuthorization();
 
-        app.MapGet("/cart/cartitems/", async (ClaimsPrincipal claims) =>
+        app.MapGet("/cart/cartitems", async (ClaimsPrincipal claims) =>
         {
             var userId = userService.GetUserId(claims);
             if (userId is null) return Results.Unauthorized();
 
-            var cartId = await cartService.GetCartIdByUserIdAsync(userId);
-            if (cartId == 0) return Results.NotFound();
+            var cart = await cartService.GetCartAsync(userId);
+            if (cart == null) return Results.NotFound();
 
-            var cart = await cartService.GetCartItemsByCartIdAsync(cartId);
-            return Results.Ok(cart);
+            var cartitems = await cartService.GetCartItemsAsync(userId);
+            return Results.Ok(cartitems);
 
         }).RequireAuthorization();
 
@@ -41,12 +41,12 @@ public class CartEndpoints(ICartService cartService, IUserService userService) :
             var userId = userService.GetUserId(claims);
             if (userId is null) return Results.Unauthorized();
 
-            var existingCart = await cartService.GetCartByUserIdAsync(userId);
+            var existingCart = await cartService.GetCartAsync(userId);
             return existingCart is not null ? Results.Ok(existingCart) : Results.NotFound();
 
         }).RequireAuthorization();
 
-        app.MapPut("/cart", async (ClaimsPrincipal claims, List<CartItemDto> cartItems) =>
+        app.MapPut("/cart/cartitems", async (ClaimsPrincipal claims, List<CartItemDto> cartItems) =>
         {
             var userId = userService.GetUserId(claims);
             if (userId is null) return Results.Unauthorized();

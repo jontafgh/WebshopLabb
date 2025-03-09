@@ -68,8 +68,8 @@ else
     {
         if (firstRender)
         {
-            CartItems = await CartService.GetLocalStorageCartItems();
-            await UpdateUserCart();
+            CartItems = await CartService.GetCart();
+            //await UpdateUserCart();
             await InvokeAsync(StateHasChanged);
         }
 
@@ -104,9 +104,9 @@ else
 
     private async Task UpdateCartAsync()
     {
-        await CartService.UpdateLocalStorageCart(CartItems);
+        await CartService.UpdateCart(CartItems);
         await UpdateUserCart();
-        CartItems = await CartService.GetLocalStorageCartItems();
+        CartItems = await CartService.GetCart();
     }
 
     private void RemoveItem(CartItemDto cartItem)

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
 using WebshopBackend.Models;
 using WebshopShared;
@@ -7,12 +8,12 @@ namespace WebshopBackend.Services
 {
     public class CartService(WebshopContext dbContext) : ICartService
     {
-        public async Task<Cart?> GetCartByUserIdAsync(string userId)
+        public async Task<Cart?> GetCartAsync(string id)
         {
-            return await dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+            return await dbContext.Carts.FindAsync(id);
         }
 
-        public async Task<Cart> AddCartAsync(CreateCartDto createCartDto)
+        public async Task<Cart> CreateCartAsync(CreateCartDto createCartDto)
         {
             var cart = createCartDto.ToCart();
             dbContext.Carts.Add(cart);
@@ -20,15 +21,7 @@ namespace WebshopBackend.Services
             return cart;
         }
 
-        public async Task<int> GetCartIdByUserIdAsync(string userId)
-        {
-            return await dbContext.Carts.Where(c => c.UserId == userId)
-                .AsNoTracking()
-                .Select(c => c.Id)
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<List<CartItemDto>> GetCartItemsByCartIdAsync(int cartId)
+        public async Task<List<CartItemDto>> GetCartItemsAsync(string cartId)
         {
             return await dbContext.CartItems.Where(ci => ci.CartId == cartId)
                 .AsNoTracking()
@@ -39,10 +32,10 @@ namespace WebshopBackend.Services
                 .ToListAsync();
         }
 
-        public async Task<Cart?> UpdateCartItemsAsync(string userId, List<CartItemDto> cartItems)
+        public async Task<Cart?> UpdateCartItemsAsync(string id, List<CartItemDto> cartItems)
         {
             var cart = await dbContext.Carts.Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (cart is null) return cart;
             
             cart.CartItems = cartItems.Select(ci => ci.ToCartItem()).ToList();
@@ -50,10 +43,10 @@ namespace WebshopBackend.Services
             return cart;
         }
 
-        public async Task<Cart?> DeleteCartAsync(string userId)
+        public async Task<Cart?> DeleteCartAsync(string id)
         {
             var cart = await dbContext.Carts.Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (cart is null) return null;
 
             dbContext.Carts.Remove(cart);

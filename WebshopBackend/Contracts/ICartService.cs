@@ -5,11 +5,10 @@ namespace WebshopBackend.Contracts
 {
     public interface ICartService
     {
-        Task<Cart?> GetCartByUserIdAsync(string userId);
-        Task<Cart> AddCartAsync(CreateCartDto createCartDto);
-        Task<int> GetCartIdByUserIdAsync(string userId);
-        Task<List<CartItemDto>> GetCartItemsByCartIdAsync(int cartId);
-        Task<Cart?> UpdateCartItemsAsync(string userId, List<CartItemDto> cartItems);
-        Task<Cart?> DeleteCartAsync(string userId);
+        Task<Cart?> GetCartAsync(string id);
+        Task<Cart> CreateCartAsync(CreateCartDto createCartDto);
+        Task<List<CartItemDto>> GetCartItemsAsync(string cartId);
+        Task<Cart?> UpdateCartItemsAsync(string id, List<CartItemDto> cartItems);
+        Task<Cart?> DeleteCartAsync(string id);
     }
 }

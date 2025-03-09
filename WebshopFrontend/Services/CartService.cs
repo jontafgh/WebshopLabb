@@ -1,4 +1,6 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using WebshopFrontend.Services.Interfaces;
@@ -17,49 +19,78 @@ namespace WebshopFrontend.Services
 
         public async Task Login()
         {
-            var userCart = await GetUserCart();
-            
-            if (userCart == null || userCart.Id == 0) await SetUserCart();
+            var cart = await GetUserCart();
+            if (string.IsNullOrWhiteSpace(cart.Id)) 
+                cart = await SetUserCart();
 
-            var cart = await GetUserCartItems();
-            await UpdateLocalStorageCart(cart);
-
-            counterService.SetCount(cart.Sum(ci => ci.Quantity));
+            cart!.CartItems = await GetUserCartItems();
+            await UpdateCart(cart.CartItems);
+            counterService.SetCount(cart.CartItems.Sum(ci => ci.Quantity));
         }
-
         public async Task Logout()
         {
-            var cart = await GetLocalStorageCartItems();
+            var cart = await GetCart();
             await UpdateUserCart(cart);
-            await ClearLocalStorageCart();
+            await ClearCart();
             counterService.SetCount(0);
         }
-
-        public async Task<CartItemDto> AddItem(int productId, int quantity)
+        public async Task<CartItemDto> AddItem(int productId, int quantity, string cartId)
         {
-            var cartItem = await GetCartItem(productId, quantity);
+            var cartItem = await GetCartItem(productId, quantity, cartId);
             await js.InvokeVoidAsync("AddItemToLocalStorage", cartItem);
             return cartItem;
         }
-
-        public async Task<List<CartItemDto>> GetLocalStorageCartItems()
+        public async Task<List<CartItemDto>> GetCart()
         {
-            return await js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
+            var cart = await js.InvokeAsync<List<CartItemDto>>("GetCartFromLocalStorage");
+            return cart;
         }
-
-        public async Task UpdateLocalStorageCart(List<CartItemDto> cartItems)
+        public async Task UpdateCart(List<CartItemDto> cartItems)
         {
             var cartItemsJson = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
             await js.InvokeVoidAsync("localStorage.setItem", "cart", cartItemsJson);
         }
+        public async Task SetCart()
+        {
+            await js.InvokeVoidAsync("localStorage.setItem", "cart", "[]");
+        }
+        public async Task ClearCart()
+        {
+            await js.InvokeVoidAsync("RemoveCartFromLocalStorage");
+        }
 
+        private async Task<CartItemDto> GetCartItem(int productId, int quantity, string cartId)
+        {
+            var product = await productService.GetProductById(productId);
+            var cart = await GetUserCart();
+
+            return new CartItemDto
+            {
+                Id = product.Id,
+                ProductId = product.Id,
+                CartId = cartId,
+                Name = product.Name,
+                ArtNr = product.ArtNr,
+                Quantity = quantity,
+                Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
+            };
+        }
+        public async Task<CartDto> GetUserCart()
+        {
+            var result = await _httpClient.GetAsync("/cart");
+            if (!result.IsSuccessStatusCode) return new CartDto();
+
+            var cartJson = await result.Content.ReadAsStringAsync();
+            var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
+            return cart ?? new CartDto();
+        }
         public async Task UpdateUserCart(List<CartItemDto> cartItems)
         {
             var json = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var result = await _httpClient.PutAsync($"/cart", content);
-        }
+            var response = await _httpClient.PutAsync($"/cart/cartitems", content);
 
+        }
         public async Task<CartDto?> SetUserCart()
         {
             const string empty = "{}";
@@ -73,50 +104,17 @@ namespace WebshopFrontend.Services
 
             return cart ?? null;
         }
-
+        public async Task ClearUserCart()
+        {
+            var emptyCollection = new List<CartItemDto>();
+            await UpdateUserCart(emptyCollection);
+        }
         public async Task<List<CartItemDto>> GetUserCartItems()
         {
             var result = await _httpClient.GetAsync($"/cart/cartitems");
             var content = await result.Content.ReadAsStreamAsync();
             var cartitems = JsonSerializer.Deserialize<List<CartItemDto>>(content, _jsonSerializerOptions) ?? [];
             return cartitems;
-        }
-
-        public async Task<CartDto?> GetUserCart()
-        {
-            var result = await _httpClient.GetAsync("/cart");
-            if (!result.IsSuccessStatusCode) return null;   
-
-            var cartJson = await result.Content.ReadAsStringAsync();
-            var cart = JsonSerializer.Deserialize<CartDto>(cartJson, _jsonSerializerOptions);
-            return cart ?? null;
-        }
-
-        public async Task ClearLocalStorageCart()
-        {
-            await js.InvokeVoidAsync("RemoveCartFromLocalStorage");
-        }
-
-        public async Task ClearUserCart()
-        {
-            await _httpClient.DeleteAsync($"/cart");
-        }
-
-        private async Task<CartItemDto> GetCartItem(int productId, int quantity)
-        {
-            var product = await productService.GetProductById(productId);
-            var cartId = await GetUserCart();
-
-            return new CartItemDto
-            {
-                Id = product.Id,
-                ProductId = product.Id,
-                CartId = cartId?.Id ?? 0,
-                Name = product.Name,
-                ArtNr = product.ArtNr,
-                Quantity = quantity,
-                Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
-            };
         }
     }
 }

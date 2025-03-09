@@ -221,20 +221,10 @@ namespace WebshopBackend.Migrations
 
             modelBuilder.Entity("WebshopBackend.Models.Cart", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -247,8 +237,9 @@ namespace WebshopBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
+                    b.Property<string>("CartId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -638,7 +629,7 @@ namespace WebshopBackend.Migrations
                 {
                     b.HasOne("WebshopBackend.WebshopUser", "User")
                         .WithOne("Cart")
-                        .HasForeignKey("WebshopBackend.Models.Cart", "UserId")
+                        .HasForeignKey("WebshopBackend.Models.Cart", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

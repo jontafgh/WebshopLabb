@@ -30,6 +30,11 @@ namespace WebshopBackend
             modelBuilder.Entity<Boardgame>()
                 .HasOne(b => b.Product)
                 .WithOne();
+
+            modelBuilder.Entity<WebshopUser>()
+                .HasOne(u => u.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<Cart>(c => c.Id);
         }
     }
     public class WebshopUser : IdentityUser
