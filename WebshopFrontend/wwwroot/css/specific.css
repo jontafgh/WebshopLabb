@@ -40,6 +40,9 @@
         cursor: pointer;
     }
 
+.product-table-container {
+    overflow-x: hidden;
+}
 
 .product-table {
     width: 100%;

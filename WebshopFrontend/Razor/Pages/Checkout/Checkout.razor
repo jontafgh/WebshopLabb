@@ -11,16 +11,17 @@
         <OrderConfirmationDetails OrderId="_orderId" />
     </AuthorizeView>
 }
-
 else
 {
-    
-        <Cart OnEmptyCart="HideUserDetailsForm" />
-    
+    <Cart OnEmptyCart="HideUserDetailsForm" />
     <AuthorizeView>
         <Authorized>
             @if (!_cartEmpty)
             {
+                <div class="padding-x padding-y ">
+                    <h3>Please comfirm your shipping details</h3>
+                </div>
+
                 <div class="white border padding-x padding-y">
                     <UserDetailsForm OnFormSubmit="OnFormSubmitted" />
                 </div>

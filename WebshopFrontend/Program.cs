@@ -1,7 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using WebshopFrontend.Components;
+using WebshopFrontend.Razor;
 using WebshopFrontend.Services;
 using WebshopFrontend.Services.Identity;
 using WebshopFrontend.Services.Interfaces;

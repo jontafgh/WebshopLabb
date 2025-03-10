@@ -1,10 +1,6 @@
 ﻿@using WebshopShared.Validation
 @inject IUserService UserService
 
-<div class="padding-x padding-y ">
-    <h3>Please comfirm your shipping details</h3>
-</div>
-
 <EditForm Model="UserDetails" OnValidSubmit="Submit" FormName="UserDetails">
     <ObjectGraphDataAnnotationsValidator />
     <div class="form-flex-container">
