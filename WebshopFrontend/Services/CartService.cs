@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
-using System.Collections.Generic;
+﻿using Microsoft.JSInterop;
 using System.Text;
 using System.Text.Json;
 using WebshopFrontend.Services.Interfaces;
@@ -62,7 +60,6 @@ namespace WebshopFrontend.Services
         private async Task<CartItemDto> GetCartItem(int productId, int quantity, string cartId)
         {
             var product = await productService.GetProductById(productId);
-            var cart = await GetUserCart();
 
             return new CartItemDto
             {

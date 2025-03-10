@@ -15,7 +15,7 @@ namespace WebshopFrontend.Services.Identity
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
-        private bool _authenticated = false;
+        private bool _authenticated;
         private readonly ClaimsPrincipal _unauthenticated = new(new ClaimsIdentity());
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -108,7 +108,7 @@ namespace WebshopFrontend.Services.Identity
             var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("/Account/logout", emptyContent);
-            var responseContent = await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }

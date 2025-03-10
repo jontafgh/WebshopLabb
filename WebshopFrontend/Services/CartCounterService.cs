@@ -4,7 +4,7 @@ namespace WebshopFrontend.Services
 {
     public class CartCounterService : ICounterService
     {
-        private int _counter = 0;
+        private int _counter;
 
         public event EventHandler<int>? CounterChanged;
 

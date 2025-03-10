@@ -150,11 +150,11 @@
 
 @code {
 
-    [SupplyParameterFromForm] private UserDetails? UserDetails { get; set; } = new();
+    [SupplyParameterFromForm] private UserDetails UserDetails { get; set; } = new();
 
     [Parameter] public EventCallback<UserDetails> OnFormSubmit { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         UserDetails = await GetExistingUserDetails();
     }

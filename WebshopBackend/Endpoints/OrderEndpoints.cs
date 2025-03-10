@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
 using WebshopShared;
 

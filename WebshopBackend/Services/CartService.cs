@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
 using WebshopBackend.Models;
 using WebshopShared;
@@ -26,7 +25,7 @@ namespace WebshopBackend.Services
             return await dbContext.CartItems.Where(ci => ci.CartId == cartId)
                 .AsNoTracking()
                 .Include(p => p.Product)
-                .ThenInclude(p => p.Price)
+                .ThenInclude(p => p.Price!)
                 .ThenInclude(d => d.Discount)
                 .Select(c => c.ToCartItemDto())
                 .ToListAsync();

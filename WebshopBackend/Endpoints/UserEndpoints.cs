@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
 using WebshopShared;
+using WebshopBackend.Models;
 
 namespace WebshopBackend.Endpoints
 {

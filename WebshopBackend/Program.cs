@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
 using WebshopBackend.Endpoints;
+using WebshopBackend.Models;
 using WebshopBackend.Services;
 
 namespace WebshopBackend
@@ -14,7 +15,7 @@ namespace WebshopBackend
             var builder = WebApplication.CreateBuilder(args);
 
             var connectionStringPc = builder.Configuration.GetConnectionString("WebshopDbPc");
-            var connectionStringLaptop = builder.Configuration.GetConnectionString("WebshopDbLaptop");
+            //var connectionStringLaptop = builder.Configuration.GetConnectionString("WebshopDbLaptop");
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

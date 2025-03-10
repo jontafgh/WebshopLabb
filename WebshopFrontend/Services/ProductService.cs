@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using WebshopFrontend.Services.Interfaces;
+﻿using WebshopFrontend.Services.Interfaces;
 using WebshopShared;
 
 namespace WebshopFrontend.Services

@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Models;
 
 namespace WebshopBackend
 {
-    public class WebshopContext : IdentityDbContext<WebshopUser>
+    public class WebshopContext(DbContextOptions<WebshopContext> options) : IdentityDbContext<WebshopUser>(options)
     {
-        public WebshopContext(DbContextOptions<WebshopContext> options) : base(options) {}
-       
         public DbSet<Boardgame> Boardgames { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Image> Images { get; set; }
@@ -36,23 +33,5 @@ namespace WebshopBackend
                 .WithOne(c => c.User)
                 .HasForeignKey<Cart>(c => c.Id);
         }
-    }
-    public class WebshopUser : IdentityUser
-    {
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public int? AddressId { get; set; }
-        public Address? Address { get; set; }
-        public Cart? Cart { get; set; }
-    }
-
-    public class Address
-    {
-        public int Id { get; set; }
-        public List<WebshopUser> Users { get; set; } = [];
-        public string Street { get; set; } = null!;
-        public string PostalCode { get; set; } = null!;
-        public string City { get; set; } = null!;
-        public string Country { get; set; } = null!;
     }
 }

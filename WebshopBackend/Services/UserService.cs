@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
-using WebshopBackend;
+using WebshopBackend.Models;
 using WebshopShared;
 
 namespace WebshopBackend.Services

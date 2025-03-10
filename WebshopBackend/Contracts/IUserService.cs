@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using WebshopBackend.Models;
 using WebshopShared;
 
 namespace WebshopBackend.Contracts

@@ -39,7 +39,6 @@ else
 @code {
     private bool _formSubmitted;
     private bool _cartEmpty;
-
     private int _orderId;
 
     private async Task OnFormSubmitted(UserDetails userDetails)
@@ -54,13 +53,10 @@ else
 
         _orderId = order.Id;
         _formSubmitted = true;
-
-        await InvokeAsync(StateHasChanged);
     }
 
     private void HideUserDetailsForm(bool arg)
     {
         _cartEmpty = arg;
     }
-
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
-using WebshopBackend.Models;
 using WebshopShared;
 
 namespace WebshopBackend.Services
@@ -21,7 +20,7 @@ namespace WebshopBackend.Services
                 .AsNoTracking()
                 .Include(o => o.OrderLines)
                 .ThenInclude(ol => ol.Product)
-                .ThenInclude(p => p.Price)
+                .ThenInclude(p => p.Price!)
                 .ThenInclude(d => d.Discount)
                 .Select(o => o.ToOrderDtoWithCartItems())
                 .FirstOrDefaultAsync();
@@ -34,7 +33,7 @@ namespace WebshopBackend.Services
                 .AsNoTracking()
                 .Include(o => o.OrderLines)
                 .ThenInclude(ol => ol.Product)
-                .ThenInclude(p => p.Price)
+                .ThenInclude(p => p.Price!)
                 .ThenInclude(d => d.Discount)
                 .Select(o => o.ToOrderDtoWithCartItems())
                 .ToListAsync();

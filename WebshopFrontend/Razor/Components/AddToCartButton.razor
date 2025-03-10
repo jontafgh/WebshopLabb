@@ -36,7 +36,7 @@
     {
         if (AuthenticationState == null) return string.Empty;
         var authState = await AuthenticationState;
-        if (authState.User?.Identity is not null && authState.User.Identity.IsAuthenticated)
+        if (authState.User.Identity is not null && authState.User.Identity.IsAuthenticated)
             return authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         return string.Empty;
     }

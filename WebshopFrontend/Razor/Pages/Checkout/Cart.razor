@@ -127,7 +127,7 @@ else
         if (AuthenticationState != null)
         {
             var authState = await AuthenticationState;
-            if (authState.User?.Identity is not null && authState.User.Identity.IsAuthenticated)
+            if (authState.User.Identity is not null && authState.User.Identity.IsAuthenticated)
                 await CartService.UpdateUserCart(CartItems);
         }
     }
