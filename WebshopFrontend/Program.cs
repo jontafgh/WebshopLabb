@@ -29,11 +29,10 @@ public class Program
             CookieContainer = new CookieContainer()
         });
         
-        builder.Services.AddScoped<ICartService, CartService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();
-        builder.Services.AddKeyedScoped<ICartService, UserCartService>("Api");
+        builder.Services.AddKeyedScoped<ICartService, ApiCartService>("Api");
         builder.Services.AddKeyedScoped<ICartService, CartService>("Local");
 
         var app = builder.Build();

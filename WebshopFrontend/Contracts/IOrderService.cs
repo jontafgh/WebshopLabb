@@ -6,6 +6,6 @@ namespace WebshopFrontend.Contracts
     {
         public Task<List<OrderDto>> GetOrders();
         public Task<OrderDto> GetOrder(int orderId);
-        public Task<OrderDto> PlaceOrder();
+        public Task<OrderDto> PlaceOrder(List<CartItemDto> cartItems);
     }
 }

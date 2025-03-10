@@ -1,14 +1,10 @@
-﻿@using WebshopFrontend.Contracts
-@inject IUserService UserService
+﻿@inject IUserService UserService
+@inject ICounterService CounterService
 
 <div class="login-box padding-y padding-x-16 border">
     <AuthorizeView>
         <Authorized>
-            <button @onclick="Logout"
-                    type="button"
-                    class="button-fit padding-x padding-y text-large">
-                Log out
-            </button>
+            <LogoutButton />
         </Authorized>
         <NotAuthorized>
 
@@ -19,9 +15,9 @@
                     <label for="email">
                         Email:
                         <InputText @bind-value="@LoginDto.Email"
-                                   id="email"
-                                   class="input-text"
-                                   placeholder="name@example.com"></InputText>
+                        id="email"
+                        class="input-text"
+                        placeholder="name@example.com"></InputText>
                     </label>
                     <ValidationMessage For="() => LoginDto.Email" class="red" />
                 </div>
@@ -30,13 +26,13 @@
                     <label for="password">
                         Password:
                         <InputText @bind-value="@LoginDto.Password"
-                                   id="password"
-                                   type="password"
-                                   class="input-text"
-                                   placeholder="password"></InputText>
+                        id="password"
+                        type="password"
+                        class="input-text"
+                        placeholder="password"></InputText>
                     </label>
                     <ValidationMessage For="() => LoginDto.Password"
-                                       class="red" />
+                    class="red" />
                 </div>
 
                 <button type="submit" class="button-fit padding-x padding-y text-large">
@@ -53,6 +49,9 @@
 </div>
 
 @code {
+    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
+    [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
+
     [SupplyParameterFromForm] private LoginDto LoginDto { get; set; } = new();
 
     private RegisterLoginResponseDto _registerLoginResponseDto = new();
@@ -65,12 +64,24 @@
 
         if (_registerLoginResponseDto.Succeeded)
         {
+            await UpdateCart();
+        }
+
+        if (_registerLoginResponseDto.Succeeded)
+        {
             await OnLogin.InvokeAsync();
         }
     }
 
-    private async Task Logout()
+    private async Task UpdateCart()
     {
-        await UserService.LogoutAsync();
+        await ApiCartService.SetCart();
+
+        var apiCart = await ApiCartService.GetCart();
+        var localCart = await LocalCartService.GetCart();
+        var cart = apiCart.Concat(localCart).DistinctBy(c => c.ArtNr).ToList();
+        await LocalCartService.UpdateCart(cart);
+
+        CounterService.SetCount(cart.Sum(c => c.Quantity));
     }
 }

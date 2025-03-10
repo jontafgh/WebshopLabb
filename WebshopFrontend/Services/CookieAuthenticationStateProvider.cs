@@ -8,7 +8,7 @@ using WebshopShared.Validation;
 
 namespace WebshopFrontend.Services
 {
-    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory, ICartService cartService) : AuthenticationStateProvider, IUserService
+    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory) : AuthenticationStateProvider, IUserService
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
@@ -22,8 +22,8 @@ namespace WebshopFrontend.Services
         {
             _authenticated = false;
             var user = _unauthenticated;
-            
-            var userResponse = await _httpClient.GetAsync("/Account/users/me");
+
+            var userResponse = await _httpClient.GetAsync("/Account/manage/info");
             try
             {
                 userResponse.EnsureSuccessStatusCode();
@@ -36,15 +36,11 @@ namespace WebshopFrontend.Services
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userInfo.Email),
-                    new Claim(ClaimTypes.Email, userInfo.Email),
-                    new Claim(ClaimTypes.NameIdentifier, userInfo.UserId)
+                    new Claim(ClaimTypes.Email, userInfo.Email)
                 };
 
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                 user = new ClaimsPrincipal(id);
-
-                if (!_authenticated)
-                    await cartService.Login();
 
                 _authenticated = true;
             }
@@ -102,8 +98,6 @@ namespace WebshopFrontend.Services
 
         public async Task LogoutAsync()
         {
-            await cartService.Logout();
-
             const string empty = "{}";
             var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
 

@@ -1,7 +1,6 @@
 ﻿@page "/checkout"
 @using WebshopFrontend.Contracts
 @using WebshopShared.Validation
-@inject ICartService CartService
 @inject IOrderService OrderService
 @inject ICounterService CounterService
 @inject IUserService UserService
@@ -38,6 +37,9 @@ else
 }
 
 @code {
+    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
+    [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
+
     private bool _formSubmitted;
     private bool _cartEmpty;
     private int _orderId;
@@ -46,10 +48,12 @@ else
     {
         await UserService.UpdateUserDetails(userDetails);
 
-        var order = await OrderService.PlaceOrder();
+        var cart = await LocalCartService.GetCart();
+        var order = await OrderService.PlaceOrder(cart);
 
-        await CartService.ClearCart();
-        await CartService.ClearUserCart();
+        await LocalCartService.ClearCart();
+        await ApiCartService.ClearCart();
+
         CounterService.SetCount(0);
 
         _orderId = order.Id;

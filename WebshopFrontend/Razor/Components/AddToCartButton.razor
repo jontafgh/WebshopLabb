@@ -1,7 +1,6 @@
 ﻿@using WebshopFrontend.Contracts
 @inject IJSRuntime Js
 @inject ICounterService CartCounterService
-@inject ICartService CartService
 @inject IUserService UserService
 
 <button class="@GetButtonClasses()" @onclick="AddToCart">
@@ -9,9 +8,12 @@
 </button>
 
 @code {
+    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
+
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public required int ProductId { get; set; }
     [Parameter] public required int Stock { get; set; }
+
     private string _cartId = string.Empty;
 
     private const int Quantity = 1;
@@ -19,7 +21,7 @@
     private async Task AddToCart()
     {
         _cartId = await GetCartId();
-        var cartItem = await CartService.AddItem(ProductId, Quantity, _cartId);
+        var cartItem = await LocalCartService.AddItem(ProductId, Quantity, _cartId);
         if (cartItem.Id != 0) CartCounterService.AddToCount(Quantity);
     }
 

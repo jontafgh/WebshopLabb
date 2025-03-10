@@ -1,14 +1,9 @@
-﻿@using WebshopFrontend.Contracts
-@inject IUserService UserService
+﻿@inject IUserService UserService
 
 <div class="register-box padding-y padding-x-16 border">
     <AuthorizeView>
         <Authorized>
-            <button @onclick="Logout"
-                    type="button"
-                    class="button-fit padding-x padding-y text-large">
-                Log out
-            </button>
+            <LogoutButton />
         </Authorized>
         <NotAuthorized>
             @if (_registerLoginResponseDto.Succeeded)
@@ -86,10 +81,5 @@
         {
             await OnRegistered.InvokeAsync();
         }
-    }
-
-    private async Task Logout()
-    {
-        await UserService.LogoutAsync();
     }
 }

@@ -1,6 +1,5 @@
 ﻿@using WebshopFrontend.Contracts
 @inject ICounterService CounterService
-@inject ICartService CartService
 
 <NavLink href="checkout" class="text-gray">
     <div class="cart">
@@ -9,6 +8,8 @@
 </NavLink>
 
 @code {
+    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
+
     private int _noOfItemsInCart = 0;
 
     protected override void OnInitialized()
@@ -20,19 +21,24 @@
     {
         if (firstRender)
         {
-            var cart = await CartService.GetCart();
+            var cart = await LocalCartService.GetCart();
             CounterService.SetCount(cart.Sum(c => c.Quantity));
-            _noOfItemsInCart = CounterService.GetCount();
         }
     }
 
     private async void UpdateCartCounter(object? sender, int newCount)
     {
-        await InvokeAsync(() =>
+        try
         {
-            _noOfItemsInCart = newCount;
-            StateHasChanged();
-        });
+            await InvokeAsync(() =>
+            {
+                _noOfItemsInCart = newCount;
+                StateHasChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
-
 }

@@ -1,9 +1,10 @@
 ﻿using WebshopFrontend.Contracts;
+using WebshopFrontend.Razor.Pages.Checkout;
 using WebshopShared;
 
 namespace WebshopFrontend.Services
 {
-    public class OrderService(ICartService cartService, IHttpClientFactory httpClientFactory) : IOrderService
+    public class OrderService(IHttpClientFactory httpClientFactory) : IOrderService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
         public Task<List<OrderDto>> GetOrders()
@@ -20,21 +21,14 @@ namespace WebshopFrontend.Services
             return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
         }
 
-        public async Task<OrderDto> PlaceOrder()
+        public async Task<OrderDto> PlaceOrder(List<CartItemDto> cartItems)
         {
-            var order = await CreatePlaceOrderDto();
+            var order = new PlaceOrderDto { CartItems = cartItems };
             var response = await _httpClient.PostAsJsonAsync("/order", order);
 
             if (!response.IsSuccessStatusCode) return new OrderDto();
 
             return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
-        }
-
-        private async Task<PlaceOrderDto> CreatePlaceOrderDto()
-        {
-            var cartItems = await cartService.GetCart();
-
-            return new PlaceOrderDto { CartItems = cartItems };
         }
     }
 }
