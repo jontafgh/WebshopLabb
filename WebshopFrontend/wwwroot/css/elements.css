@@ -25,9 +25,14 @@ header {
     position: sticky;
     top: 0;
 }
+footer {
+    min-height: 10vh;
+    background-color: black;
+}
 
 main {
     flex-grow: 1;
+
 }
 
 img {

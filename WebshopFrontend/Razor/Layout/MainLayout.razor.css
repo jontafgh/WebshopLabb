@@ -1,7 +1,7 @@
 ﻿.root {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    min-height: 100vh;
 }
 
 .top-bar {
@@ -38,7 +38,6 @@
     flex-shrink: 0;
     z-index: 3;
     top: 81px;
-    border: 1px solid #ededed;
 }
 
 @media (min-width: 993px) {

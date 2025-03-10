@@ -1,0 +1,94 @@
+﻿@inject IUserService UserService
+
+<div class="register-box padding-y padding-x-16 border">
+    <AuthorizeView>
+        <Authorized>
+            <button @onclick="Logout"
+                    type="button"
+                    class="button-fit padding-x padding-y text-large">
+                Log out
+            </button>
+        </Authorized>
+        <NotAuthorized>
+            @if (_registerLoginResponseDto.Succeeded)
+            {
+                <p>Registration successful</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var error in _registerLoginResponseDto.ErrorList)
+                    {
+                        <li class="red">@error</li>
+                    }
+                </ul>
+
+                <EditForm Model="RegisterUserDto" OnValidSubmit="RegisterUser" FormName="RegisterUser" Context="registerFormContext">
+                    <DataAnnotationsValidator />
+
+                    <div class="padding-y">
+                        <label for="email">
+                            Email:
+                            <InputText @bind-value="@RegisterUserDto.Email"
+                                       id="email"
+                                       class="input-text"
+                                       placeholder="name@example.com" />
+                        </label>
+                        <ValidationMessage For="() => RegisterUserDto.Email" class="red" />
+                    </div>
+
+                    <div class="padding-y">
+                        <label for="password">
+                            Password:
+                            <InputText @bind-value="@RegisterUserDto.Password"
+                                       type="password"
+                                       id="password"
+                                       class="input-text"
+                                       placeholder="password" />
+                        </label>
+                        <ValidationMessage For="() => RegisterUserDto.Password" class="red" />
+                    </div>
+
+                    <div class="padding-y">
+                        <label for="comfirmpassword">
+                            Comfirm Password:
+                            <InputText @bind-value="@RegisterUserDto.ComfirmPassword"
+                                       type="password"
+                                       id="comfirmpassword"
+                                       class="input-text"
+                                       placeholder="password" />
+                        </label>
+                        <ValidationMessage For="() => RegisterUserDto.ComfirmPassword" class="red" />
+                    </div>
+
+                    <button type="submit" class="button-fit padding-x padding-y text-large">
+                        Register
+                    </button>
+                </EditForm>
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnRegistered { get; set; }
+
+    [SupplyParameterFromForm] private RegisterUserDto RegisterUserDto { get; set; } = new();
+
+    private RegisterLoginResponseDto _registerLoginResponseDto = new();
+
+    private async Task RegisterUser()
+    {
+        _registerLoginResponseDto = await UserService.RegisterAsync(RegisterUserDto);
+
+        if (_registerLoginResponseDto.Succeeded)
+        {
+            await OnRegistered.InvokeAsync();
+        }
+    }
+
+    private async Task Logout()
+    {
+        await UserService.LogoutAsync();
+    }
+}

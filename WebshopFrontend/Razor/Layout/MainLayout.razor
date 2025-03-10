@@ -10,18 +10,16 @@
             </div>
         </div>
     </header>
-    <main>
-        <div class="content flex-row">
-            <div class="sidebar white" style="@DisplayStyle">
-                <NavMenu SideBarShown="@_sideBarShown" OnHideSideBar="ShowSidebar"></NavMenu>
-            </div>
+    <main class="content flex-row">
+        <div class="sidebar white border" style="@DisplayStyle">
+            <NavMenu SideBarShown="@_sideBarShown" OnHideSideBar="ShowSidebar"></NavMenu>
+        </div>
 
-            <div class="main padding-x">
-                @Body
-            </div>
+        <div class="main padding-x">
+            @Body
+        </div>
 
-            <div class="overlay" style="@DisplayStyle" @onclick="ShowSidebar">
-            </div>
+        <div class="overlay" style="@DisplayStyle" @onclick="ShowSidebar">
         </div>
     </main>
 

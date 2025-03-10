@@ -4,7 +4,7 @@
 <EditForm Model="UserDetails" OnValidSubmit="Submit" FormName="UserDetails">
     <ObjectGraphDataAnnotationsValidator />
     <div class="form-flex-container">
-        
+
         <div class="form-flex-row">
             <div class="form-flex-item">
                 <label for="firstname">
@@ -13,7 +13,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="firstname" @bind-Value="UserDetails.FirstName" />
+                <InputText placeholder="Examplefirst"
+                           class="input-text"
+                           id="firstname"
+                           @bind-Value="UserDetails.FirstName" />
             </div>
 
             <div class="form-flex-item">
@@ -29,7 +32,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="lastname" @bind-Value="UserDetails.LastName" />
+                <InputText placeholder="Examplelast"
+                           class="input-text"
+                           id="lastname"
+                           @bind-Value="UserDetails.LastName" />
             </div>
 
             <div class="form-flex-item">
@@ -45,7 +51,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="country" @bind-Value="UserDetails.Address.Country" />
+                <InputText placeholder="Examplecountry"
+                           class="input-text"
+                           id="country"
+                           @bind-Value="UserDetails.Address.Country" />
             </div>
 
             <div class="form-flex-item">
@@ -62,7 +71,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="city" @bind-Value="UserDetails.Address.City" />
+                <InputText placeholder="Examplecity"
+                           class="input-text"
+                           id="city"
+                           @bind-Value="UserDetails.Address.City" />
             </div>
 
             <div class="form-flex-item">
@@ -79,7 +91,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="street" @bind-Value="UserDetails.Address.Street" />
+                <InputText placeholder="Examplestreet 123"
+                           class="input-text"
+                           id="street"
+                           @bind-Value="UserDetails.Address.Street" />
             </div>
 
             <div class="form-flex-item">
@@ -96,7 +111,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="postalcode" @bind-Value="UserDetails.Address.PostalCode" />
+                <InputText placeholder="123 45"
+                           class="input-text"
+                           id="postalcode"
+                           @bind-Value="UserDetails.Address.PostalCode" />
             </div>
 
             <div class="form-flex-item">
@@ -113,7 +131,10 @@
             </div>
 
             <div class="form-flex-item">
-                <InputText class="input-text" id="phonenumber" @bind-Value="UserDetails.PhoneNumber" />
+                <InputText placeholder="+12 345 67 890"
+                           class="input-text"
+                           id="phonenumber"
+                           @bind-Value="UserDetails.PhoneNumber" />
             </div>
 
             <div class="form-flex-item">
@@ -122,29 +143,20 @@
         </div>
     </div>
     <div>
-        <button type="submit" class="button-fit text-large padding-y padding-x" >Comfirm</button>
+        <button type="submit" class="button-fit text-large padding-y padding-x">Comfirm</button>
 
     </div>
 </EditForm>
 
 @code {
 
-    [SupplyParameterFromForm] private UserDetails? UserDetails { get; set; }
+    [SupplyParameterFromForm] private UserDetails? UserDetails { get; set; } = new();
 
     [Parameter] public EventCallback<UserDetails> OnFormSubmit { get; set; }
 
-    private bool _formSet;
-
-    protected override void OnInitialized()
-    {
-        UserDetails = new UserDetails();
-    }
-
     protected override async Task OnParametersSetAsync()
     {
-        if (!_formSet)
-            UserDetails = await GetExistingUserDetails();
-        _formSet = true;
+        UserDetails = await GetExistingUserDetails();
     }
 
     private async Task<UserDetails> GetExistingUserDetails()

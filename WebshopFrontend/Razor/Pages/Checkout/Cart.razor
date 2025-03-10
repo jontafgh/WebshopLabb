@@ -3,11 +3,11 @@
 
 @if (CartItems.Count == 0)
 {
-    <p>There are no products in the cart</p>
+    <ImportantInfoBox>There are no products in the cart</ImportantInfoBox>
 }
 else
 {
-    <ProductTable Items="CartItems" Context="cartItem">
+    <ProductTable Caption="Products in cart" Items="CartItems" Context="cartItem">
         <TableHeader>
             <th>Product</th>
             <th>ArNr</th>

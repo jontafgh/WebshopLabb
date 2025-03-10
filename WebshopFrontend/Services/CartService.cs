@@ -88,8 +88,7 @@ namespace WebshopFrontend.Services
         {
             var json = JsonSerializer.Serialize(cartItems, _jsonSerializerOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"/cart/cartitems", content);
-
+            await _httpClient.PutAsync($"/cart/cartitems", content);
         }
         public async Task<CartDto?> SetUserCart()
         {

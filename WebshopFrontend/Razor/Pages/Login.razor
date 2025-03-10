@@ -1,8 +1,15 @@
 ﻿@page "/login"
+@inject NavigationManager NavigationManager
 
-<LoginBox></LoginBox>
+<PageTitle>Log in</PageTitle>
+<PageHeading>Log in</PageHeading>
+
+<LoginBox OnLogin="GoToProfile"></LoginBox>
 
 @code {
-    
 
+    private void GoToProfile()
+    {
+        NavigationManager.NavigateTo("/profile");
+    }
 }

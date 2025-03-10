@@ -1,57 +1,15 @@
 ﻿@page "/register"
-@inject IUserService UserService
 @inject NavigationManager NavigationManager
 
-<AuthorizeView>
-    <Authorized>
-        <h4>Already registered</h4>
-        <button type="button" @onclick="Logout">Log out</button>
-    </Authorized>
-    <NotAuthorized>
-        <h4>Register new userDetails</h4>
-        <label for="email">
-            Email:
-            <InputText id="email" @bind-value="@_registerUserDto.Email"></InputText>
-        </label>
-        <label for="password">
-            Password:
-            <InputText id="password" type="password" @bind-value="@_registerUserDto.Password"></InputText>
-        </label>
-        <button type="button" @onclick="RegisterUser">Sign in</button>
-    </NotAuthorized>
-</AuthorizeView>
+<PageTitle>Register</PageTitle>
+<PageHeading>Register</PageHeading>
 
-@if (_registerLoginResponseDto.Succeeded)
-{
-    GoToLoginPage();
-}
-else
-{
-    @foreach (var error in _registerLoginResponseDto.ErrorList)
-    {
-        <div>@error</div>
-    }
-}
+<RegisterBox OnRegistered="OnRegistered"/>
 
 @code {
 
-    private RegisterUserDto _registerUserDto = new();
-    private RegisterLoginResponseDto _registerLoginResponseDto = new();
-    
-    private void GoToLoginPage()
+    private void OnRegistered()
     {
         NavigationManager.NavigateTo("/login");
     }
-
-    private async Task RegisterUser()
-    {
-        _registerLoginResponseDto = await UserService.RegisterAsync(_registerUserDto);
-    }
-
-    private async Task Logout()
-    {
-        _registerLoginResponseDto = new RegisterLoginResponseDto();
-        await UserService.LogoutAsync();
-    }
-
 }

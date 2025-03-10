@@ -5,6 +5,9 @@
 @inject ICounterService CounterService
 @inject IUserService UserService
 
+<PageTitle>Checkout</PageTitle>
+<PageHeading>Checkout</PageHeading>
+
 @if (_formSubmitted)
 {
     <AuthorizeView>
@@ -16,11 +19,9 @@ else
     <Cart OnEmptyCart="HideUserDetailsForm" />
     <AuthorizeView>
         <Authorized>
-            @if (!_cartEmpty)
+            @if (!_cartEmpty) 
             {
-                <div class="padding-x padding-y ">
-                    <h3>Please comfirm your shipping details</h3>
-                </div>
+                <ImportantInfoBox>Please comfirm your shipping details</ImportantInfoBox>
 
                 <div class="white border padding-x padding-y">
                     <UserDetailsForm OnFormSubmit="OnFormSubmitted" />
@@ -28,9 +29,7 @@ else
             }
         </Authorized>
         <NotAuthorized>
-            <div class="white border padding-x padding-y">
-                <strong>Please log in to continue</strong>
-            </div>
+            <ImportantInfoBox>Please log in to continue</ImportantInfoBox>
             <LoginBox />
 
         </NotAuthorized>
