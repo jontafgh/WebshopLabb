@@ -4,58 +4,46 @@
 @if (CartItems.Count == 0)
 {
     <p>There are no products in the cart</p>
-
 }
 else
 {
-    <table class="checkout-table">
-        <caption>Products in cart</caption>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>ArNr</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Quantity</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var cartItem in CartItems)
-            {
-                <tr>
-                    <td data-label="Product">@cartItem.Name</td>
-                    <td data-label="ArNr">@cartItem.ArtNr</td>
-                    <td data-label="Price">@cartItem.Price</td>
-                    <td data-label="Total">@(cartItem.Quantity * cartItem.Price)</td>
-                    <td data-label="Quantity">@cartItem.Quantity</td>
-                    <td data-label="">
-                        <button class="checkout-table-button">
-                            <i class="fa fa-plus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(1, cartItem.Id))"></i>
-                        </button>
+    <ProductTable Items="CartItems" Context="cartItem">
+        <TableHeader>
+            <th>Product</th>
+            <th>ArNr</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Quantity</th>
+            <th></th>
+        </TableHeader>
+        <RowTemplate>
+            <td data-label="Product">@cartItem.Name</td>
+            <td data-label="ArNr">@cartItem.ArtNr</td>
+            <td data-label="Price">@cartItem.Price</td>
+            <td data-label="Total">@(cartItem.Quantity * cartItem.Price)</td>
+            <td data-label="Quantity">@cartItem.Quantity</td>
+            <td data-label="">
+                <button class="cart-table-button">
+                    <i class="fa fa-plus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(1, cartItem.Id))"></i>
+                </button>
 
-                        <button class="margin-x checkout-table-button">
-                            <i class="fa fa-minus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(-1, cartItem.Id))"></i>
-                        </button>
+                <button class="margin-x cart-table-button">
+                    <i class="fa fa-minus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(-1, cartItem.Id))"></i>
+                </button>
 
-                        <button class="checkout-table-button">
-                            <i class="fa fa-times" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(0, cartItem.Id))"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <th colspan="5">Total: </th>
-                <td>
-                    @GetTotalPrice()
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+                <button class="cart-table-button">
+                    <i class="fa fa-times" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(0, cartItem.Id))"></i>
+                </button>
+            </td>
+        </RowTemplate>
+        <TableFooter>
+            <th colspan="5">Total: </th>
+            <td>
+                @GetTotalPrice()
+            </td>
+        </TableFooter>
+    </ProductTable>
 }
-
 
 @code {
     private List<CartItemDto> CartItems { get; set; } = [];
@@ -69,7 +57,7 @@ else
         if (firstRender)
         {
             CartItems = await CartService.GetCart();
-            //await UpdateUserCart();
+            await UpdateUserCart();
             await InvokeAsync(StateHasChanged);
         }
 

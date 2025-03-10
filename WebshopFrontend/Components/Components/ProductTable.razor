@@ -1,0 +1,38 @@
+﻿@typeparam TItem
+
+<div class="product-table-container border white padding-x">
+    <table class="product-table">
+        <caption class="text-bold margin-y">@Caption </caption>
+        <thead>
+            <tr>
+                @TableHeader
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Items)
+            {
+                <tr @key="@item">
+                    @RowTemplate(item)
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                @TableFooter
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+@code {
+    [Parameter] public string Caption { get; set; } = string.Empty;
+
+    [Parameter] public RenderFragment? TableFooter { get; set; }
+
+    [Parameter] public RenderFragment? TableHeader { get; set; }
+
+    [Parameter] public List<TItem> Items { get; set; } = [];
+
+    [Parameter] public RenderFragment<TItem> RowTemplate { get; set; } = null!;
+
+}

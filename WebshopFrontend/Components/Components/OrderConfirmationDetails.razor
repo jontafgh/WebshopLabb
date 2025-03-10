@@ -2,55 +2,45 @@
 @inject IUserService UserService
 
 @if (Order == null)
-{ 
+{
     <p>Loading...</p>
 }
 else
 {
-    <table class="checkout-table">
-        <caption>Order summary</caption>
-        <thead>
-        <tr>
+    <ProductTable Items="Order.CartItems" Context="orderLine" Caption="Order summary">
+        <TableHeader>
             <th>Product</th>
             <th>ArNr</th>
             <th>DiscountPrice</th>
             <th>Quantity</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var orderLine in Order.CartItems)
-        {
-            <tr>
-                <td data-label="Product">@orderLine.Name</td>
-                <td data-label="ArNr">@orderLine.ArtNr</td>
-                <td data-label="DiscountPrice">@orderLine.Price</td>
-                <td data-label="Quantity">@orderLine.Quantity</td>
-            </tr>
-        }
-        </tbody>
-        <tfoot>
-        <tr>
+        </TableHeader>
+        <RowTemplate>
+            <td data-label="Product">@orderLine.Name</td>
+            <td data-label="ArtNr">@orderLine.ArtNr</td>
+            <td data-label="Price">@orderLine.Price</td>
+            <td data-label="Quantity">@orderLine.Quantity</td>
+        </RowTemplate>
+        <TableFooter>
             <th colspan="3">Total: </th>
-            <td>
-                @GetTotalPrice()
-            </td>
-        </tr>
-        </tfoot>
-    </table>
+            <td>@GetTotalPrice()</td>
+        </TableFooter>
+    </ProductTable>
 
-    <div>
-        <h4>Confirmation email sent to:</h4>
-        <p>@UserDetails.Email</p>
-    </div>
+    <div class ="white padding-x padding-y margin-y border">
+        <div>
+            <h4>Confirmation email sent to:</h4>
+            <p>@UserDetails.Email</p>
+        </div>
 
-    <div>
-        <h4>Order will be sent to:</h4>
-        <ul>
-            <li>@UserDetails.FirstName @UserDetails.LastName</li>
-            <li>@UserDetails.Address!.Street</li>
-            <li>@UserDetails.Address.PostalCode @UserDetails.Address.City</li>
-            <li>@UserDetails.Address.Country</li>
-        </ul>
+        <div>
+            <h4>Order will be sent to:</h4>
+            <ul>
+                <li>@UserDetails.FirstName @UserDetails.LastName</li>
+                <li>@UserDetails.Address!.Street</li>
+                <li>@UserDetails.Address.PostalCode @UserDetails.Address.City</li>
+                <li>@UserDetails.Address.Country</li>
+            </ul>
+        </div>
     </div>
 }
 

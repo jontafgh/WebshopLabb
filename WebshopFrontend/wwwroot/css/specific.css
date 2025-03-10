@@ -40,6 +40,32 @@
         cursor: pointer;
     }
 
+
+.product-table {
+    width: 100%;
+    background: white;
+    text-align: left;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.product-table th {
+    height: 50px;
+}
+
+.product-table td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.product-table tfoot th {
+    text-align: right;
+}
+
+.product-table th, .product-table td {
+    border-bottom: 1px solid #d9d9d9;
+}
+
 [class^="product-grid-item"] {
     background: white;
 }
@@ -49,4 +75,33 @@
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+@media screen and (max-width: 600px) {
+
+    table thead {
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        position: absolute;
+        width: 1px;
+    }
+
+    table tr {
+        border-bottom: 3px solid #ddd;
+        display: block;
+    }
+
+    table td {
+        display: block;
+        padding-left: 8px;
+        text-align: right;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
 }

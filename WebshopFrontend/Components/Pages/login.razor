@@ -1,41 +1,8 @@
 ﻿@page "/login"
-@inject IUserService UserService
 
-<AuthorizeView>
-    <Authorized>
-        <div>You're logged in as @context.User.Identity?.Name.</div>
-    </Authorized>
-    <NotAuthorized>
-        <p>Log in:</p>
-        <label for="email">
-            Email:
-            <InputText id="email" @bind-value="@_loginDto.Email"></InputText>
-        </label>
-        <label for="password">
-            Password:
-            <InputText id="password" type="password" @bind-value="@_loginDto.Password"></InputText>
-        </label>
-        <button type="button" @onclick="LogIn">Sign in</button>
-
-        @foreach (var error in _registerLoginResponseDto.ErrorList)
-        {
-            <div>@error</div>
-        }
-    </NotAuthorized>
-</AuthorizeView>
+<LoginBox></LoginBox>
 
 @code {
-    private LoginDto _loginDto = new();
-    private RegisterLoginResponseDto _registerLoginResponseDto = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        //await UserService.CheckAuthenticatedAsync();
-    }
-
-    private async Task LogIn()
-    {
-        _registerLoginResponseDto = await UserService.LoginAsync(_loginDto);
-    }
+    
 
 }

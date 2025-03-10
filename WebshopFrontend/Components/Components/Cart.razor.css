@@ -1,0 +1,13 @@
+﻿.cart-table-button {
+    background: white;
+    color: gray;
+    border: none;
+    transition: 0.1s;
+}
+
+    .cart-table-button:hover {
+        color: black;
+        cursor: pointer;
+        background: #d9d9d9;
+        border-radius: 20%;
+    }

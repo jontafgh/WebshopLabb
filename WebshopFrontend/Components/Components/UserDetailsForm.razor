@@ -1,12 +1,14 @@
 ﻿@using WebshopShared.Validation
 @inject IUserService UserService
 
-<h3>Please comfirm your shipping details</h3>
+<div class="padding-x padding-y ">
+    <h3>Please comfirm your shipping details</h3>
+</div>
 
 <EditForm Model="UserDetails" OnValidSubmit="Submit" FormName="UserDetails">
     <ObjectGraphDataAnnotationsValidator />
     <div class="form-flex-container">
-
+        
         <div class="form-flex-row">
             <div class="form-flex-item">
                 <label for="firstname">
@@ -124,12 +126,10 @@
         </div>
     </div>
     <div>
-        <button type="submit">Comfirm</button>
+        <button type="submit" class="button-fit text-large padding-y padding-x" >Comfirm</button>
 
     </div>
 </EditForm>
-
-<button @onclick="FillForm" type="submit">Get Info</button>
 
 @code {
 

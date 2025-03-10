@@ -1,26 +1,34 @@
 ﻿@inject IUserService UserService
 
-<AuthorizeView>
-    <Authorized>
-        <div>You're logged in as @context.User.Identity?.Name.</div>
-    </Authorized>
-    <NotAuthorized>
-        <label for="email">
-            Email:
-            <InputText id="email" @bind-value="@_loginDto.Email"></InputText>
-        </label>
-        <label for="password">
-            Password:
-            <InputText id="password" type="password" @bind-value="@_loginDto.Password"></InputText>
-        </label>
-        <button type="button" @onclick="LogIn">Log In</button>
+<div class="login-box padding-y padding-x-16 border">
+    <AuthorizeView>
+        <Authorized>
+            <p>You're logged in as @context.User.Identity?.Name.</p>
+        </Authorized>
+        <NotAuthorized>
 
-        @foreach (var error in _registerLoginResponseDto.ErrorList)
-        {
-            <div>@error</div>
-        }
-    </NotAuthorized>
-</AuthorizeView>
+            <div class="padding-y">
+                <label for="email">
+                    Email:
+                    <InputText id="email" class="input-text" @bind-value="@_loginDto.Email"></InputText>
+                </label>
+            </div>
+
+            <div class="padding-y">
+                <label for="password">
+                    Password:
+                    <InputText id="password" type="password" class="input-text" @bind-value="@_loginDto.Password"></InputText>
+                </label>
+            </div>
+            <button type="button" class="button-fit padding-x padding-y text-large" @onclick="LogIn">Log In</button>
+
+            @foreach (var error in _registerLoginResponseDto.ErrorList)
+            {
+                <p class="validation-message">@error</p>
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
 @code {
     private LoginDto _loginDto = new();

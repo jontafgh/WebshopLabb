@@ -23,7 +23,7 @@ namespace WebshopBackend.Services
                 .ThenInclude(ol => ol.Product)
                 .ThenInclude(p => p.Price)
                 .ThenInclude(d => d.Discount)
-                .Select(o => o.ToOrderDto())
+                .Select(o => o.ToOrderDtoWithCartItems())
                 .FirstOrDefaultAsync();
         }
 
@@ -36,7 +36,7 @@ namespace WebshopBackend.Services
                 .ThenInclude(ol => ol.Product)
                 .ThenInclude(p => p.Price)
                 .ThenInclude(d => d.Discount)
-                .Select(o => o.ToOrderDto())
+                .Select(o => o.ToOrderDtoWithCartItems())
                 .ToListAsync();
         }
     }

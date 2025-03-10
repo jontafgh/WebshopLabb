@@ -22,6 +22,15 @@ public static class DtoExtensions
         return new OrderDto
         {
             Id = order.Id,
+            OrderDate = order.OrderDate
+        };
+    }
+
+    public static OrderDto ToOrderDtoWithCartItems(this Order order)
+    {
+        return new OrderDto
+        {
+            Id = order.Id,
             OrderDate = order.OrderDate,
             CartItems = order.OrderLines.Select(ol => new CartItemDto
             {
