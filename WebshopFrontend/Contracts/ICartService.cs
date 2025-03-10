@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using WebshopShared;
+﻿using WebshopShared;
 
-namespace WebshopFrontend.Services.Interfaces
+namespace WebshopFrontend.Contracts
 {
     public interface ICartService
     {

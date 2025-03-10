@@ -2,11 +2,11 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using WebshopFrontend.Services.Interfaces;
+using WebshopFrontend.Contracts;
 using WebshopShared;
 using WebshopShared.Validation;
 
-namespace WebshopFrontend.Services.Identity
+namespace WebshopFrontend.Services
 {
     public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory, ICartService cartService) : AuthenticationStateProvider, IUserService
     {

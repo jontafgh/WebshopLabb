@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Text;
 using System.Text.Json;
-using WebshopFrontend.Services.Interfaces;
+using WebshopFrontend.Contracts;
 using WebshopShared;
 
 namespace WebshopFrontend.Services

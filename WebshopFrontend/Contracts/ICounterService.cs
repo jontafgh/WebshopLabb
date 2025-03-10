@@ -1,4 +1,4 @@
-﻿namespace WebshopFrontend.Services.Interfaces
+﻿namespace WebshopFrontend.Contracts
 {
     public interface ICounterService
     {

@@ -1,9 +1,8 @@
 using System.Net;
 using Microsoft.AspNetCore.Components.Authorization;
+using WebshopFrontend.Contracts;
 using WebshopFrontend.Razor;
 using WebshopFrontend.Services;
-using WebshopFrontend.Services.Identity;
-using WebshopFrontend.Services.Interfaces;
 
 namespace WebshopFrontend;
 

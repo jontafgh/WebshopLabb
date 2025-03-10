@@ -2,7 +2,7 @@
 using WebshopShared;
 using WebshopShared.Validation;
 
-namespace WebshopFrontend.Services.Interfaces
+namespace WebshopFrontend.Contracts
 {
     public interface IUserService
     {

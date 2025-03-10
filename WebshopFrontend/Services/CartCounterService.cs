@@ -1,4 +1,4 @@
-﻿using WebshopFrontend.Services.Interfaces;
+﻿using WebshopFrontend.Contracts;
 
 namespace WebshopFrontend.Services
 {

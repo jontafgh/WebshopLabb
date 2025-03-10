@@ -1,4 +1,4 @@
-﻿using WebshopFrontend.Services.Interfaces;
+﻿using WebshopFrontend.Contracts;
 using WebshopShared;
 
 namespace WebshopFrontend.Services
