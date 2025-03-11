@@ -53,6 +53,5 @@ namespace WebshopFrontend.Services
                 Price = product.Price.Discount?.DiscountPrice ?? product.Price.Regular
             };
         }
-        
     }
 }

@@ -13,14 +13,16 @@
     </AuthorizeView>
 }
 else
-{
+{ 
     <Cart OnEmptyCart="ChangePlaceOrderButtonStyle" />
+
     <AuthorizeView>
         <Authorized>
-            @if (_formShown)
+
+            @if (_userDetailsFormShown)
             {
                 <ImportantInfoBox>Please comfirm your shipping details</ImportantInfoBox>
-                <UserDetailsForm OnFormSubmit="PrepareOrderDetails" />
+                <UserDetailsForm OnFormSubmit="PrepareOrder"/>
             }
             else
             {
@@ -34,8 +36,9 @@ else
 
         </Authorized>
         <NotAuthorized>
+
             <ImportantInfoBox>Please log in to continue</ImportantInfoBox>
-            <LoginBox OnLogin="UpdateComponent" />
+            <LoginBox />
 
         </NotAuthorized>
     </AuthorizeView>
@@ -48,15 +51,15 @@ else
     private UserDetailsDto _userDetails = new();
     private OrderDto _order = new();
     private bool _orderSubmitted;
-    private bool _formShown = true;
+    private bool _userDetailsFormShown = true;
     private string _placeOrderButtonStyle = string.Empty;
     private List<CartItemDto> _cart = [];
 
-    private async Task PrepareOrderDetails(UserDetails userDetails)
+    private async Task PrepareOrder(UserDetails userDetails)
     {
         _userDetails = await UserService.UpdateUserDetails(userDetails);
         _cart = await LocalCartService.GetCart();
-        _formShown = false;
+        _userDetailsFormShown = false;
     }
 
     private async Task PlaceOrder()
@@ -73,12 +76,7 @@ else
 
     private void ShowUserDetailsForm()
     {
-        _formShown = !_formShown;
-    }
-
-    private void UpdateComponent()
-    {
-        StateHasChanged();
+        _userDetailsFormShown = !_userDetailsFormShown;
     }
 
     private void ChangePlaceOrderButtonStyle()

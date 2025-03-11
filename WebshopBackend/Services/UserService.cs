@@ -7,7 +7,7 @@ using WebshopShared;
 
 namespace WebshopBackend.Services
 {
-    public class UserService(WebshopContext dbContext, UserManager<WebshopUser> userManager) : IUserService
+    public class UserService(IDbContextFactory<WebshopContext> dbContextFactory, UserManager<WebshopUser> userManager) : IUserService
     {
         public string? GetUserId(ClaimsPrincipal claims)
         {
@@ -16,15 +16,18 @@ namespace WebshopBackend.Services
 
         public async Task<WebshopUser?> GetUserByIdAsync(string userId)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Users.FindAsync(userId);
         }
 
         public async Task<UserDetailsDto> UpdateUserAsync(UserDetailsDto userDetails, WebshopUser user)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             user.FirstName = userDetails.FirstName;
             user.LastName = userDetails.LastName;
             user.PhoneNumber = userDetails.PhoneNumber;
             user.Address = userDetails.Address?.ToAddress();
+
             await dbContext.SaveChangesAsync();
 
             userDetails.Email = user.Email;
@@ -33,8 +36,8 @@ namespace WebshopBackend.Services
 
         public async Task<UserDetailsDto?> GetUserDetailsAsync(string userId)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Users.Where(u => u.Id == userId)
-                .AsNoTracking()
                 .Include(u => u.Address)
                 .Select(u => u.ToUserDetailsDto())
                 .FirstOrDefaultAsync();

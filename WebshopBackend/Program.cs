@@ -19,6 +19,11 @@ namespace WebshopBackend
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            builder.Services.AddDbContextFactory<WebshopContext>(options =>
+
+                options.UseSqlServer(connectionStringPc)
+            );
 
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
@@ -28,10 +33,7 @@ namespace WebshopBackend
                 .AddEntityFrameworkStores<WebshopContext>()
                 .AddApiEndpoints();
 
-            builder.Services.AddDbContext<WebshopContext>(options =>
-                options.UseSqlServer(connectionStringPc)
-                );
-
+            
             builder.Services.ConfigureHttpJsonOptions(options =>
             {
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

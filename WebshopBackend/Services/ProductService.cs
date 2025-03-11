@@ -5,10 +5,11 @@ using WebshopShared;
 
 namespace WebshopBackend.Services
 {
-    public class ProductService(WebshopContext dbContext) : IProductService
+    public class ProductService(IDbContextFactory<WebshopContext> dbContextFactory) : IProductService
     {
         public async Task<List<Product>> GetProductsAsync()
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Products.Include(p => p.Image)
                 .Include(p => p.Price)
                     .ThenInclude(p => p.Discount)
@@ -18,6 +19,7 @@ namespace WebshopBackend.Services
         }
         public async Task<Product?> GetProductByIdAsync(int id)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Products.Include(p => p.Image)
                 .Include(p => p.Price)
                     .ThenInclude(p => p.Discount)
@@ -27,6 +29,7 @@ namespace WebshopBackend.Services
         }
         public async Task<List<Boardgame>> GetBoardgamesAsync()
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Boardgames.Include(b => b.Publisher)
                 .Include(b => b.Product)
                     .ThenInclude(b => b.Image)
@@ -40,6 +43,7 @@ namespace WebshopBackend.Services
         }
         public async Task<Boardgame?> GetBoardgameByIdAsync(int id)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Boardgames.Include(b => b.Publisher)
                 .Include(b => b.Product)
                     .ThenInclude(b => b.Image)
@@ -54,6 +58,7 @@ namespace WebshopBackend.Services
 
         public async Task<Boardgame?> GetBoardgameByArtNrAsync(string artNr)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             return await dbContext.Boardgames.Include(b => b.Publisher)
                 .Include(b => b.Product)
                     .ThenInclude(b => b.Image)
@@ -68,6 +73,7 @@ namespace WebshopBackend.Services
 
         public async Task<Boardgame> AddBoardgameAsync(BoardgameDto boardgameDto)
         {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var boardgame = boardgameDto.ToBoardgame();
             dbContext.Boardgames.Add(boardgame);
             await dbContext.SaveChangesAsync();

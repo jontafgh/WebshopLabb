@@ -49,10 +49,9 @@ else
     [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
 
     [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
-
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
-    private List<CartItemDto> CartItems { get; set; } = [];
+    [Parameter] public List<CartItemDto> CartItems { get; set; } = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -66,7 +65,7 @@ else
             await OnEmptyCart.InvokeAsync(true);
         }
     }
-
+    
     private decimal GetTotalPrice() => CartItems.Sum(cartItem => cartItem.Quantity * cartItem.Price);
 
     private async Task UpdateProductQuantity(int action, int id)

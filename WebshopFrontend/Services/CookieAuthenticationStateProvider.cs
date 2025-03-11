@@ -24,6 +24,7 @@ namespace WebshopFrontend.Services
             var user = _unauthenticated;
 
             var userResponse = await _httpClient.GetAsync("/Account/manage/info");
+            
             try
             {
                 userResponse.EnsureSuccessStatusCode();
