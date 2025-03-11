@@ -1,5 +1,4 @@
-﻿@using WebshopFrontend.Contracts
-@inject IOrderService OrderService
+﻿@inject IOrderService OrderService
 @inject IUserService UserService
 
 @if (Order == null)
@@ -55,13 +54,7 @@ else
     [Parameter] public int OrderId { get; set; }
     [Parameter] public OrderDto? Order { get; set; }
     [Parameter] public UserDetailsDto? UserDetails { get; set; }
-
-    // protected override void OnInitialized()
-    // {
-    //     UserDetails = new UserDetailsDto();
-    //     Order = new OrderDto();
-    // }
-
+    
     protected override async Task OnParametersSetAsync()
     {
         if (Order == null && OrderId != 0)

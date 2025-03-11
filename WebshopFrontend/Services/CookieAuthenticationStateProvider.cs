@@ -8,7 +8,7 @@ using WebshopShared.Validation;
 
 namespace WebshopFrontend.Services
 {
-    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory) : AuthenticationStateProvider, IUserService
+    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory) : AuthenticationStateProvider
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
@@ -105,22 +105,6 @@ namespace WebshopFrontend.Services
             await response.Content.ReadAsStringAsync();
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        }
-
-        public async Task<UserDetailsDto> UpdateUserDetails(UserDetails userDetails)
-        {
-            var response = await _httpClient.PutAsJsonAsync("/Account/users/update", userDetails);
-            if (!response.IsSuccessStatusCode) return new UserDetailsDto();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<UserDetailsDto>(responseContent, _jsonSerializerOptions) ?? new UserDetailsDto();
-
-        }
-
-        public async Task<UserDetailsDto> GetUserDetails()
-        {
-            var response = await _httpClient.GetAsync("/Account/users/details");
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<UserDetailsDto>(responseContent, _jsonSerializerOptions) ?? new UserDetailsDto();
         }
 
         public async Task<bool> CheckAuthenticatedAsync()

@@ -1,7 +1,5 @@
-﻿@using WebshopFrontend.Contracts
-@inject IJSRuntime Js
+﻿@inject IJSRuntime Js
 @inject ICounterService CartCounterService
-@inject IUserService UserService
 
 <button class="@GetButtonClasses()" @onclick="AddToCart">
     <span>@GetButtonText()</span>

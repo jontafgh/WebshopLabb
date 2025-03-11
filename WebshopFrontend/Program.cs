@@ -17,8 +17,8 @@ public class Program
         
         builder.Services.AddAuthenticationCore();
         builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
-        builder.Services.AddScoped(
-            sp => (IUserService)sp.GetRequiredService<AuthenticationStateProvider>());
+        //builder.Services.AddScoped(
+        //    sp => (IUserService)sp.GetRequiredService<AuthenticationStateProvider>());
 
         builder.Services.AddHttpClient("WebshopMinimalApi", client =>
         {
@@ -28,7 +28,8 @@ public class Program
             UseCookies = true,
             CookieContainer = new CookieContainer()
         });
-        
+
+        builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();

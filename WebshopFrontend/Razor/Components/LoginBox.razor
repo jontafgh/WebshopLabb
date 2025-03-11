@@ -1,4 +1,4 @@
-﻿@inject IUserService UserService
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICounterService CounterService
 
 <div class="login-box padding-y padding-x-16 border">
@@ -60,7 +60,7 @@
 
     private async Task LogIn()
     {
-        _registerLoginResponseDto = await UserService.LoginAsync(LoginDto);
+        _registerLoginResponseDto = await ((CookieAuthenticationStateProvider)AuthenticationStateProvider).LoginAsync(LoginDto);
 
         if (_registerLoginResponseDto.Succeeded)
         {

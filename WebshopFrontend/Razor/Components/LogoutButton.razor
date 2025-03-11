@@ -1,4 +1,4 @@
-﻿@inject IUserService UserService
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICounterService CounterService
 
 <button @onclick="Logout"
@@ -18,6 +18,6 @@ class="button-fit padding-x padding-y text-large">
 
         CounterService.SetCount(0);
 
-        await UserService.LogoutAsync();
+        await ((CookieAuthenticationStateProvider)AuthenticationStateProvider).LogoutAsync();
     }
 }

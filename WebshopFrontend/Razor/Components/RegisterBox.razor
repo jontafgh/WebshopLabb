@@ -1,4 +1,4 @@
-﻿@inject IUserService UserService
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="register-box padding-y padding-x-16 border">
     <AuthorizeView>
@@ -75,7 +75,7 @@
 
     private async Task RegisterUser()
     {
-        _registerLoginResponseDto = await UserService.RegisterAsync(RegisterUserDto);
+        _registerLoginResponseDto = await ((CookieAuthenticationStateProvider)AuthenticationStateProvider).RegisterAsync(RegisterUserDto);
 
         if (_registerLoginResponseDto.Succeeded)
         {
