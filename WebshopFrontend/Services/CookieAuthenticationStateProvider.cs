@@ -107,10 +107,13 @@ namespace WebshopFrontend.Services
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
-        public async Task<bool> UpdateUserDetails(UserDetails userDetails)
+        public async Task<UserDetailsDto> UpdateUserDetails(UserDetails userDetails)
         {
             var response = await _httpClient.PutAsJsonAsync("/Account/users/update", userDetails);
-            return response.IsSuccessStatusCode;
+            if (!response.IsSuccessStatusCode) return new UserDetailsDto();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<UserDetailsDto>(responseContent, _jsonSerializerOptions) ?? new UserDetailsDto();
+
         }
 
         public async Task<UserDetailsDto> GetUserDetails()

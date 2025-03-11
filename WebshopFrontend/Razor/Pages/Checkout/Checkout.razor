@@ -1,5 +1,4 @@
 ﻿@page "/checkout"
-@using WebshopFrontend.Contracts
 @using WebshopShared.Validation
 @inject IOrderService OrderService
 @inject ICounterService CounterService
@@ -8,29 +7,36 @@
 <PageTitle>Checkout</PageTitle>
 <PageHeading>Checkout</PageHeading>
 
-@if (_formSubmitted)
+@if (_orderSubmitted)
 {
     <AuthorizeView>
-        <OrderConfirmationDetails OrderId="_orderId" />
+        <OrderDetails Order="_order" UserDetails="_userDetails" />
     </AuthorizeView>
 }
 else
 {
-    <Cart OnEmptyCart="HideUserDetailsForm" />
+    <Cart OnEmptyCart="ChangePlaceOrderButtonStyle" />
     <AuthorizeView>
         <Authorized>
-            @if (!_cartEmpty) 
+            @if (_formShown)
             {
                 <ImportantInfoBox>Please comfirm your shipping details</ImportantInfoBox>
-
-                <div class="white border padding-x padding-y">
-                    <UserDetailsForm OnFormSubmit="OnFormSubmitted" />
+                <UserDetailsForm OnFormSubmit="PrepareOrderDetails" />
+            }
+            else
+            {
+                <div class="padding-x padding-y white border">
+                    <button type="button" class="button-fit padding-x padding-y text-large" @onclick="ShowUserDetailsForm">Show form</button>
+                </div>
+                <div class="padding-x padding-y white border">
+                    <button type="button" class="button-fit padding-x padding-y text-large @_placeOrderButtonStyle" @onclick="PlaceOrder">Place order</button>
                 </div>
             }
+
         </Authorized>
         <NotAuthorized>
             <ImportantInfoBox>Please log in to continue</ImportantInfoBox>
-            <LoginBox />
+            <LoginBox OnLogin="UpdateComponent" />
 
         </NotAuthorized>
     </AuthorizeView>
@@ -40,28 +46,45 @@ else
     [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
     [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
 
-    private bool _formSubmitted;
-    private bool _cartEmpty;
-    private int _orderId;
+    private UserDetailsDto _userDetails = new();
+    private OrderDto _order = new();
+    private bool _orderSubmitted;
+    private bool _formShown = true;
+    private string _placeOrderButtonStyle = string.Empty;
+    private List<CartItemDto> _cart = [];
 
-    private async Task OnFormSubmitted(UserDetails userDetails)
+    private async Task PrepareOrderDetails(UserDetails userDetails)
     {
-        await UserService.UpdateUserDetails(userDetails);
-
-        var cart = await LocalCartService.GetCart();
-        var order = await OrderService.PlaceOrder(cart);
-
-        await LocalCartService.ClearCart();
-        await ApiCartService.ClearCart();
-
-        CounterService.SetCount(0);
-
-        _orderId = order.Id;
-        _formSubmitted = true;
+        _userDetails = await UserService.UpdateUserDetails(userDetails);
+        _cart = await LocalCartService.GetCart();
+        _formShown = false;
     }
 
-    private void HideUserDetailsForm(bool arg)
+    private async Task PlaceOrder()
     {
-        _cartEmpty = arg;
+        if (_cart.Any())
+        {
+            _order = await OrderService.PlaceOrder(_cart);
+            await LocalCartService.ClearCart();
+            await ApiCartService.ClearCart();
+            CounterService.SetCount(0);
+            _orderSubmitted = true;
+        }
     }
+
+    private void ShowUserDetailsForm()
+    {
+        _formShown = !_formShown;
+    }
+
+    private void UpdateComponent()
+    {
+        StateHasChanged();
+    }
+
+    private void ChangePlaceOrderButtonStyle()
+    {
+        _placeOrderButtonStyle = "no-items-in-cart ";
+    }
+
 }

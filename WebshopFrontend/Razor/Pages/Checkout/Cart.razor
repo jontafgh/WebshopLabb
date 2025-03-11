@@ -60,7 +60,6 @@ else
         if (firstRender)
         {
             CartItems = await LocalCartService.GetCart();
-            await UpdateUserCart();
             await InvokeAsync(StateHasChanged);
         }
         if (CartItems.Count == 0 && firstRender)
@@ -89,6 +88,10 @@ else
         }
 
         await UpdateCartAsync();
+
+        if(!CartItems.Any())
+            await OnEmptyCart.InvokeAsync(true);
+
         await InvokeAsync(StateHasChanged);
     }
 

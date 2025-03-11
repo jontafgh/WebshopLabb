@@ -11,7 +11,7 @@ namespace WebshopBackend.Services
             var order = placeOrderDto.ToOrder(userId);
             dbContext.Orders.Add(order);
             await dbContext.SaveChangesAsync();
-            return order.ToOrderDto();
+            return order.ToOrderDtoWithCartItems();
         }
 
         public async Task<OrderDto?> GetOrderAsync(int orderId, string userId)

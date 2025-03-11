@@ -29,8 +29,8 @@ namespace WebshopBackend.Endpoints
                 var userToUpdate = await userService.GetUserByIdAsync(userId);
                 if (userToUpdate == null) return Results.NotFound();
 
-                await userService.UpdateUserAsync(user, userToUpdate);
-                return Results.Ok();
+                var userDetails = await userService.UpdateUserAsync(user, userToUpdate);
+                return Results.Ok(userDetails);
 
             }).RequireAuthorization();
 

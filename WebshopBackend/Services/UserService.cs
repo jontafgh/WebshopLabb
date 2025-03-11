@@ -19,13 +19,16 @@ namespace WebshopBackend.Services
             return await dbContext.Users.FindAsync(userId);
         }
 
-        public async Task UpdateUserAsync(UserDetailsDto userDetails, WebshopUser user)
+        public async Task<UserDetailsDto> UpdateUserAsync(UserDetailsDto userDetails, WebshopUser user)
         {
             user.FirstName = userDetails.FirstName;
             user.LastName = userDetails.LastName;
             user.PhoneNumber = userDetails.PhoneNumber;
             user.Address = userDetails.Address?.ToAddress();
             await dbContext.SaveChangesAsync();
+
+            userDetails.Email = user.Email;
+            return userDetails;
         }
 
         public async Task<UserDetailsDto?> GetUserDetailsAsync(string userId)

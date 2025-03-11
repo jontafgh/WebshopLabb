@@ -1,0 +1,24 @@
+﻿.no-items-in-cart {
+    background-color: red;
+}
+
+    .no-items-in-cart:active {
+
+        animation-name: emptycart;
+        animation-duration: 0.5s;
+    }
+
+
+@keyframes emptycart {
+    0% {
+        background-color: rgb(56, 160, 56);
+    }
+
+    50% {
+        background-color: red;
+    }
+
+    100% {
+        background-color: rgb(56, 160, 56);
+    }
+}
