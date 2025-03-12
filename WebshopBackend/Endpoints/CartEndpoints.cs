@@ -12,7 +12,7 @@ public class CartEndpoints(ICartService cartService) : IEndpoints
         app.MapPost("/cart", async (ClaimsPrincipal claims, [FromBody] object? empty) =>
         {
             var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
-
+            
             var existingCart = await cartService.GetCartAsync(userId);
             if (existingCart is not null) return Results.Ok(existingCart);
 

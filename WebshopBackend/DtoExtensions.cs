@@ -17,15 +17,6 @@ public static class DtoExtensions
         };
     }
 
-    //public static OrderDto ToOrderDto(this Order order)
-    //{
-    //    return new OrderDto
-    //    {
-    //        Id = order.Id,
-    //        OrderDate = order.OrderDate
-    //    };
-    //}
-
     public static OrderDto ToOrderDtoWithCartItems(this Order order, List<CartItemDto> cartItems)
     {
         return new OrderDto

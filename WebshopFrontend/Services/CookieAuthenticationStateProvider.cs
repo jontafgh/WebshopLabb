@@ -2,9 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using WebshopFrontend.Contracts;
 using WebshopShared;
-using WebshopShared.Validation;
 
 namespace WebshopFrontend.Services
 {
@@ -15,15 +13,13 @@ namespace WebshopFrontend.Services
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
-        private bool _authenticated;
         private readonly ClaimsPrincipal _unauthenticated = new(new ClaimsIdentity());
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            _authenticated = false;
             var user = _unauthenticated;
 
-            var userResponse = await _httpClient.GetAsync("/Account/manage/info");
+            var userResponse = await _httpClient.GetAsync("/Account/users/me");
             
             try
             {
@@ -37,13 +33,12 @@ namespace WebshopFrontend.Services
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userInfo.Email),
-                    new Claim(ClaimTypes.Email, userInfo.Email)
+                    new Claim(ClaimTypes.Email, userInfo.Email),
+                    new Claim(ClaimTypes.NameIdentifier, userInfo.UserId)
                 };
 
                 var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                 user = new ClaimsPrincipal(id);
-
-                _authenticated = true;
             }
             catch (Exception e)
             {
@@ -55,11 +50,11 @@ namespace WebshopFrontend.Services
         public async Task<RegisterLoginResponseDto> RegisterAsync(RegisterUserDto user)
         {
             var result = await _httpClient.PostAsJsonAsync("Account/register", user);
-
             if (result.IsSuccessStatusCode) { return new RegisterLoginResponseDto { Succeeded = true }; }
 
             var details = await result.Content.ReadAsStringAsync();
             var problemDetails = JsonDocument.Parse(details);
+
             var errors = new List<string>();
             var errorList = problemDetails.RootElement.GetProperty("errors");
             errorList.EnumerateObject().ToList().ForEach(errorEntry =>
@@ -106,12 +101,6 @@ namespace WebshopFrontend.Services
             await response.Content.ReadAsStringAsync();
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        }
-
-        public async Task<bool> CheckAuthenticatedAsync()
-        {
-            await GetAuthenticationStateAsync();
-            return _authenticated;
         }
     }
 }

@@ -1,17 +1,51 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
+using WebshopBackend.Models;
 using WebshopShared;
 
 namespace WebshopBackend.Services
 {
     public class OrderService(IDbContextFactory<WebshopContext> dbContextFactory) : IOrderService
     {
+        public async Task<OrderDto> TryUpdateStockAsync(PlaceOrderDto placeOrderDto)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+            var products = await dbContext.Products.Include(p => p.Stock)
+                .Where(p => placeOrderDto.CartItems.Select(ci => ci.ArtNr).Contains(p.ArtNr))
+                .ToListAsync();
+
+            var errors = new List<string>();
+
+            foreach (var product in products)
+            {
+                var cartItem = placeOrderDto.CartItems.FirstOrDefault(ci => ci.ArtNr == product.ArtNr)!;
+
+                if (product.Stock!.Quantity < cartItem.Quantity) 
+                    errors.Add($"Not enough stock for {product.Name} {product.ArtNr}, {cartItem.Quantity} in cart {product.Stock.Quantity} available");
+            }
+
+            if (errors.Count == 0)
+            {
+                foreach (var product in products)
+                {
+                    product.Stock!.Quantity -= placeOrderDto.CartItems.First(ci => ci.ArtNr == product.ArtNr).Quantity;
+                    dbContext.Entry(product).State = EntityState.Modified;
+                }
+                await dbContext.SaveChangesAsync();
+            }
+
+            return new OrderDto { Errors = errors, Valid = errors.Count == 0 };
+        }
+        
         public async Task<OrderDto> AddOrderAsync(string userId, PlaceOrderDto placeOrderDto)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
             var order = placeOrderDto.ToOrder(userId);
             dbContext.Orders.Add(order);
             await dbContext.SaveChangesAsync();
+
             return order.ToOrderDtoWithCartItems(placeOrderDto.CartItems);
         }
 

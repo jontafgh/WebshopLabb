@@ -43,7 +43,7 @@ namespace WebshopBackend.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<AuthenticatedUserDto?> GetUserClaimsAsync(ClaimsPrincipal claims)
+        public async Task<AuthenticatedUserDto?> GetAuthenticatedUser(ClaimsPrincipal claims)
         {
             var validUser = await userManager.GetUserAsync(claims);
             if (validUser == null) return null;

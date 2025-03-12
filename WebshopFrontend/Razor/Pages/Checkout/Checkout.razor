@@ -2,6 +2,7 @@
 @inject IOrderService OrderService
 @inject ICounterService CounterService
 @inject IUserService UserService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Checkout</PageTitle>
 <PageHeading>Checkout</PageHeading>
@@ -33,12 +34,24 @@ else
                     <button type="button" class="button-fit padding-x padding-y text-large @_placeOrderButtonStyle" @onclick="PlaceOrder">Place order</button>
                 </div>
             }
+            
+            @if (!_order.Valid)
+            {
+                <ImportantInfoBox>
+                    <ul>
+                        @foreach (var error in _order.Errors)
+                        {
+                            <li class="red">@error</li>
+                        }
+                    </ul>
+                </ImportantInfoBox>
+            }
 
         </Authorized>
         <NotAuthorized>
 
             <ImportantInfoBox>Please log in to continue</ImportantInfoBox>
-            <LoginBox />
+            <LoginBox OnLogin="() => NavigationManager.Refresh(true)"/>
 
         </NotAuthorized>
     </AuthorizeView>
@@ -58,19 +71,24 @@ else
     private async Task PrepareOrder(UserDetails userDetails)
     {
         _userDetails = await UserService.UpdateUserDetails(userDetails);
-        _cart = await LocalCartService.GetCart();
         _userDetailsFormShown = false;
     }
 
     private async Task PlaceOrder()
     {
+        _cart = await LocalCartService.GetCart();
+
         if (_cart.Any())
         {
             _order = await OrderService.PlaceOrder(_cart);
-            await LocalCartService.ClearCart();
-            await ApiCartService.ClearCart();
-            CounterService.SetCount(0);
-            _orderSubmitted = true;
+
+            if (_order.Valid)
+            {
+                await LocalCartService.ClearCart();
+                await ApiCartService.ClearCart();
+                CounterService.SetCount(0);
+                _orderSubmitted = true;
+            }
         }
     }
 

@@ -10,9 +10,14 @@ namespace WebshopBackend.Endpoints
         {
             app.MapPost("/order", async (ClaimsPrincipal claims, PlaceOrderDto placeOrderDto) =>
             {
+                var invalidOrder = await orderService.TryUpdateStockAsync(placeOrderDto);
+                if (!invalidOrder.Valid) return Results.BadRequest(invalidOrder);
+
                 var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
 
                 var order = await orderService.AddOrderAsync(userId, placeOrderDto);
+                order.Valid = true;
+
                 return Results.Created($"/order/{order.Id}", order);
 
             }).RequireAuthorization();

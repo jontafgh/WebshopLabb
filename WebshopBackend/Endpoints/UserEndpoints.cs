@@ -46,7 +46,7 @@ namespace WebshopBackend.Endpoints
 
             app.MapGet("/Account/users/me", async (ClaimsPrincipal claims) =>
             {
-                var authenticatedUserDto = await userService.GetUserClaimsAsync(claims);
+                var authenticatedUserDto = await userService.GetAuthenticatedUser(claims);
                 return authenticatedUserDto == null ? Results.Unauthorized() : Results.Ok(authenticatedUserDto);
 
             }).RequireAuthorization();

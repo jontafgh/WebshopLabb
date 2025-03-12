@@ -1,5 +1,5 @@
-﻿using WebshopFrontend.Contracts;
-using WebshopFrontend.Razor.Pages.Checkout;
+﻿using System.Net;
+using WebshopFrontend.Contracts;
 using WebshopShared;
 
 namespace WebshopFrontend.Services
@@ -25,6 +25,9 @@ namespace WebshopFrontend.Services
         {
             var order = new PlaceOrderDto { CartItems = cartItems };
             var response = await _httpClient.PostAsJsonAsync("/order", order);
+
+            if (response.StatusCode == HttpStatusCode.BadRequest) 
+                return await response.Content.ReadFromJsonAsync<OrderDto>() ?? new OrderDto();
 
             if (!response.IsSuccessStatusCode) return new OrderDto();
 
