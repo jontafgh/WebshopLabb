@@ -23,15 +23,15 @@ else
             <td data-label="Total">@((cartItem.Quantity * cartItem.Price * ExchangeRate.Value).ToString("N2"))</td>
             <td data-label="Quantity">@cartItem.Quantity</td>
             <td data-label="">
-                <button class="cart-table-button">
+                <button class="button-cart-table">
                     <i class="fa fa-plus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(1, cartItem.Id))"></i>
                 </button>
 
-                <button class="margin-x cart-table-button">
+                <button class="margin-x button-cart-table">
                     <i class="fa fa-minus" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(-1, cartItem.Id))"></i>
                 </button>
 
-                <button class="cart-table-button">
+                <button class="button-cart-table">
                     <i class="fa fa-times" aria-hidden="true" @key="@cartItem.Id" @onclick="@(() => UpdateProductQuantity(0, cartItem.Id))"></i>
                 </button>
             </td>

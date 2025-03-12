@@ -2,20 +2,20 @@
 
 <div class="root">
     <header>
-        <div class="black top-bar">
+        <div class="black topbar-top">
         </div>
-        <div class="white middle-top-bar">
-            <div class="content">
+        <div class="white topbar-bottom">
+            <div class="content padding-x width-100">
                 <TopMenu OnShowSidebar="ShowSidebar"></TopMenu>
             </div>
         </div>
     </header>
-    <main class="content flex-row">
+    <main class="content padding-x flex-row width-100">
         <div class="sidebar white border" style="@DisplayStyle">
             <NavMenu SideBarShown="@_sideBarShown" OnHideSideBar="ShowSidebar"></NavMenu>
         </div>
 
-        <div class="main padding-x">
+        <div class="width-100 padding-x">
             @Body
         </div>
 
@@ -24,7 +24,7 @@
     </main>
 
     <footer>
-        <div class="content">
+        <div class="content width-100 padding-x">
         </div>
     </footer>
 </div>

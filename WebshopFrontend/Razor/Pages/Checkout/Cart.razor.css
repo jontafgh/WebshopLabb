@@ -1,11 +1,11 @@
-﻿.cart-table-button {
+﻿.button-cart-table {
     background: white;
     color: gray;
     border: none;
     transition: 0.1s;
 }
 
-    .cart-table-button:hover {
+    .button-cart-table:hover {
         color: black;
         cursor: pointer;
         background: #d9d9d9;

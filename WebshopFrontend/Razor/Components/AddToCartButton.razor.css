@@ -1,4 +1,4 @@
-﻿.button-block {
+﻿.button-cart {
     width: 100%;
     display: block;
     cursor: pointer;
@@ -7,20 +7,20 @@
     border: 0;
 }
 
-.button-buy {
+.button-color-green {
     background-color: rgb(76, 180, 76);
     color: white;
 }
 
-    .button-buy:hover {
+    .button-color-green:hover {
         background-color: rgb(56, 160, 56);
     }
 
-.button-reserve {
+.button-color-yellow {
     background-color: rgb(255, 165, 0);
     color: white;
 }
 
-    .button-reserve:hover {
+    .button-color-yellow:hover {
         background-color: rgb(255, 145, 0);
     }

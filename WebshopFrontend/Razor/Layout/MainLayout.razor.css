@@ -4,11 +4,11 @@
     min-height: 100vh;
 }
 
-.top-bar {
+.topbar-top {
     height: 32px;
 }
 
-.middle-top-bar {
+.topbar-bottom {
     border-top: 1px solid #d9d9d9;
     border-bottom: 1px solid #d9d9d9;
     margin-top: 5px;
@@ -19,15 +19,6 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 1200px;
-    padding-left: 8px;
-    padding-right: 8px;
-    width: 100%;
-}
-
-.main {
-    margin-left: 0;
-    transition: margin-left .4s;
-    width: 100%;
 }
 
 .sidebar {

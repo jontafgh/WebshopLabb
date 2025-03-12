@@ -2,7 +2,6 @@
     padding: 8px;
     display: flex;
     flex-direction: column;
-    background: white;
 }
 
 .form-flex-row {
@@ -15,10 +14,6 @@
 .form-flex-item {
     flex-basis: 100%;
     max-width: 100%;
-}
-
-label {
-    display: block;
 }
 
 @media (min-width: 768px) {
@@ -39,10 +34,4 @@ label {
             flex-basis: 15%;
             max-width: 15%;
         }
-}
-
-@media (min-width: 993px) {
-}
-
-@media (min-width: 1200px) {
 }

@@ -1,4 +1,4 @@
-﻿.badge:after {
+﻿.cart-badge:after {
     content: attr(value);
     font-size: 14px;
     color: white;
@@ -10,16 +10,16 @@
     top: -4px;
 }
 
-.badge span {
+.cart-badge span {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.cart {
+.hover-to-black {
     transition: 0.2s;
 }
 
-    .cart:hover {
+    .hover-to-black :hover {
         color: black;
     }

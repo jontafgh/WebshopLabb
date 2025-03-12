@@ -1,6 +1,6 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<div class="register-box padding-y padding-x-16 border">
+<div class="login-box padding-y padding-x-16 white border">
     <AuthorizeView>
         <Authorized>
             <LogoutButton />
@@ -30,7 +30,7 @@
                                        class="input-text"
                                        placeholder="name@example.com" />
                         </label>
-                        <ValidationMessage For="() => RegisterUserDto.Email" class="red" />
+                        <ValidationMessage For="() => RegisterUserDto.Email" class="text-red" />
                     </div>
 
                     <div class="padding-y">
@@ -42,7 +42,7 @@
                                        class="input-text"
                                        placeholder="password" />
                         </label>
-                        <ValidationMessage For="() => RegisterUserDto.Password" class="red" />
+                        <ValidationMessage For="() => RegisterUserDto.Password" class="text-red" />
                     </div>
 
                     <div class="padding-y">
@@ -54,7 +54,7 @@
                                        class="input-text"
                                        placeholder="password" />
                         </label>
-                        <ValidationMessage For="() => RegisterUserDto.ComfirmPassword" class="red" />
+                        <ValidationMessage For="() => RegisterUserDto.ComfirmPassword" class="text-red" />
                     </div>
 
                     <button type="submit" class="button-fit padding-x padding-y text-large">

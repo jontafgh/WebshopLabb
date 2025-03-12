@@ -1,7 +1,7 @@
 ﻿@inject IExchangeRateService ExchangeRateService
 
-<div class="text-small">
-    <label for="currency" class="padding-x">Currency: </label>
+<div class="text-small exchange-rate-selector">
+    <label for="currency" class="padding-x align-children-center">Currency: </label>
     <select class="" id="currency" @bind="SelectedCurrency" @bind:after="ChangeRate">
         @foreach (var currency in ExchangeRates.Keys)
         {

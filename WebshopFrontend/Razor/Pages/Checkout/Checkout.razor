@@ -41,7 +41,7 @@ else
                     <ul>
                         @foreach (var error in _order.Errors)
                         {
-                            <li class="red">@error</li>
+                            <li class="text-red">@error</li>
                         }
                     </ul>
                 </ImportantInfoBox>
@@ -99,7 +99,7 @@ else
 
     private void ChangePlaceOrderButtonStyle()
     {
-        _placeOrderButtonStyle = "no-items-in-cart ";
+        _placeOrderButtonStyle = "button-denied ";
     }
 
 }

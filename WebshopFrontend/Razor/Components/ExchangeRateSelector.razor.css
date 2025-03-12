@@ -1,4 +1,4 @@
-﻿div {
+﻿.exchange-rate-selector {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -7,12 +7,11 @@
     align-items: center
 }
 
-label {
+    .exchange-rate-selector select {
+        height: 25px;
+    }
+
+.align-children-center {
     display: flex;
     align-items: center;
-}
-
-select {
-    height: 25px;
-
 }

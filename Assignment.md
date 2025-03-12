@@ -45,7 +45,7 @@
         - [ ] varan är slut.
         - [x] varan är på rea.
 - På produktsidan ska produktens pris kunna visas i olika valutor med hjälp av API:et https://api-ninjas.com/api/exchangerate.
-    - [ ] API:et måste användas på ett sätt som gör att slutanvändaren inte kan komma åt API-nyckeln.
+    - [x] API:et måste användas på ett sätt som gör att slutanvändaren inte kan komma åt API-nyckeln.
 - Konton
     - [x] Kontoregistrering användarnamn och lösenord.
     - [x] Inloggning med användarnamn och lösenord.

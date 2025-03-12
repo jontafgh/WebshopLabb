@@ -13,16 +13,6 @@
 .top-menu-menu {
     display: flex;
     align-items: center;
-    transition: 0.1s
-}
-
-.top-menu-menu img {
-    width: 25px;
-    height: 25px;
-}
-
-.top-menu-menu:hover {
-    color: black;
 }
 
 @media (min-width: 993px) {

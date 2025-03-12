@@ -1,6 +1,5 @@
 ﻿
 .border {
-    /*border: 1px solid #d9d9d9;*/
     border: 1px solid #ededed;
 }
 
@@ -25,32 +24,16 @@
     color: white
 }
 
-.button-fit:hover {
+    .button-fit:hover {
         background-color: rgb(56, 160, 56);
     }
-
-.container-center-verticaly {
-    position: relative
-}
-
-.center-verticaly {
-    margin: 0;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    position: absolute;
-}
-
-.validation-message {
-    color: red;
-}
 
 .gray {
     background-color: rgb(242, 242, 242);
     color: black;
 }
 
-.red {
+.text-red {
     color: red;
 }
 
@@ -144,15 +127,11 @@
     text-align: right;
 }
 
-.right {
-    float: right;
-}
-
-.left {
-    float: left;
-}
-
 .flex-row {
     display: flex;
     flex-direction: row;
+}
+
+.width-100 {
+    width: 100%;
 }

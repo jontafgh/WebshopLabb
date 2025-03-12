@@ -8,16 +8,11 @@
     justify-content: end;
 }
 
-.nav-menu-close-button {
+.nav-menu-close i {
     color: gray;
     font-size: 30px;
     font-weight: bold;
-    transition: 0.1s;
     align-self: end;
+    cursor: pointer;
 }
-
-    .nav-menu-close-button:hover {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
+   

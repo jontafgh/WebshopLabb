@@ -1,7 +1,7 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICounterService CounterService
 
-<div class="login-box padding-y padding-x-16 border">
+<div class="login-box padding-y padding-x-16 border white">
     <AuthorizeView>
         <Authorized>
             <LogoutButton />
@@ -19,7 +19,7 @@
                         class="input-text"
                         placeholder="name@example.com"></InputText>
                     </label>
-                    <ValidationMessage For="() => LoginDto.Email" class="red" />
+                    <ValidationMessage For="() => LoginDto.Email" class="text-red" />
                 </div>
 
                 <div class="padding-y">
@@ -32,7 +32,7 @@
                         placeholder="password"></InputText>
                     </label>
                     <ValidationMessage For="() => LoginDto.Password"
-                    class="red" />
+                                       class="text-red" />
                 </div>
 
                 <button type="submit" class="button-fit padding-x padding-y text-large">
@@ -42,7 +42,7 @@
 
             @foreach (var error in _registerLoginResponseDto.ErrorList)
             {
-                <p class="validation-message">@error</p>
+                <p class="text-red">@error</p>
             }
         </NotAuthorized>
     </AuthorizeView>

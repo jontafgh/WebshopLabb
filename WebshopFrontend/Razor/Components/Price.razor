@@ -28,7 +28,7 @@
         }
     }
     
-    private string GetDiscountClasses() => (Product.Price.Discount == null) ? "hide-element" : "red";
+    private string GetDiscountClasses() => (Product.Price.Discount == null) ? "hide-element" : "text-red";
 
     private string GetPriceClasses() => ((Product.Price.Discount == null)) ? "" : "text-crossed";
 
