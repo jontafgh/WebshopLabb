@@ -12,9 +12,9 @@ namespace WebshopFrontend.Services
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
         
-        public async Task<CartItemDto> AddItem(int productId, int quantity, string cartId)
+        public async Task<CartItemDto> AddItem(ProductDto product,int quantity, string cartId)
         {
-            var cartItem = await GetCartItem(productId, quantity, cartId);
+            var cartItem = GetCartItem(product, quantity, cartId);
             await js.InvokeVoidAsync("AddItemToLocalStorage", cartItem);
             return cartItem;
         }
@@ -38,10 +38,8 @@ namespace WebshopFrontend.Services
             await js.InvokeVoidAsync("RemoveCartFromLocalStorage");
         }
 
-        private async Task<CartItemDto> GetCartItem(int productId, int quantity, string cartId)
+        private static CartItemDto GetCartItem(ProductDto product, int quantity, string cartId)
         {
-            var product = await productService.GetProductById(productId);
-
             return new CartItemDto
             {
                 Id = product.Id,

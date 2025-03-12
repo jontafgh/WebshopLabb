@@ -33,7 +33,7 @@ public class ApiCartService(IHttpClientFactory httpClientFactory) : ICartService
         return cartDto;
     }
 
-    public Task<CartItemDto> AddItem(int productId, int quantity, string cartId)
+    public Task<CartItemDto> AddItem(ProductDto product, int quantity, string cartId)
     {
         throw new NotImplementedException();
     }
