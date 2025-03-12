@@ -31,8 +31,10 @@ public class Program
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddSingleton<IExchangeRateService, ExchangeRateService>();
         builder.Services.AddKeyedScoped<ICartService, ApiCartService>("Api");
         builder.Services.AddKeyedScoped<ICartService, CartService>("Local");
+
 
         var app = builder.Build();
         
@@ -41,6 +43,8 @@ public class Program
             app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
+
+        app.Services.CreateScope().ServiceProvider.GetRequiredService<IExchangeRateService>().SetExchangeRatesAsync().Wait();
 
         app.UseHttpsRedirection();
 

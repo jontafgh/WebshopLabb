@@ -1,0 +1,29 @@
+﻿@inject IExchangeRateService ExchangeRateService
+
+<div class="text-small">
+    <label for="currency" class="padding-x">Currency: </label>
+    <select class="" id="currency" @bind="SelectedCurrency" @bind:after="ChangeRate">
+        @foreach (var currency in ExchangeRates.Keys)
+        {
+            <option value="@currency">@currency</option>
+        }
+    </select>
+</div>
+
+@code {
+
+    private string SelectedCurrency { get; set; } = string.Empty;
+    private Dictionary<string, decimal> ExchangeRates { get; set; } = [];
+
+    protected override void OnInitialized()
+    {
+        SelectedCurrency = ExchangeRateService.GetCurrentRate().Key;
+        ExchangeRates = ExchangeRateService.GetExchangeRates();
+    }
+
+    private void ChangeRate()
+    {
+        ExchangeRateService.SetCurrentRate(new KeyValuePair<string, decimal>(SelectedCurrency, ExchangeRates[SelectedCurrency]));
+        
+    }
+}

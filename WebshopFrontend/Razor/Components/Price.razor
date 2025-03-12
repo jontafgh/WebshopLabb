@@ -1,17 +1,24 @@
-﻿<div>
-    <span class="@GetPriceClasses()" style="@_regularStyle">@(Product.Price.Regular)$</span>
-    <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Product.Price.Discount == null) ? "" : Product.Price.Discount.DiscountPrice)$</span>
+﻿@inject IExchangeRateService ExchangeRateService
+
+<div>
+    <span class="@GetPriceClasses()" style="@_regularStyle">@((Product.Price.Regular * ExchangeRate.Value).ToString("N2"))</span>
+    <span class="@GetDiscountClasses()" style="@_discountedStyle">@((Product.Price.Discount == null) ? "" : (Product.Price.Discount.DiscountPrice * ExchangeRate.Value).ToString("N2"))</span>
+    <em class="text-small"> @ExchangeRate.Key</em>
 </div>
 
 @code {
     [Parameter] public required ProductDto Product { get; set; }
     [Parameter] public int FontSizePx { get; set; } = 15;
+    [Parameter] public KeyValuePair<string, decimal> ExchangeRate { get; set; }
 
     private string _regularStyle = "font-size: 15px;";
     private string _discountedStyle = "font-size: 15px;";
 
     protected override void OnInitialized()
     {
+        ExchangeRateService.ExchangeRateChanged += UpdatePrice;
+        ExchangeRate = ExchangeRateService.GetCurrentRate();
+
         _regularStyle = $"font-size: {FontSizePx}px;";
         _discountedStyle = $"font-size: {FontSizePx}px;";
 
@@ -20,8 +27,24 @@
             _regularStyle = $"font-size: {FontSizePx - (FontSizePx/2)}px;";
         }
     }
-
+    
     private string GetDiscountClasses() => (Product.Price.Discount == null) ? "hide-element" : "red";
 
     private string GetPriceClasses() => ((Product.Price.Discount == null)) ? "" : "text-crossed";
+
+    private async void UpdatePrice(object? sender, KeyValuePair<string, decimal> exchangeRate)
+    {
+        try
+        {
+            await InvokeAsync(() =>
+            {
+                ExchangeRate = exchangeRate;
+                StateHasChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
 }

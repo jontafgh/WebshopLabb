@@ -1,4 +1,5 @@
 ﻿@inject ICounterService CounterService
+@inject IExchangeRateService ExchangeRateService
 
 @if (CartItems.Count == 0)
 {
@@ -10,7 +11,7 @@ else
         <TableHeader>
             <th>Product</th>
             <th>ArNr</th>
-            <th>Price</th>
+            <th>Price <em class="text-small">@ExchangeRate.Key</em></th>
             <th>Total</th>
             <th>Quantity</th>
             <th></th>
@@ -18,8 +19,8 @@ else
         <RowTemplate>
             <td data-label="Product">@cartItem.Name</td>
             <td data-label="ArNr">@cartItem.ArtNr</td>
-            <td data-label="Price">@cartItem.Price</td>
-            <td data-label="Total">@(cartItem.Quantity * cartItem.Price)</td>
+            <td data-label="Price">@((cartItem.Price * ExchangeRate.Value).ToString("N2"))</td>
+            <td data-label="Total">@((cartItem.Quantity * cartItem.Price * ExchangeRate.Value).ToString("N2"))</td>
             <td data-label="Quantity">@cartItem.Quantity</td>
             <td data-label="">
                 <button class="cart-table-button">
@@ -38,7 +39,7 @@ else
         <TableFooter>
             <th colspan="5">Total: </th>
             <td>
-                @GetTotalPrice()
+                @GetTotalPrice().ToString("N2")
             </td>
         </TableFooter>
     </ProductTable>
@@ -49,9 +50,18 @@ else
     [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
 
     [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
+
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     [Parameter] public List<CartItemDto> CartItems { get; set; } = [];
+
+    private KeyValuePair<string, decimal> ExchangeRate { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ExchangeRateService.ExchangeRateChanged += UpdatePrice;
+        ExchangeRate = ExchangeRateService.GetCurrentRate();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -66,7 +76,7 @@ else
         }
     }
     
-    private decimal GetTotalPrice() => CartItems.Sum(cartItem => cartItem.Quantity * cartItem.Price);
+    private decimal GetTotalPrice() => CartItems.Sum(cartItem => cartItem.Quantity * cartItem.Price * ExchangeRate.Value);
 
     private async Task UpdateProductQuantity(int action, int id)
     {
@@ -132,6 +142,22 @@ else
             var authState = await AuthenticationState;
             if (authState.User.Identity is not null && authState.User.Identity.IsAuthenticated)
                 await ApiCartService.UpdateCart(CartItems);
+        }
+    }
+
+    private async void UpdatePrice(object? sender, KeyValuePair<string, decimal> exchangeRate)
+    {
+        try
+        {
+            await InvokeAsync(() =>
+            {
+                ExchangeRate = exchangeRate;
+                StateHasChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
 }

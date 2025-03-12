@@ -1,0 +1,18 @@
+﻿div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    margin-right: 30px;
+    align-items: center
+}
+
+label {
+    display: flex;
+    align-items: center;
+}
+
+select {
+    height: 25px;
+
+}
