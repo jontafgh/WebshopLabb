@@ -1,13 +1,13 @@
 ﻿@inject IExchangeRateService ExchangeRateService
 
-<div class="text-small exchange-rate-selector">
+<div class="text-medium exchange-rate-selector">
     <label for="currency" class="padding-x align-children-center">Currency: </label>
-    <select class="" id="currency" @bind="SelectedCurrency" @bind:after="ChangeRate">
+    <InputSelect id="currency" @bind-value="SelectedCurrency" @bind-value:after="ChangeRate">
         @foreach (var currency in ExchangeRates.Keys)
         {
             <option value="@currency">@currency</option>
         }
-    </select>
+    </InputSelect>
 </div>
 
 @code {

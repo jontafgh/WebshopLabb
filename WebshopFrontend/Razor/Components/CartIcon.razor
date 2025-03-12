@@ -1,8 +1,11 @@
 ﻿@inject ICounterService CounterService
 
 <NavLink href="checkout" class="text-gray">
-    <div class="hover-to-black">
-        <i class="fa cart-badge fa-lg" style="font-size: 24px;" value="@_noOfItemsInCart">&#xf07a;</i>
+    <div class="hover-to-black align-children-center">
+        <div class="cart-badge text-medium text-bold">
+            @_noOfItemsInCart
+        </div>
+        <i class="fa fa-shopping-cart"></i>
     </div>
 </NavLink>
 

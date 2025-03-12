@@ -1,17 +1,29 @@
-﻿
-.border {
-    border: 1px solid #ededed;
+.active {
+    color: black;
 }
 
-.white {
-    background-color: white;
-    color: black;
+.align-children-center {
+    display: flex;
+    align-items: center;
 }
 
 .black {
     background-color: black;
     color: white;
 }
+
+.border {
+    border: 1px solid #ededed;
+}
+
+.button-denied {
+    background-color: red;
+}
+
+    .button-denied:active {
+        animation-name: denied;
+        animation-duration: 0.5s;
+    }
 
 .button-fit {
     width: fit-content;
@@ -28,17 +40,25 @@
         background-color: rgb(56, 160, 56);
     }
 
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
 .gray {
     background-color: rgb(242, 242, 242);
     color: black;
 }
 
-.text-red {
-    color: red;
-}
-
 .hide-element {
     display: none;
+}
+
+.input-text {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .margin-x {
@@ -51,34 +71,9 @@
     margin-bottom: 8px;
 }
 
-.padding-y-64 {
-    padding-bottom: 64px;
-    padding-top: 64px;
-}
-
-.padding-y-32 {
-    padding-bottom: 32px;
-    padding-top: 32px;
-}
-
-.padding-y-16 {
-    padding-top: 16px;
-    padding-bottom: 16px;
-}
-
-.padding-y {
-    padding-top: 8px;
-    padding-bottom: 8px;
-}
-
-.padding-x-64 {
-    padding-left: 64px;
-    padding-right: 64px;
-}
-
-.padding-x-32 {
-    padding-left: 32px;
-    padding-right: 32px;
+.padding-x {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .padding-x-16 {
@@ -86,9 +81,38 @@
     padding-right: 16px;
 }
 
-.padding-x {
-    padding-left: 8px;
-    padding-right: 8px;
+.padding-x-32 {
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+.padding-x-64 {
+    padding-left: 64px;
+    padding-right: 64px;
+}
+
+.padding-y {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.padding-y-16 {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.padding-y-32 {
+    padding-bottom: 32px;
+    padding-top: 32px;
+}
+
+.padding-y-64 {
+    padding-bottom: 64px;
+    padding-top: 64px;
+}
+
+.text-red {
+    color: red;
 }
 
 .text-gray {
@@ -97,6 +121,10 @@
 
 .text-large {
     font-size: 18px;
+}
+
+.text-medium {
+    font-size: 15px;
 }
 
 .text-small {
@@ -127,10 +155,51 @@
     text-align: right;
 }
 
-.flex-row {
-    display: flex;
-    flex-direction: row;
+.width-100 {
+    width: 100%;
 }
+
+.white {
+    background-color: white;
+    color: black;
+}
+
+@keyframes denied {
+    0% {
+        background-color: rgb(56, 160, 56);
+    }
+
+    50% {
+        background-color: red;
+    }
+
+    100% {
+        background-color: rgb(56, 160, 56);
+    }
+}
+
+.content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+}
+
+.hover-to-black {
+    transition: 0.2s;
+}
+
+    .hover-to-black:hover {
+        color: black;
+    }
+
+.hover-to-black-bg {
+    transition: 0.2s;
+}
+
+    .hover-to-black-bg:hover {
+        background-color: rgb(212, 212, 212);
+        color: black;
+    }
 
 .width-100 {
     width: 100%;

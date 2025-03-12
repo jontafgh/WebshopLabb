@@ -1,0 +1,68 @@
+[class^="product-grid-item"] {
+    background: white;
+}
+
+.product-grid-container {
+    width: 100%;
+    display: grid;
+    grid-template-areas:
+        "product"
+        "image"
+        "description"
+        "price"
+        "stock";
+    grid-template-columns: auto;
+    grid-template-rows: 80px auto auto auto auto;
+    border: 1px solid #ededed;
+}
+
+.product-grid-item-description {
+    grid-area: description;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.product-grid-item-stock {
+    grid-area: stock;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.product-grid-item-price {
+    grid-area: price;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
+.product-grid-item-image {
+    grid-area: image;
+}
+
+.product-grid-item-product {
+    grid-area: product;
+}
+
+
+.boardgame-properties {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+@media (min-width: 768px) {
+    .product-grid-container {
+        grid-template-areas:
+            "product product"
+            "image price"
+            "image price"
+            "description stock"
+            "description stock";
+        grid-template-columns: 8fr minmax(200px, 6fr);
+        grid-template-rows: 80px auto auto auto auto;
+    }
+}

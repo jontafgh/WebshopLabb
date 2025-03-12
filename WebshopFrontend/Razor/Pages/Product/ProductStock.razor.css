@@ -1,7 +1,0 @@
-﻿.product-grid-item-stock {
-    grid-area: stock;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: start;
-}
