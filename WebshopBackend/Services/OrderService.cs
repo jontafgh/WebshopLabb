@@ -15,29 +15,24 @@ namespace WebshopBackend.Services
                 .Where(p => placeOrderDto.CartItems.Select(ci => ci.ArtNr).Contains(p.ArtNr))
                 .ToListAsync();
 
-            var errors = new List<string>();
+            var errors = (from product in products
+                          let cartItem = placeOrderDto.CartItems.FirstOrDefault(ci => ci.ArtNr == product.ArtNr)!
+                          where product.Stock!.Quantity < cartItem.Quantity
+                          select $"Not enough stock for {product.Name} {product.ArtNr}, {cartItem.Quantity} in cart {product.Stock.Quantity} available").ToList();
+
+            if (errors.Count != 0) return new OrderDto { Errors = errors, Valid = errors.Count == 0 };
 
             foreach (var product in products)
             {
-                var cartItem = placeOrderDto.CartItems.FirstOrDefault(ci => ci.ArtNr == product.ArtNr)!;
-
-                if (product.Stock!.Quantity < cartItem.Quantity) 
-                    errors.Add($"Not enough stock for {product.Name} {product.ArtNr}, {cartItem.Quantity} in cart {product.Stock.Quantity} available");
+                product.Stock!.Quantity -= placeOrderDto.CartItems.First(ci => ci.ArtNr == product.ArtNr).Quantity;
+                dbContext.Entry(product).State = EntityState.Modified;
             }
 
-            if (errors.Count == 0)
-            {
-                foreach (var product in products)
-                {
-                    product.Stock!.Quantity -= placeOrderDto.CartItems.First(ci => ci.ArtNr == product.ArtNr).Quantity;
-                    dbContext.Entry(product).State = EntityState.Modified;
-                }
-                await dbContext.SaveChangesAsync();
-            }
+            await dbContext.SaveChangesAsync();
 
             return new OrderDto { Errors = errors, Valid = errors.Count == 0 };
         }
-        
+
         public async Task<OrderDto> AddOrderAsync(string userId, PlaceOrderDto placeOrderDto)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
@@ -52,7 +47,9 @@ namespace WebshopBackend.Services
         public async Task<OrderDto?> GetOrderAsync(int orderId, string userId)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            return await dbContext.Orders.Where(o => o.Id == orderId && o.UserId == userId)
+
+            return await dbContext.Orders.AsNoTracking()
+                .Where(o => o.Id == orderId && o.UserId == userId)
                 .Include(o => o.OrderLines)
                 .ThenInclude(ol => ol.Product)
                 .ThenInclude(p => p.Price!)
@@ -64,7 +61,7 @@ namespace WebshopBackend.Services
         public async Task<List<OrderDto>> GetOrdersAsync(string userId)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            return await dbContext.Orders
+            return await dbContext.Orders.AsNoTracking()
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderLines)
                 .ThenInclude(ol => ol.Product)

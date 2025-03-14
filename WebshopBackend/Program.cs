@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace WebshopBackend
             builder.Services.AddDbContextFactory<WebshopContext>(options =>
 
                 options.UseSqlServer(connectionStringPc)
+                    .LogTo(message => Debug.WriteLine(message))
+                    .EnableSensitiveDataLogging()
             );
 
             builder.Services.AddAuthorization();

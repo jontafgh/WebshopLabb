@@ -11,12 +11,14 @@ namespace WebshopBackend.Services
         public async Task<Cart?> GetCartAsync(string id) 
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
             return await dbContext.Carts.FindAsync(id);
         }
 
         public async Task<Cart> CreateCartAsync(CreateCartDto createCartDto)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
             var cart = createCartDto.ToCart();
             dbContext.Carts.Add(cart);
             await dbContext.SaveChangesAsync();
@@ -26,7 +28,8 @@ namespace WebshopBackend.Services
         public async Task<List<CartItemDto>> GetCartItemsAsync(string cartId)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            return await dbContext.CartItems.Where(ci => ci.CartId == cartId)
+
+            return await dbContext.CartItems.AsNoTracking().Where(ci => ci.CartId == cartId)
                 .Include(p => p.Product)
                 .ThenInclude(p => p.Price!)
                 .ThenInclude(d => d.Discount)
@@ -37,6 +40,7 @@ namespace WebshopBackend.Services
         public async Task<Cart?> UpdateCartItemsAsync(string id, List<CartItemDto> cartItems)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
             var cart = await dbContext.Carts.Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.Id == id);
             if (cart is null) return cart;

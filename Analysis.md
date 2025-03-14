@@ -12,8 +12,8 @@ Hittat fel:     Insåg att eftersom jag inte hade specificerat om InvokeAsync ba
 Lösning:        Lade till villkoret if(firstRender) så metoden bara körs en gång
                 Såg till att logik som interagerar med local storage sker när UpdateProductQuantity() körs
 
-#####################################
-#####################################
+# ----------------
+# ----------------
 
 Problem:        Fick följande fel i WebshopBackend.Services.UserService.GetUserDetailsAsync när jag försökte lägga en order, men bara ibland.
 
@@ -31,19 +31,24 @@ Felsökning 2:   Kollade i debugloggen vilka operationer som utfördes på datab
                 och det var både när jag hämtade UserDetails eller när jag insertade en Order.
                 Satte breakpoints på alla metoder i Frontend som hämtade UserDetails och postade OrderDto.
 
-Insikt:         På min checkout sida renderar jag olika komponenter beroende på vilkor.
-                Innan man betalar ska man fylla i en Form med UserDetails,
-                denna autofyller jag åt användaren om hen är inloggad och redan fyllt i tidigare.
-                När formen submittas så skickar jag resultatet med en eventcallback till parenten som sedan postar till backend och postar sen ordern.
+Insikt 1:       Komponenter som renderas tar inte hänsyn till varandra, t.ex LogIn() metoden startas i LogInBox kompotenten.
+                Samtidigt startar Cart komponetenen osv.
+                Jag ser inget sätt, eller vet inget sätt att awaita komponenter.
 
-Resultat:       På form-komponenten så autofyllde jag med hjälp av OnParametersSetAsync()
-                Såg att den renderades en till gång när jag tryckte på submit
-                Detta antar jag (ska checka mina assumptions senare) den gjorde när jag invokade mitt EventCallback.
-                Det som hände var att form-komponenten hämtade UserDetails igen, samtitigt som parenten postade UserDetails.
+Lösning 1:      Jag skrev om lite kod för att minska anrop till backend och problemet försvann. (Trodde jag)
+                Men känns fel att lösa ett backendproblem i frontend.
 
-Lösning:        Jag provade använda OnInitializedAsync() istället för OnParametersSetAsync() och gjorde om lite logk.
-                Nu renderas komponenten bara en gång och har inte fått felet igen
-                Men det känns som att lösnigen borde ske i backend, men har inte listat ut hur än.
-                Vill inte lösa problem som uppstår i backend genom att ändra i frontend.
+Insikt 2:       Problemet försvann inte
+
+Felsökning 3:   Jag googlade, chatgptade och hittade IDbContextFactory.
+                Det funkar lite som IHttpClientFactory och jag kan skapa och disposa dBcontexts för varje databas-query
+
+Lösning 2:      Implementerade IDbContextFactory i samtliga queries och har sedan dess inte sett felt igen.
+
+
+
+
+
+
 
 

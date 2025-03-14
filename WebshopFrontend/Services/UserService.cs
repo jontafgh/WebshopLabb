@@ -8,6 +8,7 @@ namespace WebshopFrontend.Services
     public class UserService(IHttpClientFactory httpClientFactory) : IUserService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
+
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -17,15 +18,14 @@ namespace WebshopFrontend.Services
         {
             var response = await _httpClient.PutAsJsonAsync("/Account/users/update", userDetails);
             if (!response.IsSuccessStatusCode) return new UserDetailsDto();
+
             var responseContent = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<UserDetailsDto>(responseContent, _jsonSerializerOptions) ?? new UserDetailsDto();
         }
 
         public async Task<UserDetailsDto> GetUserDetails()
         {
-            var response = await _httpClient.GetAsync("/Account/users/details");
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<UserDetailsDto>(responseContent, _jsonSerializerOptions) ?? new UserDetailsDto();
+            return await _httpClient.GetFromJsonAsync<UserDetailsDto>("/Account/users/details", _jsonSerializerOptions) ?? new UserDetailsDto();
         }
     }
 }
