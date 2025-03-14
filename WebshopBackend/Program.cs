@@ -24,8 +24,8 @@ namespace WebshopBackend
             builder.Services.AddDbContextFactory<WebshopContext>(options =>
 
                 options.UseSqlServer(connectionStringPc)
-                    .LogTo(message => Debug.WriteLine(message))
-                    .EnableSensitiveDataLogging()
+                    //.LogTo(message => Debug.WriteLine(message))
+                    //.EnableSensitiveDataLogging()
             );
 
             builder.Services.AddAuthorization();

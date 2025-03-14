@@ -1,20 +1,33 @@
 ﻿@page "/checkout"
-@inject IOrderService OrderService
 @inject ICounterService CounterService
-@inject IUserService UserService
+@inject IApiSevice WebshopApiSevice
 @inject NavigationManager NavigationManager
 
 <PageTitle>Checkout</PageTitle>
 <PageHeading>Checkout</PageHeading>
 
-@if (_orderSubmitted)
+@if (_order is not null)
 {
     <AuthorizeView>
-        <OrderDetails Order="_order" UserDetails="_userDetails" />
+        @if (_order.Valid)
+        {
+            <OrderDetails Order="_order" UserDetails="_userDetails" />
+        }
+        else
+        {
+            <ImportantInfoBox>
+                <ul>
+                    @foreach (var error in _order.Errors)
+                    {
+                        <li class="text-red">@error</li>
+                    }
+                </ul>
+            </ImportantInfoBox>
+        }
     </AuthorizeView>
 }
 else
-{ 
+{
     <Cart OnEmptyCart="ChangePlaceOrderButtonStyle" />
 
     <AuthorizeView>
@@ -23,7 +36,7 @@ else
             @if (_userDetailsFormShown)
             {
                 <ImportantInfoBox>Please comfirm your shipping details</ImportantInfoBox>
-                <UserDetailsForm OnFormSubmit="PrepareOrder"/>
+                <UserDetailsForm OnFormSubmit="PrepareOrder" />
             }
             else
             {
@@ -34,16 +47,12 @@ else
                     <button type="button" class="button-fit padding-x padding-y text-large @_placeOrderButtonStyle" @onclick="PlaceOrder">Place order</button>
                 </div>
             }
-            
-            @if (!_order.Valid)
+
+            @if (_orderErrorMessage is not null)
             {
                 <ImportantInfoBox>
-                    <ul>
-                        @foreach (var error in _order.Errors)
-                        {
-                            <li class="text-red">@error</li>
-                        }
-                    </ul>
+                    <h4>Order failed</h4>
+                    <p>@_orderErrorMessage</p>
                 </ImportantInfoBox>
             }
 
@@ -51,43 +60,56 @@ else
         <NotAuthorized>
 
             <ImportantInfoBox>Please log in to continue</ImportantInfoBox>
-            <LoginBox OnLogin="() => NavigationManager.Refresh(true)"/>
+            <LoginBox OnLogin="() => NavigationManager.Refresh(true)" />
 
         </NotAuthorized>
     </AuthorizeView>
 }
 
 @code {
-    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-    [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
+    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;   
 
-    private UserDetailsDto _userDetails = new();
-    private OrderDto _order = new();
-    private bool _orderSubmitted;
+    private UserDetailsDto? _userDetails;
+    private string? _orderErrorMessage;
+    private OrderDto? _order;
     private bool _userDetailsFormShown = true;
     private string _placeOrderButtonStyle = string.Empty;
     private List<CartItemDto> _cart = [];
 
-    private async Task PrepareOrder(UserDetails userDetails)
+    private async Task PrepareOrder(UserDetailsDto userDetails)
     {
-        _userDetails = await UserService.UpdateUserDetails(userDetails);
-        _userDetailsFormShown = false;
+        var result = await WebshopApiSevice.PutAsync<UserDetailsDto, UserDetailsDto>(WebshopApiEndpoints.PutUser, userDetails);
+
+        if (result.IsSuccess)
+        {
+            _userDetails = result.Data;
+            _userDetailsFormShown = false;
+        }
     }
 
     private async Task PlaceOrder()
     {
         _cart = await LocalCartService.GetCart();
+        var order = new PlaceOrderDto { CartItems = _cart };
 
         if (_cart.Any())
         {
-            _order = await OrderService.PlaceOrder(_cart);
+            var orderResult = await WebshopApiSevice.PostAsync<OrderDto, PlaceOrderDto>(WebshopApiEndpoints.PostOrder, order);
 
-            if (_order.Valid)
+            if (!orderResult.IsSuccess)
             {
-                await LocalCartService.ClearCart();
-                await ApiCartService.ClearCart();
-                CounterService.SetCount(0);
-                _orderSubmitted = true;
+                _orderErrorMessage = orderResult.ErrorMessage;
+            }
+            else
+            {
+                _order = orderResult.Data;
+
+                if (_order is not null && _order.Valid)
+                {
+                    await WebshopApiSevice.DeleteAsync<string>(WebshopApiEndpoints.DeleteCart);
+                    await LocalCartService.ClearCart();
+                    CounterService.SetCount(0);
+                }
             }
         }
     }

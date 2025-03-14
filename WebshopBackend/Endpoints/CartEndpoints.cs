@@ -9,44 +9,20 @@ public class CartEndpoints(ICartService cartService) : IEndpoints
 {
     public void RegisterEndpoints(WebApplication app)
     {
-        app.MapPost("/cart", async (ClaimsPrincipal claims, [FromBody] object? empty) =>
-        {
-            var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
-            
-            var existingCart = await cartService.GetCartAsync(userId);
-            if (existingCart is not null) return Results.Ok(existingCart);
-
-            var cart = await cartService.CreateCartAsync(new CreateCartDto { Id = userId });
-            return Results.Created($"/cart/{cart.Id}", cart);
-
-        }).RequireAuthorization();
-
-        app.MapGet("/cart/cartitems", async (ClaimsPrincipal claims) =>
-        {
-            var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
-
-            var cart = await cartService.GetCartAsync(userId);
-            if (cart == null) return Results.NotFound();
-
-            var cartitems = await cartService.GetCartItemsAsync(userId);
-            return Results.Ok(cartitems);
-
-        }).RequireAuthorization();
-
         app.MapGet("/cart", async (ClaimsPrincipal claims) =>
         {
             var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
 
-            var existingCart = await cartService.GetCartAsync(userId);
-            return existingCart is not null ? Results.Ok(existingCart) : Results.NotFound();
+            var cart = await cartService.GetCartAsync(userId);
+            return cart is not null ? Results.Ok(cart) : Results.NotFound();
 
         }).RequireAuthorization();
 
-        app.MapPut("/cart/cartitems", async (ClaimsPrincipal claims, List<CartItemDto> cartItems) =>
+        app.MapPut("/cart", async (ClaimsPrincipal claims, List<CartItemDto> cartItems) =>
         {
             var userId = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
 
-            var cart = await cartService.UpdateCartItemsAsync(userId, cartItems);
+            var cart = await cartService.UpdateCartAsync(userId, cartItems);
             return cart == null ? Results.NotFound() : Results.Ok(cart);
 
         }).RequireAuthorization();

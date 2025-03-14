@@ -1,31 +1,46 @@
 ﻿@page "/products"
-@inject IProductService ProductService
+@inject IApiSevice WebshopApiService
 
 <PageTitle>Products</PageTitle>
 <PageHeading>Products</PageHeading>
 
 <div class="product-flex-container">
-
-    @if (_products == null)
+    
+    @if (_errorMessage is not null)
     {
-        <p>Loading...</p>
+        <ImportantInfoBox>
+            <h2>Failed to load products</h2>
+            <p class="text-red">@_errorMessage</p>
+        </ImportantInfoBox>
     }
-    else
+
+    @if (_products is not null)
     {
         foreach (var product in _products)
         {
             <ProductPreview Product="product" />
-        }  
+        }
     }
+
 </div>
 
 @code {
 
     private List<ProductDto>? _products;
+    private string? _errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        _products = await ProductService.GetProducts();
+        var result = await WebshopApiService.GetAsync<List<ProductDto>>(WebshopApiEndpoints.GetProducts);
+
+        if (result.IsSuccess)
+        {
+             _products = result.Data;
+        }
+        else
+        {
+            _errorMessage = result.ErrorMessage;
+        }
     }
 }
 

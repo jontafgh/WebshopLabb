@@ -1,5 +1,6 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICounterService CounterService
+@inject IApiSevice WebshopApiService
 
 <div class="login-box padding-y padding-x-16 border white">
     <AuthorizeView>
@@ -32,7 +33,7 @@
                         placeholder="password"></InputText>
                     </label>
                     <ValidationMessage For="() => LoginDto.Password"
-                                       class="text-red" />
+                    class="text-red" />
                 </div>
 
                 <button type="submit" class="button-fit padding-x padding-y text-large">
@@ -50,7 +51,6 @@
 
 @code {
     [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-    [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
 
     [SupplyParameterFromForm] private LoginDto LoginDto { get; set; } = new();
 
@@ -76,11 +76,18 @@
 
     private async Task UpdateCart()
     {
-        await ApiCartService.SetCart();
+        var result = await WebshopApiService.GetAsync<CartDto>(WebshopApiEndpoints.GetCart);
 
-        var apiCart = await ApiCartService.GetCart();
+        var apiCart = new CartDto();
+
+        if (result is { IsSuccess: true, Data: not null })
+        {
+            apiCart = result.Data;
+        }
+
         var localCart = await LocalCartService.GetCart();
-        var cart = apiCart.Concat(localCart).DistinctBy(c => c.ArtNr).ToList();
+        var cart = apiCart.CartItems.Concat(localCart).DistinctBy(c => c.ArtNr).ToList();
+
         await LocalCartService.UpdateCart(cart);
 
         CounterService.SetCount(cart.Sum(c => c.Quantity));

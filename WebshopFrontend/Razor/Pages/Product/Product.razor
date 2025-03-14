@@ -1,11 +1,14 @@
 ﻿@page "/product/{ArtNr}"
-@inject IProductService ProductService
+@inject IApiSevice WebshopApiService
 
-@if (_boardgame == null)
+@if (_errorMessage is not null)
 {
-    <p>Loading...</p>
+    <ImportantInfoBox>
+        <h2>Failed to load product</h2>
+        <p class="text-red">@_errorMessage</p>
+    </ImportantInfoBox>
 }
-else
+@if (_boardgame is not null)
 {
     <PageTitle>@_boardgame.Product.Name</PageTitle>
 
@@ -22,9 +25,19 @@ else
     [Parameter] public required string ArtNr { get; set; }
 
     private BoardgameDto? _boardgame;
+    private string? _errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        _boardgame = await ProductService.GetBoardgameByArtNr(ArtNr);
+        var result = await WebshopApiService.GetAsync<BoardgameDto>(string.Format(WebshopApiEndpoints.GetBoardgameByArtNr, ArtNr));
+
+        if (result.IsSuccess)
+        {
+            _boardgame = result.Data;
+        }
+        else
+        {
+            _errorMessage = result.ErrorMessage;
+        }
     }
 }

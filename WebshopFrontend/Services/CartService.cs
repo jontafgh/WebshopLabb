@@ -5,7 +5,7 @@ using WebshopShared;
 
 namespace WebshopFrontend.Services
 {
-    public class CartService(IJSRuntime js, IProductService productService) : ICartService
+    public class CartService(IJSRuntime js) : ICartService
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {

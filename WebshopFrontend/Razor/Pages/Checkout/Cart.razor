@@ -1,5 +1,6 @@
 ﻿@inject ICounterService CounterService
 @inject IExchangeRateService ExchangeRateService
+@inject IApiSevice WebshopApiService
 
 @if (CartItems.Count == 0)
 {
@@ -47,7 +48,6 @@ else
 
 @code {
     [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-    [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
 
     [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
 
@@ -140,8 +140,11 @@ else
         if (AuthenticationState != null)
         {
             var authState = await AuthenticationState;
+
             if (authState.User.Identity is not null && authState.User.Identity.IsAuthenticated)
-                await ApiCartService.UpdateCart(CartItems);
+            {
+                await WebshopApiService.PutAsync<CartDto, List<CartItemDto>>(WebshopApiEndpoints.PutCart, CartItems);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICounterService CounterService
+@inject IApiSevice WebshopApiSevice
 
 <button @onclick="Logout"
 type="button"
@@ -8,12 +9,11 @@ class="button-fit padding-x padding-y text-large">
 </button>
 @code {
     [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-    [Inject(Key = "Api")] public ICartService ApiCartService { get; set; } = null!;
 
     private async Task Logout()
     {
         var localCart = await LocalCartService.GetCart();
-        await ApiCartService.UpdateCart(localCart);
+        await WebshopApiSevice.PutAsync<CartDto, List<CartItemDto>>(WebshopApiEndpoints.PutCart, localCart);
         await LocalCartService.ClearCart();
 
         CounterService.SetCount(0);

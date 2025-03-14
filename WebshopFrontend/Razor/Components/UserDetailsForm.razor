@@ -1,4 +1,4 @@
-﻿@inject IUserService UserService
+﻿@inject IApiSevice WebshopApiSevice
 
 <div class="white border padding-x padding-y">
     <EditForm Model="UserDetails" OnValidSubmit="Submit" FormName="UserDetails">
@@ -151,7 +151,9 @@
 
     [SupplyParameterFromForm] private UserDetails UserDetails { get; set; } = new();
 
-    [Parameter] public EventCallback<UserDetails> OnFormSubmit { get; set; }
+    [Parameter] public EventCallback<UserDetailsDto> OnFormSubmit { get; set; }
+
+    [Parameter] public UserDetailsDto? UserDetailsDto { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,31 +162,41 @@
 
     private async Task<UserDetails> GetExistingUserDetails()
     {
-        var existingUserDetails = await UserService.GetUserDetails();
+        var result = await WebshopApiSevice.GetAsync<UserDetailsDto>(WebshopApiEndpoints.GetUser);
+
+        if (!result.IsSuccess || result.Data == null) return new UserDetails();
 
         return new UserDetails
             {
-                FirstName = existingUserDetails.FirstName ?? string.Empty,
-                LastName = existingUserDetails.LastName ?? string.Empty,
-                Address = existingUserDetails.Address == null ? new AddressDetails() : new AddressDetails
+                FirstName = result.Data.FirstName ?? string.Empty,
+                LastName = result.Data.LastName ?? string.Empty,
+                Address = result.Data.Address == null ? new AddressDetails() : new AddressDetails
                 {
-                    Country = existingUserDetails.Address.Country ?? string.Empty,
-                    City = existingUserDetails.Address.City ?? string.Empty,
-                    Street = existingUserDetails.Address.Street ?? string.Empty,
-                    PostalCode = existingUserDetails.Address.PostalCode ?? string.Empty
+                    Country = result.Data.Address.Country ?? string.Empty,
+                    City = result.Data.Address.City ?? string.Empty,
+                    Street = result.Data.Address.Street ?? string.Empty,
+                    PostalCode = result.Data.Address.PostalCode ?? string.Empty
                 },
-                PhoneNumber = existingUserDetails.PhoneNumber ?? string.Empty
+                PhoneNumber = result.Data.PhoneNumber ?? string.Empty
             };
     }
 
     private async Task Submit()
     {
-        await OnFormSubmit.InvokeAsync(UserDetails);
-    }
+        UserDetailsDto = new UserDetailsDto
+        {
+            FirstName = UserDetails.FirstName,
+            LastName = UserDetails.LastName,
+            Address = new AddressDto
+            {
+                Country = UserDetails.Address.Country,
+                City = UserDetails.Address.City,
+                Street = UserDetails.Address.Street,
+                PostalCode = UserDetails.Address.PostalCode
+            },
+                PhoneNumber = UserDetails.PhoneNumber
+        };
 
-    private async Task FillForm()
-    {
-        UserDetails = await GetExistingUserDetails();
+        await OnFormSubmit.InvokeAsync(UserDetailsDto);
     }
-
 }
