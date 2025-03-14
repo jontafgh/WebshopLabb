@@ -39,7 +39,8 @@ namespace WebshopBackend.Services
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-            var cart = await dbContext.Carts.FindAsync(id);
+            var cart = await dbContext.Carts.Include(c => c.CartItems)
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (cart is null) return null;
 
             cart.CartItems = cartItems.Select(ci => ci.ToCartItem()).ToList();
@@ -51,12 +52,15 @@ namespace WebshopBackend.Services
         public async Task<CartDto?> DeleteCartAsync(string id)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
             var cart = await dbContext.Carts.Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.Id == id);
+
             if (cart is null) return null;
 
             dbContext.Carts.Remove(cart);
             await dbContext.SaveChangesAsync();
+
             return new CartDto {Id = cart.Id };
         }
     }

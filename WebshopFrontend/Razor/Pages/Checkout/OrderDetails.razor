@@ -1,5 +1,4 @@
-﻿@inject IOrderService OrderService
-@inject IUserService UserService
+﻿@inject IApiService WebshopApiService
 @inject IExchangeRateService ExchangeRateService
 
 @if (Order == null)
@@ -63,13 +62,24 @@ else
         ExchangeRateService.ExchangeRateChanged += UpdatePrice;
         ExchangeRate = ExchangeRateService.GetCurrentRate();
     }
-    
+
     protected override async Task OnParametersSetAsync()
     {
         if (Order == null && OrderId != 0)
-            Order = await OrderService.GetOrder(OrderId);         
+        {
+            var orderResult = await WebshopApiService.GetAsync<OrderDto>($"{WebshopApiEndpoints.GetOrder}/{OrderId}");
 
-        UserDetails ??= await UserService.GetUserDetails();
+            if (orderResult.IsSuccess)
+                Order = orderResult.Data;
+        }
+
+        if (UserDetails == null)
+        {
+            var userResult = await WebshopApiService.GetAsync<UserDetailsDto>(WebshopApiEndpoints.GetUser);
+
+            if (userResult.IsSuccess)
+                UserDetails = userResult.Data;
+        }
     }
 
     private decimal GetTotalPrice() => Order!.CartItems.Sum(x => x.Price * x.Quantity * ExchangeRate.Value);

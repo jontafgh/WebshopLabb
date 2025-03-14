@@ -2,11 +2,13 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using WebshopFrontend.Contracts;
 using WebshopShared;
+using WebshopShared.Validation;
 
 namespace WebshopFrontend.Services
 {
-    public class CookieAuthenticationStateProvider(IApiSevice webshopApi) : AuthenticationStateProvider
+    public class CookieAuthenticationStateProvider(IApiService webshopApi) : AuthenticationStateProvider
     {
         private readonly ClaimsPrincipal _unauthenticated = new(new ClaimsIdentity());
 

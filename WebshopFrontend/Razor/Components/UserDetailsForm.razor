@@ -1,4 +1,4 @@
-﻿@inject IApiSevice WebshopApiSevice
+﻿@inject IApiService WebshopApiService
 
 <div class="white border padding-x padding-y">
     <EditForm Model="UserDetails" OnValidSubmit="Submit" FormName="UserDetails">
@@ -162,7 +162,7 @@
 
     private async Task<UserDetails> GetExistingUserDetails()
     {
-        var result = await WebshopApiSevice.GetAsync<UserDetailsDto>(WebshopApiEndpoints.GetUser);
+        var result = await WebshopApiService.GetAsync<UserDetailsDto>(WebshopApiEndpoints.GetUser);
 
         if (!result.IsSuccess || result.Data == null) return new UserDetails();
 

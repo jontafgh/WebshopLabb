@@ -1,6 +1,7 @@
 ﻿@inject ICounterService CounterService
 @inject IExchangeRateService ExchangeRateService
-@inject IApiSevice WebshopApiService
+@inject IApiService WebshopApiService
+@inject ICartService CartService
 
 @if (CartItems.Count == 0)
 {
@@ -47,8 +48,6 @@ else
 }
 
 @code {
-    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-
     [Parameter] public EventCallback<bool> OnEmptyCart { get; set; }
 
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -67,7 +66,7 @@ else
     {
         if (firstRender)
         {
-            CartItems = await LocalCartService.GetCart();
+            CartItems = await CartService.GetCart();
             await InvokeAsync(StateHasChanged);
         }
         if (CartItems.Count == 0 && firstRender)
@@ -105,9 +104,9 @@ else
 
     private async Task UpdateCartAsync()
     {
-        await LocalCartService.UpdateCart(CartItems);
+        await CartService.UpdateCart(CartItems);
         await UpdateUserCart();
-        CartItems = await LocalCartService.GetCart();
+        CartItems = await CartService.GetCart();
     }
 
     private void RemoveItem(CartItemDto cartItem)

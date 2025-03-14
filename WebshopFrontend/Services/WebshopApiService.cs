@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using WebshopFrontend.Contracts;
 
 namespace WebshopFrontend.Services
 {
@@ -28,15 +29,8 @@ namespace WebshopFrontend.Services
 
         public const string GetExchangerates = "/exchangerates";
     }
-    public interface IApiSevice
-    {
-        Task<Result<TOutput>> GetAsync<TOutput>(string url);
-        Task<Result<TOutput>> PostAsync<TOutput, TInput>(string url, TInput data);
-        Task<Result<TOutput>> PutAsync<TOutput, TInput>(string url, TInput data);
-        Task<Result<TOutput>> DeleteAsync<TOutput>(string url);
-    }
 
-    public class WebshopApiService(IHttpClientFactory httpClientFactory) : IApiSevice
+    public class WebshopApiService(IHttpClientFactory httpClientFactory) : IApiService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
 

@@ -1,12 +1,12 @@
 ﻿@inject IJSRuntime Js
 @inject ICounterService CartCounterService
+@inject ICartService CartService
 
 <button class="@GetButtonClasses()" @onclick="AddToCart">
     <span>@GetButtonText()</span>
 </button>
 
 @code {
-    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
 
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public required ProductDto Product { get; set; }
@@ -18,7 +18,7 @@
     private async Task AddToCart()
     {
         _cartId = await GetCartId();
-        var cartItem = await LocalCartService.AddItem(Product, QuantityToAdd, _cartId);
+        var cartItem = await CartService.AddItem(Product, QuantityToAdd, _cartId);
         if (cartItem.Id != 0) CartCounterService.AddToCount(QuantityToAdd);
     }
 

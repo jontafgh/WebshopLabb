@@ -1,4 +1,5 @@
 ﻿@inject ICounterService CounterService
+@inject ICartService CartService
 
 <NavLink href="checkout" class="text-gray">
     <div class="hover-to-black align-children-center">
@@ -10,8 +11,6 @@
 </NavLink>
 
 @code {
-    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-
     private int _noOfItemsInCart = 0;
 
     protected override void OnInitialized()
@@ -23,7 +22,7 @@
     {
         if (firstRender)
         {
-            var cart = await LocalCartService.GetCart();
+            var cart = await CartService.GetCart();
             CounterService.SetCount(cart.Sum(c => c.Quantity));
         }
     }

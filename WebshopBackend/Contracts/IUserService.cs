@@ -8,7 +8,7 @@ namespace WebshopBackend.Contracts
     {
         string? GetUserId(ClaimsPrincipal claims);
         Task<WebshopUser?> GetUserByIdAsync(string userId);
-        Task<UserDetailsDto> UpdateUserAsync(UserDetailsDto userDetails, WebshopUser user);
+        Task<UserDetailsDto?> UpdateUserAsync(string userId, UserDetailsDto userDetails);
         Task<UserDetailsDto?> GetUserDetailsAsync(string userId);
         Task<AuthenticatedUserDto?> GetAuthenticatedUser(ClaimsPrincipal claims);
     }

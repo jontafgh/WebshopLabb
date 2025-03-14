@@ -27,16 +27,10 @@ public class Program
             CookieContainer = new CookieContainer()
         });
 
-        builder.Services.AddScoped<IApiSevice, WebshopApiService>();
-
-        //builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IApiService, WebshopApiService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
-        //builder.Services.AddScoped<IOrderService, OrderService>();
-        //builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddSingleton<IExchangeRateService, ExchangeRateService>();
-        //builder.Services.AddKeyedScoped<ICartService, ApiCartService>("Api");
-        builder.Services.AddKeyedScoped<ICartService, CartService>("Local");
-
+        builder.Services.AddScoped<ICartService, CartService>();
 
         var app = builder.Build();
         

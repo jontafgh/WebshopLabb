@@ -21,9 +21,12 @@ namespace WebshopBackend.Services
             return await dbContext.Users.FindAsync(userId);
         }
 
-        public async Task<UserDetailsDto> UpdateUserAsync(UserDetailsDto userDetails, WebshopUser user)
+        public async Task<UserDetailsDto?> UpdateUserAsync(string userId, UserDetailsDto userDetails)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+            var user = await dbContext.Users.FindAsync(userId);
+            if (user == null) return null;
 
             user.FirstName = userDetails.FirstName;
             user.LastName = userDetails.LastName;
@@ -32,7 +35,6 @@ namespace WebshopBackend.Services
 
             await dbContext.SaveChangesAsync();
 
-            userDetails.Email = user.Email;
             return userDetails;
         }
 

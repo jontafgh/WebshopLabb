@@ -1,6 +1,7 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICounterService CounterService
-@inject IApiSevice WebshopApiService
+@inject IApiService WebshopApiService
+@inject ICartService CartService
 
 <div class="login-box padding-y padding-x-16 border white">
     <AuthorizeView>
@@ -50,8 +51,6 @@
 </div>
 
 @code {
-    [Inject(Key = "Local")] public ICartService LocalCartService { get; set; } = null!;
-
     [SupplyParameterFromForm] private LoginDto LoginDto { get; set; } = new();
 
     private RegisterLoginResponseDto _registerLoginResponseDto = new();
@@ -85,10 +84,10 @@
             apiCart = result.Data;
         }
 
-        var localCart = await LocalCartService.GetCart();
+        var localCart = await CartService.GetCart();
         var cart = apiCart.CartItems.Concat(localCart).DistinctBy(c => c.ArtNr).ToList();
 
-        await LocalCartService.UpdateCart(cart);
+        await CartService.UpdateCart(cart);
 
         CounterService.SetCount(cart.Sum(c => c.Quantity));
     }
