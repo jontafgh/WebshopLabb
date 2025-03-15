@@ -33,20 +33,12 @@ else
     else
     {
         <div class="white padding-x padding-y margin-y border">
-            <div>
-                <h4>Confirmation email sent to:</h4>
-                <p>@UserDetails.Email</p>
-            </div>
-            <div>
-                <h4>Order will be sent to:</h4>
-                <ul>
-                    <li>@UserDetails.FirstName @UserDetails.LastName</li>
-                    <li>@UserDetails.Address!.Street</li>
-                    <li>@UserDetails.Address.PostalCode @UserDetails.Address.City</li>
-                    <li>@UserDetails.Address.Country</li>
-                </ul>
-            </div>
+            
+            <h4>Confirmation email sent to:</h4>
+            <p>@UserDetails.Email</p>           
         </div>
+
+        <UserDetailsTable UserDetails="UserDetails" Caption="Delivery address" />
     }
 }
 
@@ -67,7 +59,7 @@ else
     {
         if (Order == null && OrderId != 0)
         {
-            var orderResult = await WebshopApiService.GetAsync<OrderDto>($"{WebshopApiEndpoints.GetOrder}/{OrderId}");
+            var orderResult = await WebshopApiService.GetAsync<OrderDto>(string.Format(WebshopApiEndpoints.GetOrder, OrderId));
 
             if (orderResult.IsSuccess)
                 Order = orderResult.Data;

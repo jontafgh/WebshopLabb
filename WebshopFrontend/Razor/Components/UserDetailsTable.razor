@@ -1,0 +1,36 @@
+﻿<div class="user-details-container border padding-x white">
+    <table class="user-details-table">
+        <caption class="padding-y text-large text-bold text-left" >@Caption</caption>
+        <tbody>
+        <tr>
+            <th>Name</th>
+            <td>@UserDetails.FirstName @UserDetails.LastName</td>
+        </tr>
+        <tr>
+            <th>Street</th>
+            <td>@UserDetails.Address?.Street</td>
+        </tr>
+        <tr>
+            <th>Postal code</th>
+            <td>@UserDetails.Address?.PostalCode</td>
+        </tr>
+
+        <tr>
+            <th>City</th>
+            <td>@UserDetails.Address?.City</td>
+        </tr>
+
+        <tr>
+            <th>Country</th>
+            <td>@UserDetails.Address?.Country</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+@code {
+
+    [Parameter] public required UserDetailsDto UserDetails { get; set; }
+    [Parameter] public string? Caption { get; set; }
+
+}

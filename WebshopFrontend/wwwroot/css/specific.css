@@ -26,18 +26,18 @@
     color: white;
 }
 
-.button-color-green:hover {
-    background-color: rgb(56, 160, 56);
-}
+    .button-color-green:hover {
+        background-color: rgb(56, 160, 56);
+    }
 
 .button-color-yellow {
     background-color: rgb(255, 165, 0);
     color: white;
 }
 
-.button-color-yellow:hover {
-    background-color: rgb(255, 145, 0);
-}
+    .button-color-yellow:hover {
+        background-color: rgb(255, 145, 0);
+    }
 
 .cart-badge {
     padding: 2px 5px 2px 5px;
@@ -52,9 +52,9 @@
     align-items: center
 }
 
-.exchange-rate-selector select {
-    height: 25px;
-}
+    .exchange-rate-selector select {
+        height: 25px;
+    }
 
 .form-flex-container {
     padding: 8px;
@@ -88,13 +88,13 @@
     justify-content: end;
 }
 
-.nav-menu-close i {
-    color: gray;
-    font-size: 30px;
-    font-weight: bold;
-    align-self: end;
-    cursor: pointer;
-}
+    .nav-menu-close i {
+        color: gray;
+        font-size: 30px;
+        font-weight: bold;
+        align-self: end;
+        cursor: pointer;
+    }
 
 .nav-menu-item {
     width: 250px;
@@ -183,22 +183,22 @@
     table-layout: fixed;
 }
 
-.product-table th {
-    height: 50px;
-}
+    .product-table th {
+        height: 50px;
+    }
 
-.product-table td {
-    padding-top: 8px;
-    padding-bottom: 8px;
-}
+    .product-table td {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
 
-.product-table tfoot th {
-    text-align: right;
-}
+    .product-table tfoot th {
+        text-align: right;
+    }
 
-.product-table th, .product-table td {
-    border-bottom: 1px solid #d9d9d9;
-}
+    .product-table th, .product-table td {
+        border-bottom: 1px solid #d9d9d9;
+    }
 
 .sidebar {
     width: 250px;
@@ -238,6 +238,32 @@
     position: relative;
 }
 
+.user-details-container {
+    overflow-x: hidden;
+}
+
+.user-details-table {
+    width: 50%;
+    background: white;
+    text-align: left;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+    .user-details-table th {
+        height: 50px;
+    }
+
+    .user-details-table td {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .user-details-table th, .user-details-table td {
+        border-bottom: 1px solid #d9d9d9;
+    }
+
+
 @media (min-width: 420px) {
     .product-flex-item {
         flex-basis: 50%;
@@ -267,11 +293,11 @@
         text-align: right;
     }
 
-    .product-table td::before {
-        content: attr(data-label);
-        float: left;
-        font-weight: bold;
-    }
+        .product-table td::before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+        }
 }
 
 @media (min-width: 768px) {
@@ -288,10 +314,10 @@
         padding-right: 8px;
     }
 
-    .form-flex-item:nth-child(1) {
-        flex-basis: 15%;
-        max-width: 15%;
-    }
+        .form-flex-item:nth-child(1) {
+            flex-basis: 15%;
+            max-width: 15%;
+        }
 
     .product-flex-item {
         flex-basis: 33.333%;

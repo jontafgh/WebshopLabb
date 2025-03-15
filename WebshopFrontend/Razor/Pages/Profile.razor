@@ -1,11 +1,32 @@
 ﻿@page "/profile"
+@inject IApiService WebshopApiService
 
 <PageHeading>Profile</PageHeading>
 <PageTitle>Profile</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        
+        @if (UserDetails != null)
+        {
+            <UserDetailsTable UserDetails="UserDetails" Caption="Contact Info" />
+        }
+
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <ImportantInfoBox>@_errorMessage</ImportantInfoBox>
+        }
+
+        @if (!_showForm)
+        {
+            <div class="padding-x padding-y white border margin-y">
+                <button class="button-fit padding-x padding-y text-large" @onclick="_ => _showForm = true">Edit</button>
+            </div>
+        }
+        else
+        {
+            <UserDetailsForm OnFormSubmit="UpdateUserDetails" />
+        }
+
     </Authorized>
     <NotAuthorized>
         <ImportantInfoBox>You're not logged in.</ImportantInfoBox>
@@ -13,5 +34,31 @@
 </AuthorizeView>
 
 @code {
+
+    private UserDetailsDto? UserDetails { get; set; }
+    private string? _errorMessage;
+    private bool _showForm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var reuslt = await WebshopApiService.GetAsync<UserDetailsDto>(WebshopApiEndpoints.GetUser);
+
+        if (reuslt.IsSuccess)
+        {
+            UserDetails = reuslt.Data;
+        }
+        else
+        {
+            _errorMessage = reuslt.ErrorMessage;
+        }
+    }
+
+    private async Task UpdateUserDetails(UserDetailsDto arg)
+    {
+        await WebshopApiService.PutAsync<UserDetailsDto, UserDetailsDto>(WebshopApiEndpoints.PutUser, arg);
+        _showForm = false;
+        UserDetails = arg;
+        //await InvokeAsync(StateHasChanged);
+    }
 
 }

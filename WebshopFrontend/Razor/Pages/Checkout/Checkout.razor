@@ -89,10 +89,9 @@ else
     private async Task PlaceOrder()
     {
         var cart = await CartService.GetCart();
-        var order = new PlaceOrderDto { CartItems = cart };
-
         if (!cart.Any()) return;
 
+        var order = new PlaceOrderDto { CartItems = cart };
         var orderResult = await WebshopApiService.PostAsync<OrderDto, PlaceOrderDto>(WebshopApiEndpoints.PostOrder, order);
 
         if (!orderResult.IsSuccess)

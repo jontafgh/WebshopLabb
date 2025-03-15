@@ -1,9 +1,5 @@
 ﻿namespace WebshopShared
 {
-    public class CreateCartDto
-    {
-        public string Id { get; set; } = null!;
-    }
     public class CartDto
     {
         public string Id { get; set; } = null!;

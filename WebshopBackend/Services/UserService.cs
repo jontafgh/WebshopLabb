@@ -33,6 +33,8 @@ namespace WebshopBackend.Services
             user.PhoneNumber = userDetails.PhoneNumber;
             user.Address = userDetails.Address?.ToAddress();
 
+            userDetails.Email = user.Email;
+
             await dbContext.SaveChangesAsync();
 
             return userDetails;

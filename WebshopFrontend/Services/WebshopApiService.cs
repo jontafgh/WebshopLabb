@@ -41,9 +41,18 @@ namespace WebshopFrontend.Services
 
         private async Task<Result<TOutput>> ProcessResponse<TOutput>(HttpResponseMessage response)
         {
-            if (!response.IsSuccessStatusCode) return new Result<TOutput> { IsSuccess = false, ErrorMessage = $"{response.StatusCode} {response.ReasonPhrase}" };
+            if (!response.IsSuccessStatusCode) return new Result<TOutput>
+            {
+                IsSuccess = false,
+                ErrorMessage = $"{response.RequestMessage?.RequestUri} {response.RequestMessage?.Method}\n{(int)response.StatusCode} {response.ReasonPhrase}"
+            };
             
             var responseContent = await response.Content.ReadAsStringAsync();
+
+            if(string.IsNullOrWhiteSpace(responseContent))
+            {
+                return new Result<TOutput> { IsSuccess = true, Data = default};
+            }
 
             try
             {
@@ -52,11 +61,11 @@ namespace WebshopFrontend.Services
             }
             catch (JsonException ex)
             {
-                return new Result<TOutput> { IsSuccess = true, Data = default, ErrorMessage = ex.Message};
+                return new Result<TOutput> { IsSuccess = false, Data = default, ErrorMessage = $"Could not read JSON: {responseContent} {response.RequestMessage?.Method} {response.RequestMessage?.RequestUri} {ex.Message}"};
             }
             catch (Exception ex)
             {
-                return new Result<TOutput> { IsSuccess = true, Data = default, ErrorMessage = $"{response.StatusCode} {response.ReasonPhrase} {ex.Message}" };
+                return new Result<TOutput> { IsSuccess = false, Data = default, ErrorMessage = $"{ex.Message}" };
             }
         }
 

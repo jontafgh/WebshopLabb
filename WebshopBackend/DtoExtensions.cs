@@ -80,13 +80,7 @@ public static class DtoExtensions
             Quantity = cartItemDto.Quantity
         };
     }
-    public static Cart ToCart(this CreateCartDto createCartDto)
-    {
-        return new Cart
-        {
-            Id = createCartDto.Id
-        };
-    }
+    
     public static AddressDto ToAddressDto(this Address address)
     {
         return new AddressDto
