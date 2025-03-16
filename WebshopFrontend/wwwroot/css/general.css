@@ -40,6 +40,12 @@
         background-color: rgb(56, 160, 56);
     }
 
+.content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+}
+
 .flex-row {
     display: flex;
     flex-direction: row;
@@ -53,6 +59,23 @@
 .hide-element {
     display: none;
 }
+
+.hover-to-black {
+    transition: 0.2s;
+}
+
+    .hover-to-black:hover {
+        color: black;
+    }
+
+.hover-to-black-bg {
+    transition: 0.2s;
+}
+
+    .hover-to-black-bg:hover {
+        background-color: rgb(212, 212, 212);
+        color: black;
+    }
 
 .input-text {
     width: 100%;
@@ -176,31 +199,4 @@
     100% {
         background-color: rgb(56, 160, 56);
     }
-}
-
-.content {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1200px;
-}
-
-.hover-to-black {
-    transition: 0.2s;
-}
-
-    .hover-to-black:hover {
-        color: black;
-    }
-
-.hover-to-black-bg {
-    transition: 0.2s;
-}
-
-    .hover-to-black-bg:hover {
-        background-color: rgb(212, 212, 212);
-        color: black;
-    }
-
-.width-100 {
-    width: 100%;
 }
