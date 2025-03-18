@@ -53,12 +53,10 @@
         }
     }
 
-    private async Task UpdateUserDetails(UserDetailsDto arg)
+    private async Task UpdateUserDetails(UserDetailsDto userDetails)
     {
-        await WebshopApiService.PutAsync<UserDetailsDto, UserDetailsDto>(WebshopApiEndpoints.PutUser, arg);
+        await WebshopApiService.PutAsync<UserDetailsDto, UserDetailsDto>(WebshopApiEndpoints.PutUser, userDetails);
         _showForm = false;
-        UserDetails = arg;
-        //await InvokeAsync(StateHasChanged);
+        UserDetails = userDetails;
     }
-
 }

@@ -31,6 +31,7 @@ namespace WebshopBackend
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddCookie(IdentityConstants.ApplicationScheme);
+                //.AddIdentityCookies();
 
             builder.Services.AddIdentityCore<WebshopUser>()
                 .AddEntityFrameworkStores<WebshopContext>()
