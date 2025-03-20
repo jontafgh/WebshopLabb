@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using WebshopFrontend.Contracts;
@@ -15,27 +16,14 @@ public class Program
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-
-        builder.Services.AddAuthenticationCore();
-
-        //builder.Services.AddAuthorization();
-        //builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-        //    .AddIdentityCookies();
-        //builder.Services.AddCascadingAuthenticationState();
-        //builder.Services.AddScoped<CookieAuthenticationStateProvider>();
-        //builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
-        //    sp.GetRequiredService<CookieAuthenticationStateProvider>());
-
-        builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
-
+        
+        //builder.Services.AddAuthorizationCore();
+        builder.Services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
+        
         builder.Services.AddHttpClient("WebshopMinimalApi", client =>
         {
             client.BaseAddress = new Uri("http://localhost:5057/");
-        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
-             {
-                 UseCookies = true,
-                 CookieContainer = new CookieContainer()
-             });
+        });
 
         builder.Services.AddScoped<IApiService, WebshopApiService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();

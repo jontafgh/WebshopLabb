@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Principal;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,14 +30,17 @@ namespace WebshopBackend
             );
 
             builder.Services.AddAuthorization();
-            builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-                .AddCookie(IdentityConstants.ApplicationScheme);
-                //.AddIdentityCookies();
+            //builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+            //.AddCookie(IdentityConstants.ApplicationScheme);
+            //.AddIdentityCookies();
 
-            builder.Services.AddIdentityCore<WebshopUser>()
-                .AddEntityFrameworkStores<WebshopContext>()
-                .AddApiEndpoints();
-            
+            builder.Services.AddIdentityApiEndpoints<WebshopUser>()
+                .AddEntityFrameworkStores<WebshopContext>();
+
+            //builder.Services.AddIdentityCore<WebshopUser>()
+            //    .AddEntityFrameworkStores<WebshopContext>()
+            //    .AddApiEndpoints();
+
             builder.Services.ConfigureHttpJsonOptions(options =>
             {
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

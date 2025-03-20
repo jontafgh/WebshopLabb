@@ -1,14 +1,18 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using Microsoft.JSInterop;
 using WebshopFrontend.Contracts;
+using WebshopShared;
 
 namespace WebshopFrontend.Services
 {
     public class WebshopApiEndpoints
     {
         public const string Logout = "/Account/logout";
-        public const string Login = "/Account/login?useCookies=true";
+        public const string Login = "/Account/login";
         public const string Register = "/Account/register";
-        public const string Authenticate = "/Account/users/me";
+        public const string GetUserClaims = "/Account/users/claims";
 
         public const string PutUser = "/Account/users/update";
         public const string GetUser = "/Account/users/details";
@@ -30,7 +34,7 @@ namespace WebshopFrontend.Services
         public const string GetExchangerates = "/exchangerates";
     }
 
-    public class WebshopApiService(IHttpClientFactory httpClientFactory) : IApiService
+    public class WebshopApiService(IHttpClientFactory httpClientFactory, IJSRuntime jsRuntime) : IApiService
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("WebshopMinimalApi");
 
@@ -38,6 +42,25 @@ namespace WebshopFrontend.Services
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
+
+        private async Task<HttpRequestMessage> CreateRequestWithAuthorizationToken(string endpoint, HttpMethod httpMethod)
+        {
+            var request = new HttpRequestMessage(httpMethod, endpoint);
+            var session = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "session");
+            if (string.IsNullOrWhiteSpace(session)) return request;
+            var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(session);
+
+            if (loginResponse is null) return request;
+
+            request.Headers.Authorization = new AuthenticationHeaderValue(loginResponse.TokenType, loginResponse.AccessToken);
+
+            return request;
+        }
+
+        private StringContent SetRequestBody<TInput>(TInput data)
+        {
+            return new StringContent(JsonSerializer.Serialize(data, _jsonSerializerOptions), System.Text.Encoding.UTF8, "application/json");
+        }
 
         private async Task<Result<TOutput>> ProcessResponse<TOutput>(HttpResponseMessage response)
         {
@@ -71,9 +94,11 @@ namespace WebshopFrontend.Services
 
         public async Task<Result<TOutput>> GetAsync<TOutput>(string url)
         {
+            var message = await CreateRequestWithAuthorizationToken(url, HttpMethod.Get);
+
             try
             {
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.SendAsync(message);
                 return await ProcessResponse<TOutput>(response);
             }
             catch (Exception ex)
@@ -84,9 +109,12 @@ namespace WebshopFrontend.Services
 
         public async Task<Result<TOutput>> PostAsync<TOutput, TInput>(string url, TInput data)
         {
+            var message = await CreateRequestWithAuthorizationToken(url, HttpMethod.Post);
+            message.Content = SetRequestBody(data);
+
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(url, data);
+                var response = await _httpClient.SendAsync(message);
                 return await ProcessResponse<TOutput>(response);
             }
             catch (Exception ex)
@@ -97,9 +125,12 @@ namespace WebshopFrontend.Services
 
         public async Task<Result<TOutput>> PutAsync<TOutput, TInput>(string url, TInput data)
         {
+            var message = await CreateRequestWithAuthorizationToken(url, HttpMethod.Put);
+            message.Content = SetRequestBody(data);
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync(url, data);
+                var response = await _httpClient.SendAsync(message);
                 return await ProcessResponse<TOutput>(response);
             }
             catch (Exception ex)
@@ -109,9 +140,10 @@ namespace WebshopFrontend.Services
         }
         public async Task<Result<TOutput>> DeleteAsync<TOutput>(string url)
         {
+            var message = await CreateRequestWithAuthorizationToken(url, HttpMethod.Delete);
             try
             {
-                var response = await _httpClient.DeleteAsync(url);
+                var response = await _httpClient.SendAsync(message);
                 return await ProcessResponse<TOutput>(response);
             }
             catch (Exception ex)

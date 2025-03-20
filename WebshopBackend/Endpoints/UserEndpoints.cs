@@ -40,11 +40,11 @@ namespace WebshopBackend.Endpoints
                 return user == null ? Results.NotFound() : Results.Ok(user);
 
             }).RequireAuthorization();
-
-            app.MapGet("/Account/users/me", async (ClaimsPrincipal claims) =>
+            
+            app.MapGet("/Account/users/claims", async (ClaimsPrincipal user) =>
             {
-                var authenticatedUserDto = await userService.GetAuthenticatedUser(claims);
-                return authenticatedUserDto == null ? Results.Unauthorized() : Results.Ok(authenticatedUserDto);
+                var claims = await userService.GetUserClaims(user);
+                return claims == null ? Results.Unauthorized() : Results.Ok(claims);
 
             }).RequireAuthorization();
         }

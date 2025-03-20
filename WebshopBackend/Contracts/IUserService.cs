@@ -10,6 +10,6 @@ namespace WebshopBackend.Contracts
         Task<WebshopUser?> GetUserByIdAsync(string userId);
         Task<UserDetailsDto?> UpdateUserAsync(string userId, UserDetailsDto userDetails);
         Task<UserDetailsDto?> GetUserDetailsAsync(string userId);
-        Task<AuthenticatedUserDto?> GetAuthenticatedUser(ClaimsPrincipal claims);
+        Task<UserClaimsDto?> GetUserClaims(ClaimsPrincipal claimsPrincipal);
     }
 }

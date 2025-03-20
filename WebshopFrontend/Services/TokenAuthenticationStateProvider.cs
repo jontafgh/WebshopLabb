@@ -2,36 +2,35 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Microsoft.JSInterop;
 using WebshopFrontend.Contracts;
 using WebshopShared;
 using WebshopShared.Validation;
 
 namespace WebshopFrontend.Services
 {
-    public class CookieAuthenticationStateProvider(IApiService webshopApi) : AuthenticationStateProvider
+    public class TokenAuthenticationStateProvider(IApiService webshopApi, IJSRuntime jsRuntime) : AuthenticationStateProvider
     {
-        private readonly ClaimsPrincipal _unauthenticated = new(new ClaimsIdentity());
-
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var user = _unauthenticated;
+            var identity = new ClaimsIdentity();
+            var session = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "session");
 
-            var response = await webshopApi.GetAsync<AuthenticatedUserDto>(WebshopApiEndpoints.Authenticate);
+            if (string.IsNullOrWhiteSpace(session)) return new AuthenticationState(new ClaimsPrincipal(identity));
 
-            if (!response.IsSuccess || response.Data == null)
-            {
-                return new AuthenticationState(user);
-            }
+            var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(session);
 
+            if (loginResponse?.Claims is null) return new AuthenticationState(new ClaimsPrincipal(identity));
+            
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, response.Data.Email),
-                new Claim(ClaimTypes.Email, response.Data.Email),
-                new Claim(ClaimTypes.NameIdentifier, response.Data.UserId)
+                new Claim(ClaimTypes.Name, loginResponse.Claims.UserName),
+                new Claim(ClaimTypes.Email, loginResponse.Claims.Email),
+                new Claim(ClaimTypes.NameIdentifier, loginResponse.Claims.Id)
             };
 
-            var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
-            user = new ClaimsPrincipal(id);
+            identity = new ClaimsIdentity(claims, nameof(TokenAuthenticationStateProvider));
+            var user = new ClaimsPrincipal(identity);
             return new AuthenticationState(user);
         }
 
@@ -67,12 +66,21 @@ namespace WebshopFrontend.Services
 
         public async Task<RegisterLoginResponseDto> LoginAsync(LoginDto user)
         {
-            var result = await webshopApi.PostAsync<string, LoginDto>(WebshopApiEndpoints.Login, user);
+            var result = await webshopApi.PostAsync<LoginResponseDto, LoginDto>(WebshopApiEndpoints.Login, user);
 
-            if (result.IsSuccess)
+            if (result is { IsSuccess: true, Data: not null })
             {
+                var loginResponseJson = JsonSerializer.Serialize(result.Data);
+                await jsRuntime.InvokeVoidAsync("localStorage.setItem", "session", loginResponseJson);
+
+                var claims = await webshopApi.GetAsync<UserClaimsDto>(WebshopApiEndpoints.GetUserClaims);
+
+                if (claims.Data is not null) result.Data.Claims = claims.Data;
+
+                loginResponseJson = JsonSerializer.Serialize(result.Data);
+                await jsRuntime.InvokeVoidAsync("localStorage.setItem", "session", loginResponseJson);
+
                 NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-                return new RegisterLoginResponseDto { Succeeded = true };
             }
 
             return new RegisterLoginResponseDto
@@ -88,8 +96,12 @@ namespace WebshopFrontend.Services
             var emptyContent = new StringContent(empty, Encoding.UTF8, "application/json");
 
             var response = await webshopApi.PostAsync<string, StringContent>(WebshopApiEndpoints.Logout, emptyContent);
-            
-            if (response.IsSuccess) NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+            if (response.IsSuccess)
+            {
+                await jsRuntime.InvokeVoidAsync("localStorage.removeItem", "session");
+                NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            }
         }
     }
 }

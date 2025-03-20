@@ -59,7 +59,7 @@
 
     private async Task LogIn()
     {
-        _registerLoginResponseDto = await ((CookieAuthenticationStateProvider)AuthenticationStateProvider).LoginAsync(LoginDto);
+        _registerLoginResponseDto = await ((TokenAuthenticationStateProvider)AuthenticationStateProvider).LoginAsync(LoginDto);
 
         if (_registerLoginResponseDto.Succeeded)
         {

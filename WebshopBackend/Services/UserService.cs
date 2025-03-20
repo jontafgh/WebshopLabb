@@ -50,15 +50,16 @@ namespace WebshopBackend.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<AuthenticatedUserDto?> GetAuthenticatedUser(ClaimsPrincipal claims)
+        public async Task<UserClaimsDto?> GetUserClaims(ClaimsPrincipal claimsPrincipal)
         {
-            var validUser = await userManager.GetUserAsync(claims);
+            var validUser = await userManager.GetUserAsync(claimsPrincipal);
             if (validUser == null) return null;
 
-            return new AuthenticatedUserDto
+            return new UserClaimsDto
             {
-                UserId = validUser.Id,
-                Email = validUser.Email!
+                Id = validUser.Id,
+                Email = validUser.Email!,
+                UserName = validUser.UserName!
             };
         }
     }

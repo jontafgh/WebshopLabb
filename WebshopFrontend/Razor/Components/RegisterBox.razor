@@ -75,7 +75,7 @@
 
     private async Task RegisterUser()
     {
-        _registerLoginResponseDto = await ((CookieAuthenticationStateProvider)AuthenticationStateProvider).RegisterAsync(RegisterUserDto);
+        _registerLoginResponseDto = await ((TokenAuthenticationStateProvider)AuthenticationStateProvider).RegisterAsync(RegisterUserDto);
 
         if (_registerLoginResponseDto.Succeeded)
         {

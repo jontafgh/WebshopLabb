@@ -16,9 +16,14 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveServer"/>
+    <Routes @rendermode="@InteractiveServerWithoutPrerendering" />
     <script src="_framework/blazor.web.js"></script>
     <script src="@Assets["cart.js"]"></script>
 </body>
 
 </html>
+
+@code {
+    private static readonly IComponentRenderMode InteractiveServerWithoutPrerendering =
+        new InteractiveServerRenderMode(prerender: false);
+}
