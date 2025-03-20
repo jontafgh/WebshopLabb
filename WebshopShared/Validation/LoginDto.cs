@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebshopShared
+namespace WebshopShared.Validation
 {
     public class LoginDto
     {

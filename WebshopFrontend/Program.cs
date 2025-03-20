@@ -17,13 +17,12 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         
-        //builder.Services.AddAuthorizationCore();
-        builder.Services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
-        
         builder.Services.AddHttpClient("WebshopMinimalApi", client =>
         {
             client.BaseAddress = new Uri("http://localhost:5057/");
         });
+
+        builder.Services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
 
         builder.Services.AddScoped<IApiService, WebshopApiService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
