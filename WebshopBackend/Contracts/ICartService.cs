@@ -1,5 +1,4 @@
-﻿using WebshopBackend.Models;
-using WebshopShared;
+﻿using WebshopShared;
 
 namespace WebshopBackend.Contracts
 {

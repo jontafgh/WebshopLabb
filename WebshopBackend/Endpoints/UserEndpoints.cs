@@ -11,7 +11,7 @@ namespace WebshopBackend.Endpoints
     {
         public void RegisterEndpoints(WebApplication app)
         {
-            app.MapPost("Account/logout", async (SignInManager<WebshopUser> signInManager, [FromBody] object? empty) =>
+            app.MapPost("/account/logout", async (SignInManager<WebshopUser> signInManager, [FromBody] object? empty) =>
             {
                 if (empty == null) return Results.Unauthorized();
 
@@ -21,7 +21,7 @@ namespace WebshopBackend.Endpoints
 
             }).RequireAuthorization();
 
-            app.MapPut("/Account/users/update", async (ClaimsPrincipal claims, UserDetailsDto user) =>
+            app.MapPut("/account/manage/details", async (ClaimsPrincipal claims, UserDetailsDto user) =>
             {
                 var userId = userService.GetUserId(claims);
                 if (userId == null) return Results.Unauthorized();
@@ -31,7 +31,7 @@ namespace WebshopBackend.Endpoints
 
             }).RequireAuthorization();
 
-            app.MapGet("/Account/users/details", async (ClaimsPrincipal claims) =>
+            app.MapGet("/account/manage/details", async (ClaimsPrincipal claims) =>
             {
                 var userId = userService.GetUserId(claims);
                 if (userId == null) return Results.Unauthorized();
@@ -41,7 +41,7 @@ namespace WebshopBackend.Endpoints
 
             }).RequireAuthorization();
             
-            app.MapGet("/Account/users/claims", async (ClaimsPrincipal user) =>
+            app.MapGet("/account/claims", async (ClaimsPrincipal user) =>
             {
                 var claims = await userService.GetUserClaims(user);
                 return claims == null ? Results.Unauthorized() : Results.Ok(claims);

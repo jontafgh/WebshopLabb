@@ -14,14 +14,15 @@ namespace WebshopFrontend.Services
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var identity = new ClaimsIdentity();
-            var session = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "session");
 
+            var session = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "session");
             if (string.IsNullOrWhiteSpace(session)) return new AuthenticationState(new ClaimsPrincipal(identity));
 
             var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(session);
-
             if (loginResponse?.Claims is null) return new AuthenticationState(new ClaimsPrincipal(identity));
-            
+
+            if (!await ValidateUser()) return new AuthenticationState(new ClaimsPrincipal(identity));
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, loginResponse.Claims.UserName),
@@ -34,14 +35,18 @@ namespace WebshopFrontend.Services
             return new AuthenticationState(user);
         }
 
+        private async Task<bool> ValidateUser()
+        {
+            var result = await webshopApi.GetAsync<UserInfoDto>(WebshopApiEndpoints.GetUserInfo);
+            return result.IsSuccess;
+        }
+
         public async Task<RegisterLoginResponseDto> RegisterAsync(RegisterUserDto user)
         {
             var response = await webshopApi.PostAsync<string, RegisterUserDto>(WebshopApiEndpoints.Register, user);
-
             if (response.IsSuccess) { return new RegisterLoginResponseDto { Succeeded = true }; }
             
             var problemDetails = JsonDocument.Parse(response.Data!);
-
             var errors = new List<string>();
             var errorList = problemDetails.RootElement.GetProperty("errors");
 
@@ -81,6 +86,8 @@ namespace WebshopFrontend.Services
                 await jsRuntime.InvokeVoidAsync("localStorage.setItem", "session", loginResponseJson);
 
                 NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+                return new RegisterLoginResponseDto { Succeeded = true };
             }
 
             return new RegisterLoginResponseDto

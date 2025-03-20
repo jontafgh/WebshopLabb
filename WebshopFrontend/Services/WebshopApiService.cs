@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.JSInterop;
 using WebshopFrontend.Contracts;
@@ -9,13 +8,13 @@ namespace WebshopFrontend.Services
 {
     public class WebshopApiEndpoints
     {
-        public const string Logout = "/Account/logout";
-        public const string Login = "/Account/login";
-        public const string Register = "/Account/register";
-        public const string GetUserClaims = "/Account/users/claims";
-
-        public const string PutUser = "/Account/users/update";
-        public const string GetUser = "/Account/users/details";
+        public const string Logout = "/account/logout";
+        public const string Login = "/account/login";
+        public const string Register = "/account/register";
+        public const string GetUserClaims = "/account/claims";
+        public const string GetUserInfo = "/account/manage/info";
+        public const string PutUser = "/account/manage/details";
+        public const string GetUser = "/account/manage/details";
 
         public const string GetProducts = "/products";
         public const string GetProduct = "/products/{0}";
@@ -47,13 +46,14 @@ namespace WebshopFrontend.Services
         {
             var request = new HttpRequestMessage(httpMethod, endpoint);
             var session = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "session");
+
             if (string.IsNullOrWhiteSpace(session)) return request;
+
             var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(session);
 
             if (loginResponse is null) return request;
 
             request.Headers.Authorization = new AuthenticationHeaderValue(loginResponse.TokenType, loginResponse.AccessToken);
-
             return request;
         }
 

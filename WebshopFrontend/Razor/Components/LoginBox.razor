@@ -87,8 +87,7 @@
         var localCart = await CartService.GetCart();
         var cart = apiCart.CartItems.Concat(localCart).DistinctBy(c => c.ArtNr).ToList();
 
-        await CartService.UpdateCart(cart);
-
+        await CartService.SetCart(cart);
         CounterService.SetCount(cart.Sum(c => c.Quantity));
     }
 }

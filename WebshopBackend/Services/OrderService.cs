@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
-using WebshopBackend.Models;
 using WebshopShared;
 
 namespace WebshopBackend.Services

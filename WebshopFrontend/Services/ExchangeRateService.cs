@@ -15,9 +15,12 @@ namespace WebshopFrontend.Services
 
         public async Task SetExchangeRatesAsync()
         {
-            var response = await _httpClient.GetAsync("exchangerates");
+            var response = await _httpClient.GetAsync(WebshopApiEndpoints.GetExchangerates);
             if (!response.IsSuccessStatusCode)
-                return;
+            {
+                CurrentRate = new KeyValuePair<string, decimal>("USD", 1);
+                Rates.Add("USD", 1);
+            }
 
             var exchangeRates = await JsonSerializer.DeserializeAsync<ExchangeRatesDto>(await response.Content.ReadAsStreamAsync());
 

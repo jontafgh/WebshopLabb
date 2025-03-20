@@ -1,7 +1,4 @@
-using System.Net;
-using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using WebshopFrontend.Contracts;
 using WebshopFrontend.Razor;
 using WebshopFrontend.Services;
@@ -23,7 +20,6 @@ public class Program
         });
 
         builder.Services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
-
         builder.Services.AddScoped<IApiService, WebshopApiService>();
         builder.Services.AddSingleton<ICounterService, CartCounterService>();
         builder.Services.AddSingleton<IExchangeRateService, ExchangeRateService>();

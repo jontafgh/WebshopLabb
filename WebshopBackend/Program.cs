@@ -1,7 +1,4 @@
-using System.Diagnostics;
-using System.Security.Principal;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebshopBackend.Contracts;
 using WebshopBackend.Endpoints;
@@ -17,7 +14,7 @@ namespace WebshopBackend
             var builder = WebApplication.CreateBuilder(args);
 
             var connectionStringPc = builder.Configuration.GetConnectionString("WebshopDbPc");
-            //var connectionStringLaptop = builder.Configuration.GetConnectionString("WebshopDbLaptop");
+            var connectionStringLaptop = builder.Configuration.GetConnectionString("WebshopDbLaptop");
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -55,7 +52,7 @@ namespace WebshopBackend
 
             var app = builder.Build();
 
-            app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
+            app.MapGroup("/account").MapIdentityApi<WebshopUser>();
             app.MapMyEndpoints();
             
             if (app.Environment.IsDevelopment())

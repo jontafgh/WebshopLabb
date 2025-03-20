@@ -104,7 +104,7 @@ else
 
     private async Task UpdateCartAsync()
     {
-        await CartService.UpdateCart(CartItems);
+        await CartService.SetCart(CartItems);
         await UpdateUserCart();
         CartItems = await CartService.GetCart();
     }

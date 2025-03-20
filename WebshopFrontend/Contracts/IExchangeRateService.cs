@@ -1,6 +1,4 @@
-﻿using WebshopShared;
-
-namespace WebshopFrontend.Contracts
+﻿namespace WebshopFrontend.Contracts
 {
     public interface IExchangeRateService
     {
