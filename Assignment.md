@@ -21,10 +21,10 @@
     - [x] När formuläret skickas in ska användaren komma till en bekräftelsesida (page) där informationen om beställningen visas: Vilka produkter som köpts. Namn och adress från formuläret. När beställningen är klar ska varukorgen tömmas.
 - HTML/CSS/Blazor
     - [x] Minst 2 komponenter (inte pages/layout) ska användas.
-    - [ ] HTML ska användas på rätt sätt och valideras.
-    - [ ] Semantiska element när möjligt.
-    - [ ] CSS ska vara tydligt strukturerad och bidra till UI/UX.
-    - [ ] Appen ska vara responsiv och anpassad till mobile och desktop.
+    - [x] HTML ska användas på rätt sätt och valideras.
+    - [x] Semantiska element när möjligt.
+    - [x] CSS ska vara tydligt strukturerad och bidra till UI/UX.
+    - [x] Appen ska vara responsiv och anpassad till mobile och desktop.
     - [x] Inget CSS ramverk (bootstrap, tailwind etc.) får användas.
 
 # G, men inte VG
@@ -33,7 +33,7 @@
 - [x] Varukorgen ska lagras i `localStorage` (tillåtet även i VG, men ej krav).
 
 # VG
-- [ ] ... G-kriterierna ska uppfyllas.
+- [x] ... G-kriterierna ska uppfyllas.
 - Blazor
     - [x] Minst 4 komponenter (inte pages/layout) ska designas och användas.
 - Produkter
@@ -41,8 +41,8 @@
     - [x] Produkter ska ha kvantiteter. De ska kunna bli slutsålda.
     - [x] Produkter ska kunna vara på rea.
 - Produktkomponent
-    - [ ] Ändra utseende om...
-        - [ ] varan är slut.
+    - [x] Ändra utseende om...
+        - [x] varan är slut.
         - [x] varan är på rea.
 - På produktsidan ska produktens pris kunna visas i olika valutor med hjälp av API:et https://api-ninjas.com/api/exchangerate.
     - [x] API:et måste användas på ett sätt som gör att slutanvändaren inte kan komma åt API-nyckeln.
