@@ -5,11 +5,11 @@ namespace WebshopShared.Validation
     public class UserDetails
     {
         [Required]
-        [StringLength(50, MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2)]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [StringLength(50, MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2)]
         public string LastName { get; set; } = null!;
 
         [Phone]
@@ -22,19 +22,19 @@ namespace WebshopShared.Validation
     public class AddressDetails
     {
         [Required]
-        [StringLength(50, MinimumLength = 2)]
+        [StringLength(200, MinimumLength = 2)]
         public string Street { get; set; } = null!;
 
         [Required]
-        [StringLength(20, MinimumLength = 1)]
+        [StringLength(50, MinimumLength = 1)]
         public string PostalCode { get; set; } = null!;
 
         [Required]
-        [StringLength(50, MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2)]
         public string City { get; set; } = null!;
 
         [Required]
-        [StringLength(50, MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2)]
         public string Country { get; set; } = null!;
     }
 }
