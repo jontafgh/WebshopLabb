@@ -46,7 +46,7 @@ namespace WebshopFrontend.Services
             var response = await webshopApi.PostAsync<string, RegisterUserDto>(WebshopApiEndpoints.Register, user);
             if (response.IsSuccess) { return new RegisterLoginResponseDto { Succeeded = true }; }
             
-            var problemDetails = JsonDocument.Parse(response.Data!);
+            var problemDetails = JsonDocument.Parse(response.StringData!);
             var errors = new List<string>();
             var errorList = problemDetails.RootElement.GetProperty("errors");
 

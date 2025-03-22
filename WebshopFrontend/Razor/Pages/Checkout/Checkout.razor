@@ -53,7 +53,16 @@ else
             {
                 <ImportantInfoBox>
                     <h4>Order failed</h4>
-                    <p>@_orderErrorMessage</p>
+
+                    <ul class="error-list text-red">
+                        @foreach (var error in _orderErrors)
+                        {
+                            <li>@error</li>
+                        }
+                        <li>@_orderErrorMessage</li>
+                    </ul>
+                    
+                    <p>Please try again</p>
                 </ImportantInfoBox>
             }
 
@@ -70,6 +79,7 @@ else
 @code {
     private UserDetailsDto? _userDetails;
     private string? _orderErrorMessage;
+    private List<string> _orderErrors = [];
     private OrderDto? _order;
     private bool _userDetailsFormShown = true;
     private bool _showOrderConfirmation;
@@ -97,6 +107,7 @@ else
         if (!orderResult.IsSuccess)
         {
             _orderErrorMessage = orderResult.ErrorMessage;
+            _orderErrors = orderResult.Data?.Errors ?? [];
         }
         else
         {

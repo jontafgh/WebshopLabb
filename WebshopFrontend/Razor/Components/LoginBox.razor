@@ -17,9 +17,9 @@
                     <label for="email">
                         Email:
                         <InputText @bind-value="@LoginDto.Email"
-                        id="email"
-                        class="input-text"
-                        placeholder="name@example.com"></InputText>
+                                   id="email"
+                                   class="input-text"
+                                   placeholder="name@example.com"></InputText>
                     </label>
                     <ValidationMessage For="() => LoginDto.Email" class="text-red" />
                 </div>
@@ -28,13 +28,13 @@
                     <label for="password">
                         Password:
                         <InputText @bind-value="@LoginDto.Password"
-                        id="password"
-                        type="password"
-                        class="input-text"
-                        placeholder="password"></InputText>
+                                   id="password"
+                                   type="password"
+                                   class="input-text"
+                                   placeholder="password"></InputText>
                     </label>
                     <ValidationMessage For="() => LoginDto.Password"
-                    class="text-red" />
+                                       class="text-red" />
                 </div>
 
                 <button type="submit" class="button-fit padding-x padding-y text-large">
@@ -42,10 +42,15 @@
                 </button>
             </EditForm>
 
-            @foreach (var error in _registerLoginResponseDto.ErrorList)
-            {
-                <p class="text-red">@error</p>
-            }
+            <div class="padding-y">
+                <ul class="error-list text-red">
+                    @foreach (var error in _registerLoginResponseDto.ErrorList)
+                    {
+                        <li class="text-red">@error</li>
+                    }
+                </ul>
+            </div>
+
         </NotAuthorized>
     </AuthorizeView>
 </div>

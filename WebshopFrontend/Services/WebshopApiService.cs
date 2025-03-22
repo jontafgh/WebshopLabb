@@ -64,32 +64,36 @@ namespace WebshopFrontend.Services
 
         private async Task<Result<TOutput>> ProcessResponse<TOutput>(HttpResponseMessage response)
         {
-            if (!response.IsSuccessStatusCode) return new Result<TOutput>
+            var result = new Result<TOutput>();
+
+            if (!response.IsSuccessStatusCode)
             {
-                IsSuccess = false,
-                ErrorMessage = $"{response.RequestMessage?.RequestUri} {response.RequestMessage?.Method}\n{(int)response.StatusCode} {response.ReasonPhrase}"
-            };
-            
+                result.IsSuccess = false;
+                result.ErrorMessage = $"{response.RequestMessage?.RequestUri} {response.RequestMessage?.Method}\n{(int)response.StatusCode} {response.ReasonPhrase}";
+            }
+            else { result.IsSuccess = true; }
+
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            if(string.IsNullOrWhiteSpace(responseContent))
+            if (string.IsNullOrWhiteSpace(responseContent))
             {
-                return new Result<TOutput> { IsSuccess = true, Data = default};
+                result.Data = default;
+                return result;
             }
 
             try
             {
                 var data = JsonSerializer.Deserialize<TOutput>(responseContent, _jsonSerializerOptions);
-                return new Result<TOutput> { IsSuccess = true, Data = data };
+                result.Data = data;
             }
             catch (JsonException ex)
             {
-                return new Result<TOutput> { IsSuccess = false, Data = default, ErrorMessage = $"Could not read JSON: {responseContent} {response.RequestMessage?.Method} {response.RequestMessage?.RequestUri} {ex.Message}"};
+                result.Data = default;
+                result.StringData = responseContent;
+                result.ErrorMessage += $"´\n{ex.Message}";
             }
-            catch (Exception ex)
-            {
-                return new Result<TOutput> { IsSuccess = false, Data = default, ErrorMessage = $"{ex.Message}" };
-            }
+
+            return result;
         }
 
         public async Task<Result<TOutput>> GetAsync<TOutput>(string url)
@@ -153,10 +157,11 @@ namespace WebshopFrontend.Services
         }
     }
 
-    public class Result <TOutput>
+    public class Result<TOutput>
     {
         public bool IsSuccess { get; set; }
         public TOutput? Data { get; set; }
+        public string? StringData { get; set; }
         public string? ErrorMessage { get; set; }
     }
 }
