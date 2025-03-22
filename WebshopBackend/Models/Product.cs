@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebshopBackend.Models;
 
+
+[Index(nameof(ArtNr), IsUnique = true)]
 public class Product
 {
     public int Id { get; set; }
